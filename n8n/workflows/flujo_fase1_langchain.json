@@ -1,0 +1,425 @@
+{
+  "name": "Fase 1: Agente Langchain con Memoria",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4",
+          "mode": "list",
+          "cachedResultName": "Generador de Vídeos"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Texto_Inicial"
+        },
+        "event": "rowAdded"
+      },
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "d3067a2a-cfa6-4e64-b17c-52295769f2b8"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nlet input = \"\";\ntry {\n  let waitNode = $('Wait (Webhook Feedback)').last();\n  let feedback = (waitNode.json.query && waitNode.json.query.feedback) || (waitNode.json.body && waitNode.json.body.feedback) || \"Regenerar sin feedback específico\";\n  input = \"El usuario ha rechazado el borrador anterior y pide esta corrección: \" + feedback;\n} catch (e) {\n  // Si falla, es la primera ejecución\n  let texto = $('Google Sheets Trigger').first().json.Texto_Capitulo;\n  input = \"Por favor, divide el siguiente texto en escenas:\\n\\n\" + texto;\n}\nreturn { prompt_text: input };\n"
+      },
+      "name": "Preparar Input",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ],
+      "id": "5d1fdd5b-d500-48e3-b938-6fca44864f97"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.prompt_text }}",
+        "options": {
+          "systemMessage": "Eres un director de vídeo experto. Divide el texto del usuario en escenas lógicas.\\n\\nReglas:\\n- Devuelve ÚNICAMENTE un objeto JSON puro.\\n- El JSON debe tener una propiedad 'escenas' que sea un array.\\n- Cada escena debe tener:\\n  'narrador': el texto a locutar (español).\\n  'prompt_imagen': descripción visual ultra detallada (inglés)."
+        }
+      },
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "652a5666-d4d7-457d-a671-38112f726f19"
+    },
+    {
+      "parameters": {
+        "model": "gpt-4o",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        200
+      ],
+      "id": "7772098c-4a3a-48d3-a603-0ba43bbae287"
+    },
+    {
+      "parameters": {},
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [
+        550,
+        200
+      ],
+      "id": "3abf2994-a6e1-4018-8ddd-478b422236e2"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "={{ '¡Guion generado!\\n\\n' + JSON.stringify($json.output) + '\\n\\n¿Qué hacemos?' }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Aprobar",
+                    "url": "={{ $execution.resumeUrl }}?status=approved"
+                  },
+                  {
+                    "text": "🔄 Corregir (Nota de voz)",
+                    "url": "={{ $execution.resumeUrl }}?status=rejected"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Avisar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        700,
+        0
+      ],
+      "id": "49f949b8-31f5-4016-b906-73fab3bc2f8a"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook Aprobación)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "6e89ea89-9671-4b32-ae96-9161c291943c",
+      "position": [
+        900,
+        0
+      ],
+      "id": "8f16e4fb-f3c8-464d-800b-3791cb4623fb"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aprobado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "rejected",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Rechazado"
+            }
+          ]
+        }
+      },
+      "name": "Switch (Decisión)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1100,
+        0
+      ],
+      "id": "20a371e3-9814-4b46-8035-198bc6224f00"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "¡Perfecto! Guion aprobado. Avanzando a la siguiente fase..."
+      },
+      "name": "Telegram: Confirmar Aprobado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1300,
+        -100
+      ],
+      "id": "e4a115f3-0fe7-4c5b-ba49-9e39ed0d449e"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "Has rechazado el guion. Por favor, mándame una nota de voz explicándome qué quieres cambiar.\\n(El sistema guardará tu respuesta y regenerará el guion automáticamente)."
+      },
+      "name": "Telegram: Pedir Voice",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1300,
+        100
+      ],
+      "id": "105ef332-1db5-48b8-ab2c-11911b8d1f37"
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S3I8PdYk18jMX8jG",
+          "name": "Google Sheets Trigger account"
+        }
+      },
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Webhook_Feedback": "={{ $execution.resumeUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "name": "Google Sheets (Guardar URL)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1500,
+        100
+      ],
+      "id": "3aa6a30f-d13d-407d-af51-d809ce5cb55b"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook Feedback)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "5ebfd00b-cd3b-426e-b243-f8eb22ab10f0",
+      "position": [
+        1700,
+        100
+      ],
+      "id": "017c6303-3756-49dd-a1dd-9f56badfc551"
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Preparar Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Input": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Avisar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Avisar": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook Aprobación)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook Aprobación)": {
+      "main": [
+        [
+          {
+            "node": "Switch (Decisión)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Decisión)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Confirmar Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Pedir Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Pedir Voice": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets (Guardar URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets (Guardar URL)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook Feedback)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook Feedback)": {
+      "main": [
+        [
+          {
+            "node": "Preparar Input",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

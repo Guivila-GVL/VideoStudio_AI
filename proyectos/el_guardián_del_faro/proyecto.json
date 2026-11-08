@@ -1,0 +1,51 @@
+{
+  "id": "el_guardián_del_faro",
+  "titulo": "El Guardián del Faro",
+  "descripcion": "Novela corta de misterio costero y leyendas del océano",
+  "audiencia": "Jóvenes y Adultos (Misterio y Aventura)",
+  "ambiente": "Acantilados rocosos de Punta Esmeralda en una costa atlántica salvaje. El tono es misterioso, cinematográfico y épico, con noches de niebla densa, tormentas marinas y destellos luminosos mágicos.",
+  "estilo_visual": "cinematic",
+  "estilo_detalles": "Iluminación cinematográfica 35mm, alto contraste, sombras atmosféricas, partículas de niebla marina y reflejos de luz dorada en la lluvia.",
+  "voz_defecto": "eleven_george",
+  "personajes_recurrentes_texto": "Lucas (el joven vigía del faro), Marina (guardiana del océano)",
+  "personajes": [
+    {
+      "id": "lucas",
+      "nombre": "Lucas",
+      "rol": "Protagonista, vigía del faro",
+      "tipo": "humano",
+      "descripcion_visual": "Joven vigía de 25 años, cabello castaño revuelto por el viento, rostro decidido, viste un impermeable impermeable amarillo brillante y sostiene una linterna de bronce",
+      "imagen_url": null,
+      "prompt_retrato": "Full body character turnaround model sheet of Lucas, a 25 year old handsome lighthouse keeper, tousled brown hair, determined expression, wearing a classic bright yellow rain coat slicker jacket and holding a vintage brass lantern, cinematic 35mm film lighting, dramatic atmospheric look, isolated on plain solid pure white background, vertical 9:16, masterpiece"
+    },
+    {
+      "id": "marina",
+      "nombre": "Marina",
+      "rol": "Mística guardiana del océano",
+      "tipo": "humano",
+      "descripcion_visual": "Joven mujer etérea de largos cabellos ondulados azul mar, mirada profunda color turquesa, vestida con túnica marina fluida con destellos fosforescentes",
+      "imagen_url": null,
+      "prompt_retrato": "Full body character turnaround model sheet of Marina, an ethereal ocean guardian maiden, long wavy sea-blue hair flowing with gentle breeze, deep turquoise eyes, wearing a glowing translucent sea-green dress with luminescent oceanic accents, cinematic lighting, isolated on plain solid pure white background, vertical 9:16, masterpiece"
+    }
+  ],
+  "escenarios": [
+    {
+      "id": "faro_punta_esmeralda",
+      "nombre": "Faro de Punta Esmeralda",
+      "tipo": "exterior_costero",
+      "descripcion_visual": "Antiguo faro majestuoso de piedra blanca sobre un acantilado negro azotado por olas gigantes y densa niebla con rayos dorados",
+      "imagen_url": null,
+      "prompt_escenario": "Scenic background art of a majestic ancient tall white stone lighthouse on a dark dramatic rocky cliff, giant ocean waves crashing, dense coastal sea fog pierced by warm golden lantern rays, empty scene, no people, cinematic 35mm photography, vertical 9:16 background scenery, masterpiece"
+    },
+    {
+      "id": "linterna_fresnel",
+      "nombre": "Sala de la Linterna",
+      "tipo": "interior",
+      "descripcion_visual": "Cúpula de cristal del faro con la enorme lente de Fresnel dorada giratoria, tormenta visible a través de los cristales salpicados de lluvia",
+      "imagen_url": null,
+      "prompt_escenario": "Scenic background art of the top interior lantern room of an antique lighthouse, massive rotating golden Fresnel glass lens glowing brightly, storm and lightning visible through rain-slicked glass windows, empty scene, no people, vertical 9:16 background scenery, cinematic lighting, masterpiece"
+    }
+  ],
+  "creado_en": "2026-10-18 12:00:00",
+  "actualizado_en": "2026-10-18 17:18:00"
+}

@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VideoStudio AI - Producción de Vídeos Cortos por Libros & Capítulos</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css?v=2.9">
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%22100%22%20%22100%22><text y=%22.9em%22 font-size=%2290%22>🎬</text></svg>">
+</head>
+<body>
+
+  <!-- Barra Superior -->
+  <header class="app-header">
+    <div class="header-left">
+      <div class="logo-badge">
+        <span class="logo-icon">🎬</span>
+        <div>
+          <h1 class="logo-title">VideoStudio <span class="accent-text">AI</span></h1>
+        </div>
+      </div>
+
+      <!-- Selector Rápido de Proyecto / Libro -->
+      <div class="project-selector-wrapper">
+        <button class="btn btn-outline-glow btn-sm" id="btn-open-projects-hub" title="Centro de Proyectos y Selector de Libros">
+          <span class="btn-icon-symbol">📚</span> <strong>Mis Proyectos</strong>
+        </button>
+        <select id="project-select" class="form-select project-dropdown" title="Cambio rápido de libro">
+          <option value="">Cargando proyectos...</option>
+        </select>
+        <button class="btn btn-primary btn-xs" id="btn-create-project-modal" title="Crear un nuevo proyecto o libro">
+          ➕ Nuevo Libro
+        </button>
+      </div>
+    </div>
+
+
+
+    <div class="header-right">
+      <button class="btn btn-secondary btn-sm" id="btn-open-history" title="Ver y descargar los vídeos finales renderizados (MP4)">
+        🎞️ Vídeos Creados
+      </button>
+      <button class="btn btn-icon btn-sm" id="btn-open-settings" title="Ajustes y Credenciales de APIs">
+        ⚙️
+      </button>
+    </div>
+  </header>
+
+  <!-- Barra de Navegación de Capas: Genérica vs Específica -->
+  <div class="layer-nav-container">
+    <div class="pipeline-nav">
+      <button class="nav-tab-btn active" id="tab-nav-generic">
+        <span class="tab-badge-num">1</span>
+        <div class="tab-label-group">
+          <strong>🌐 Capa Genérica</strong>
+          <small>Universo, Audiencia, Estilo & Biblia de Personajes</small>
+        </div>
+      </button>
+      <div class="nav-arrow">➔</div>
+      <button class="nav-tab-btn" id="tab-nav-specific">
+        <span class="tab-badge-num">2</span>
+        <div class="tab-label-group">
+          <strong>🎬 Capa Específica</strong>
+          <small>Capítulos, Storyboard & Vídeos Verticales</small>
+        </div>
+      </button>
+    </div>
+  </div>
+
+  <!-- Casilla Global de Actividad y Estado del Sistema (Visible en Capa 1 y Capa 2) -->
+  <div class="system-status-container">
+    <div class="system-status-card" id="system-status-card">
+      <div class="status-left-group">
+        <div class="status-indicator-badge" id="status-indicator-badge">
+          <span class="status-dot" id="status-dot"></span>
+          <span class="status-tag" id="status-tag">EN ESPERA</span>
+        </div>
+        <div class="status-text-group">
+          <div class="status-primary-line">
+            <strong id="status-primary-text">Listo para recibir órdenes</strong>
+            <span class="status-time" id="status-time"></span>
+          </div>
+          <div class="status-secondary-line" id="status-secondary-text">
+            El sistema está esperando que selecciones una acción (analizar libro, generar personajes, auditar coherencia o montar vídeo).
+          </div>
+        </div>
+      </div>
+      <div class="status-spinner-box" id="status-spinner-box" style="display: none;">
+        <div class="pulse-loader"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Contenedor Principal -->
+  <main class="main-container">
+
+    <!-- ========================================================
+         VISTA 1: CAPA GENÉRICA (UNIVERSO, LIBRO, ESTILO Y PERSONAJES)
+         ======================================================== -->
+    <section class="layer-view" id="view-generic">
+      
+      <!-- Paso A: Manuscrito y Análisis Automático con IA -->
+      <div class="card universe-card">
+        <div class="card-header border-bottom">
+          <div class="card-title-group">
+            <span class="card-icon">📚</span>
+            <div>
+              <h2 class="card-title">1. Manuscrito / Libro Base</h2>
+              <p class="card-subtitle">Manuscrito guardado en la carpeta <code>documentos/</code> del proyecto o nuevo archivo para análisis.</p>
+            </div>
+          </div>
+          <div class="header-action">
+            <button class="btn btn-accent btn-md" id="btn-ai-analyze-book">
+              <span class="btn-icon-symbol">🔮</span> Analizar Libro con IA
+            </button>
+          </div>
+        </div>
+
+        <!-- Tarjeta Informativa: Alcance de 'Analizar Libro con IA' -->
+        <div class="ai-analysis-scope-banner mt-3">
+          <div class="ai-scope-icon">💡</div>
+          <div class="ai-scope-body">
+            <div class="ai-scope-title">
+              <strong>¿Qué hace el botón «Analizar Libro con IA»?</strong>
+              <span class="ai-scope-badge">Actualiza Puntos 2, 3, 4 y 5</span>
+            </div>
+            <p class="ai-scope-desc">
+              Lee el texto del manuscrito (PDF/DOCX/TXT) y genera automáticamente los cimientos del universo de la obra:
+            </p>
+            <ul class="ai-scope-list">
+              <li><b>🌌 Punto 2 (Universo & Estilo):</b> Descripción sensorial profunda del ambiente (luz, aromas, clima, época), tono y técnica visual recomendada.</li>
+              <li><b>👥 Punto 3 (Personajes Recurrentes):</b> Biblia ampliada de 6 a 10 personajes/animales con fisonomía detallada y citas literarias del libro.</li>
+              <li><b>🏛️ Punto 4 (Escenarios Clave):</b> Detección de 5 a 8 localizaciones emblemáticas sin personas para coherencia escénica.</li>
+              <li><b>🎙️ Punto 5 (Dirección de Narración & Casting):</b> Deduce el perfil psicológico y edad del narrador (ej: joven de 12-14 años en Platero) y asigna su voz idónea con estudio interactivo de audición.</li>
+            </ul>
+            <div class="ai-scope-footer text-muted">
+              🛡️ <b>Tranquilidad total:</b> NO borra ni altera los capítulos de la Capa Específica ni tus vídeos ya generados. Podrás retocar o añadir cualquier campo tras el análisis.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Manuscrito Guardado en el Proyecto (Si ya existe archivo en documentos/) -->
+        <div class="saved-book-card mt-3" id="saved-book-card" style="display: none;">
+          <div class="saved-book-body">
+            <div class="saved-book-icon-wrapper">
+              <span class="saved-book-icon">📄</span>
+              <span class="saved-book-badge">Guardado</span>
+            </div>
+            <div class="saved-book-details">
+              <div class="saved-book-title-row">
+                <h3 class="saved-book-filename" id="saved-book-filename">manuscrito.pdf</h3>
+                <span class="saved-book-path-pill" id="saved-book-path">proyectos/{id}/documentos/</span>
+              </div>
+              <p class="saved-book-meta text-muted" id="saved-book-meta">
+                Manuscrito oficial del libro listo para producción.
+              </p>
+              <div class="saved-book-status-row">
+                <span class="status-check">✅ Estructura cargada: documentos/, personajes/, escenarios/ y capitulos/</span>
+              </div>
+            </div>
+          </div>
+          <div class="saved-book-actions">
+            <button class="btn btn-secondary btn-sm" id="btn-toggle-replace-book">
+              🔄 Reemplazar Archivo
+            </button>
+          </div>
+        </div>
+
+        <!-- Formulario de Subida (Para proyectos nuevos o si se quiere reemplazar) -->
+        <div class="upload-book-container" id="upload-book-container">
+          <div class="form-grid-2 mt-3">
+            <!-- Zona de Subida de Archivo -->
+            <div class="drop-zone" id="drop-zone-book">
+              <input type="file" id="file-input-book" accept=".docx,.pdf,.txt,.md" style="display: none;">
+              <div class="drop-zone-content">
+                <span class="drop-icon">📄</span>
+                <h3>Arrastra aquí tu libro o manuscrito</h3>
+                <p>Formatos admitidos: Word (.docx), Adobe PDF (.pdf) o Texto plano (.txt)</p>
+                <div class="drop-hints">
+                  <span>.docx</span><span>.pdf</span><span>.txt</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- O pegar fragmento / sinopsis manual -->
+            <div class="form-group">
+              <label for="book-sample-text" class="form-label">
+                <span>O pega aquí el texto o sinopsis extensa del libro:</span>
+                <span class="label-hint" id="book-words-count">0 palabras</span>
+              </label>
+              <textarea id="book-sample-text" class="form-textarea" rows="6" 
+                        placeholder="Pega aquí el inicio del libro, capítulos clave o el manuscrito para que la IA detecte a los personajes y el tono del universo..."></textarea>
+            </div>
+          </div>
+        </div>
+
+        <!-- Banner de documento cargado si aplica -->
+        <div class="doc-info-banner mt-3" id="book-doc-info" style="display: none;">
+          <div class="doc-info-left">
+            <span class="doc-icon">📑</span>
+            <div>
+              <strong id="book-doc-filename">libro.pdf</strong>
+              <div class="doc-stats text-muted" id="book-doc-stats">0 palabras • 0 capítulos</div>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-sm" id="btn-analyze-uploaded-doc">
+            ✨ Extraer Biblia con este Documento
+          </button>
+        </div>
+
+      </div>
+
+      <!-- Paso B: Parámetros del Universo (Audiencia, Ambiente, Estilo) -->
+      <div class="card universe-card mt-4">
+        <div class="card-header border-bottom">
+          <div class="card-title-group">
+            <span class="card-icon">🌌</span>
+            <div>
+              <h2 class="card-title">2. Definición del Universo & Estilo Visual</h2>
+              <p class="card-subtitle">Parámetros globales que se aplicarán de forma coherente a todos los capítulos de la serie.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-grid-3 mt-3">
+          <!-- Título y Descripción -->
+          <div class="form-group form-span-2">
+            <label class="form-label" for="univ-title">Título del Libro o Serie</label>
+            <input type="text" id="univ-title" class="form-input" placeholder="Ej: Las Crónicas del Faro">
+          </div>
+
+          <!-- Público Objetivo / Audiencia -->
+          <div class="form-group">
+            <label class="form-label" for="univ-audience">Público Objetivo / Audiencia</label>
+            <select id="univ-audience" class="form-select">
+              <option value="Infantil (Cuentos)">👶 Infantil (Cuentos para niños)</option>
+              <option value="Juvenil (Aventuras)">🎒 Juvenil (Aventuras & Young Adult)</option>
+              <option value="Adultos (Thriller / Misterio)">🎩 Adultos (Suspense / Misterio / Drama)</option>
+              <option value="Fantasía Épica & Sci-Fi">🐉 Fantasía Épica & Ciencia Ficción</option>
+              <option value="Todos los públicos" selected>👥 Todos los públicos</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-grid-3 mt-3">
+          <!-- Ambiente y Mundo -->
+          <div class="form-group form-span-2">
+            <label class="form-label" for="univ-ambient">
+              <span>Ambiente & Atmósfera del Mundo</span>
+              <span class="label-hint">Época, entorno, clima, tono emocional</span>
+            </label>
+            <textarea id="univ-ambient" class="form-textarea" rows="5" 
+                      placeholder="Ej: Moguer y la campiña andaluza a comienzos del siglo XX, envueltos en una luz dorada y deslumbrante que baña las fachadas encaladas..."></textarea>
+          </div>
+
+          <!-- Voz por defecto -->
+          <div class="form-group">
+            <label class="form-label" for="univ-voice">Voz del Narrador por Defecto</label>
+            <select id="univ-voice" class="form-select">
+              <!-- Voces dinámicas -->
+            </select>
+            <small class="form-hint mt-1">Sincronizada con el <b>Punto 5 (Dirección de Narración & Casting)</b>.</small>
+          </div>
+        </div>
+
+        <div class="form-grid-3 mt-3">
+          <!-- Estilo Visual -->
+          <div class="form-group">
+            <label class="form-label" for="univ-style">Técnica de Dibujo & Estilo Visual</label>
+            <select id="univ-style" class="form-select">
+              <option value="watercolor">🖌️ Acuarela y Tinta Poética (Trazos suaves artísticos)</option>
+              <option value="ghibli_anime">🍃 Studio Ghibli (Anime tradicional pintado a mano)</option>
+              <option value="storybook_kids">🧸 Cuento Infantil Ilustrado (Colores amigables)</option>
+              <option value="pixar_3d">✨ Animación 3D tipo Pixar / Disney (Volumétrico)</option>
+              <option value="cinematic">🎬 Cinematográfico 4K (Lente 35mm, sombras dramáticas)</option>
+              <option value="anime">🎨 Anime Makoto Shinkai (Cielos brillantes & luz radiante)</option>
+              <option value="noir_bw">🕵️‍♂️ Blanco y Negro Noir (Alto contraste y claroscuro)</option>
+              <option value="comic">💥 Cómic / Novela Gráfica (Entintado dinámico)</option>
+              <option value="dark_fantasy">🐉 Dark Fantasy Épico (Grimdark, Unreal Engine 5)</option>
+              <option value="cyberpunk">⚡ Cyberpunk Neón (Distopía lluviosa con hologramas)</option>
+              <option value="vintage">📷 Fotografía Retro 70s (Grano analógico Kodak Portra)</option>
+            </select>
+          </div>
+
+          <!-- Detalles Específicos del Estilo (Caja ampliada para instrucciones detalladas) -->
+          <div class="form-group form-span-2">
+            <label class="form-label" for="univ-style-details">
+              <span>Detalles Específicos de la Técnica Visual</span>
+              <span class="label-hint">Paleta de color, tipo de iluminación, trazos, textura de papel</span>
+            </label>
+            <textarea id="univ-style-details" class="form-textarea" rows="3" 
+                      placeholder="Ej: Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea..."></textarea>
+          </div>
+        </div>
+
+        <!-- Tarjeta de Implicaciones Técnicas & Sincronización Coherente -->
+        <div class="style-implications-banner mt-3" id="style-implications-banner">
+          <div class="style-implications-topbar">
+            <div class="style-implications-left">
+              <div class="style-implications-icon" id="style-implications-icon">🖌️</div>
+              <div class="style-implications-heading">
+                <h4 class="style-implications-title" id="style-implications-title">Implicaciones Técnicas: Acuarela y Tinta Poética</h4>
+                <div class="style-implications-tags" id="style-implications-tags">
+                  <span class="style-badge-tag">🖌️ Aguada traslúcida</span>
+                  <span class="style-badge-tag">📜 Textura papel rugoso</span>
+                  <span class="style-badge-tag">📐 Hoja 4 vistas obligatoria</span>
+                </div>
+              </div>
+            </div>
+            <div class="style-implications-action">
+              <button type="button" class="btn btn-primary btn-sm btn-sync-style" id="btn-sync-style-to-all" title="Propaga y sincroniza automáticamente esta técnica de dibujo en los prompts de todos los personajes y escenarios del proyecto">
+                ⚡ Sincronizar estilo en Personajes y Escenarios
+              </button>
+            </div>
+          </div>
+          
+          <p class="style-implications-desc" id="style-implications-desc">
+            Pintura artesanal a mano con aguadas orgánicas sobre papel de grano grueso. Contornos en tinta suave sepia o grafito, bordes difuminados y ausencia de brillos artificiales 3D.
+          </p>
+          
+          <div class="style-implications-coherence-note">
+            <span class="coherence-icon">⚖️</span>
+            <span><b>Regla de Coherencia Absoluta:</b> Esta técnica rige tanto a todos los <b>Personajes (Hojas de Modelo de 4 Vistas estándar Darbón)</b> como a los <b>Escenarios Clave</b>. No se mezclarán estilos 3D o anime si está seleccionada la acuarela.</span>
+          </div>
+        </div>
+
+        <!-- Casilla de Personajes Recurrentes Clave -->
+        <div class="form-group mt-3">
+          <label class="form-label" for="univ-recurrent-chars">
+            <span>👥 Personajes Recurrentes Clave a Mantener en la Serie</span>
+            <span class="label-hint">Listado de protagonistas, animales y secundarios que deben repetirse</span>
+          </label>
+          <textarea id="univ-recurrent-chars" class="form-textarea" rows="2" 
+                    placeholder="Ej: Platero (burro protagonista, suave y plateado), El Niño (narrador y dueño), Doña Domitila (maestra de Moguer), Darbón (veterinario de Platero), Diana (perrita blanca)..."></textarea>
+          <small class="form-hint">Escribe aquí los personajes clave para que el análisis con IA y la generación de escenas los mantenga como figuras recurrentes.</small>
+        </div>
+
+      </div>
+
+      <!-- Paso C: Biblia de Personajes & Galería de Retratos de Referencia -->
+      <div class="card universe-card mt-4">
+        <div class="card-header border-bottom">
+          <div class="card-title-group">
+            <span class="card-icon">👥</span>
+            <div>
+              <h2 class="card-title">3. Biblia de Personajes Recurrentes</h2>
+              <p class="card-subtitle">
+                Los personajes principales con sus rasgos visuales inmutables y sus retratos de referencia guardados en la carpeta <code>proyectos/{nombre}/personajes/</code>.
+              </p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-warning btn-sm" id="btn-audit-characters" title="Audita con IA de visión si los personajes cumplen con las 4 perspectivas, fondo blanco y mismo estilo artístico, regenerando automáticamente los incoherentes">
+              🔍 Revisar Coherencia de Personajes
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-add-character-card">
+              ➕ Añadir Personaje
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Tarjetas de Personajes -->
+        <div class="characters-grid mt-4" id="characters-cards-grid">
+          <!-- Las tarjetas de personajes se generan dinámicamente aquí -->
+        </div>
+
+      </div>
+
+      <!-- Paso D: Biblia de Escenarios Recurrentes del Entorno -->
+      <div class="card universe-card mt-4">
+        <div class="card-header border-bottom">
+          <div class="card-title-group">
+            <span class="card-icon">🏛️</span>
+            <div>
+              <h2 class="card-title">4. Biblia de Escenarios Recurrentes del Entorno</h2>
+              <p class="card-subtitle">
+                Localizaciones clave, paisajes y fondos inmutables del mundo (arquitectura, naturaleza e interiores sin personas) guardados en <code>proyectos/{nombre}/escenarios/</code> para mantener la consistencia entre escenas.
+              </p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-warning btn-sm" id="btn-audit-environments" title="Audita con IA de visión si los escenarios coinciden en técnica plástica y están libres de personajes, regenerando automáticamente los incoherentes">
+              🔍 Revisar Coherencia de Escenarios
+            </button>
+            <button class="btn btn-secondary btn-sm" id="btn-add-environment-card">
+              ➕ Añadir Escenario
+            </button>
+          </div>
+        </div>
+
+        <!-- Grid de Tarjetas de Escenarios -->
+        <div class="environments-grid mt-4" id="environments-cards-grid">
+          <!-- Las tarjetas de escenarios se generan dinámicamente aquí -->
+        </div>
+
+      </div>
+
+      <!-- Paso E: 5. Dirección de Narración y Casting de Voz -->
+      <div class="card universe-card mt-4" id="section-narrator">
+        <div class="card-header border-bottom">
+          <div class="card-title-group">
+            <span class="card-icon">🎙️</span>
+            <div>
+              <h2 class="card-title">5. Dirección de Narración & Casting de Voz</h2>
+              <p class="card-subtitle">
+                Perfil dramático del narrador deducido del libro, selección de voz personalizada y estudio interactivo de audición en tiempo real.
+              </p>
+            </div>
+          </div>
+          <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+            <button type="button" class="btn btn-accent btn-sm" id="btn-ai-recommend-narrator" title="Reanaliza con IA el manuscrito para recomendar el narrador y la voz idónea">
+              🔮 Recomendar Narrador con IA
+            </button>
+          </div>
+        </div>
+
+        <div class="narrator-studio-grid mt-4">
+          <!-- Columna Izquierda: Perfil y Psicología del Narrador -->
+          <div class="narrator-profile-panel">
+            <div class="panel-section-title">
+              <span class="panel-pill">🎭 Identidad Narrativa</span>
+              <h4 style="margin: 0; font-size: 1.05rem;">Perfil & Psicología del Narrador</h4>
+            </div>
+
+            <div class="form-grid-2 mt-3">
+              <div class="form-group">
+                <label class="form-label" for="narrator-name">Nombre / Rol de la Voz</label>
+                <input type="text" id="narrator-name" class="form-input" placeholder="Ej: El Poeta / Muchacho de Moguer (Narrador Lírico)">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="narrator-gender">Género del Narrador</label>
+                <select id="narrator-gender" class="form-select">
+                  <option value="masculino">Masculino</option>
+                  <option value="femenino">Femenino</option>
+                  <option value="neutro">Neutro / No binario</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-grid-2 mt-3">
+              <div class="form-group">
+                <label class="form-label" for="narrator-age">Edad Aproximada</label>
+                <input type="text" id="narrator-age" class="form-input" placeholder="Ej: 12-14 años (Joven / Adolescente)">
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="narrator-age-bracket">Rango de Edad</label>
+                <select id="narrator-age-bracket" class="form-select">
+                  <option value="infantil">Infantil (7-11 años)</option>
+                  <option value="joven" selected>Joven / Adolescente (12-18 años)</option>
+                  <option value="adulto">Adulto (19-50 años)</option>
+                  <option value="maduro">Maduro / Anciano (>50 años)</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label" for="narrator-tone">
+                <span>Tono Emocional e Inflexión</span>
+                <span class="label-hint">Ritmo, cadencia y estado afectivo</span>
+              </label>
+              <input type="text" id="narrator-tone" class="form-input" placeholder="Ej: Lírico, contemplativo, tierno, pausado y reflexivo">
+            </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label" for="narrator-justification">
+                <span>Justificación Literaria y Dramática</span>
+                <span class="label-hint">Por qué este narrador encaja en la obra</span>
+              </label>
+              <textarea id="narrator-justification" class="form-textarea" rows="4" 
+                        placeholder="Explicación del perfil narrativo según la perspectiva literaria del autor..."></textarea>
+            </div>
+          </div>
+
+          <!-- Columna Derecha: Casting de Voz y Estudio de Audición -->
+          <div class="narrator-casting-panel">
+            <div class="panel-section-title">
+              <span class="panel-pill">🎧 Casting de Voz</span>
+              <h4 style="margin: 0; font-size: 1.05rem;">Estudio de Audición & Selección</h4>
+            </div>
+
+            <div class="form-group mt-3">
+              <label class="form-label" for="narrator-voice-select">Voz Asignada para Narración</label>
+              <select id="narrator-voice-select" class="form-select narrator-voice-dropdown">
+                <!-- Se pobla dinámicamente -->
+              </select>
+            </div>
+
+            <!-- Ficha / Badge de la Voz Activa -->
+            <div class="selected-voice-card mt-3" id="selected-voice-card">
+              <div class="selected-voice-header">
+                <div class="voice-badge-icon" id="selected-voice-icon">🎙️</div>
+                <div class="voice-badge-info">
+                  <strong id="selected-voice-name">Fable (OpenAI)</strong>
+                  <div class="voice-tags-container" id="selected-voice-tags">
+                    <span class="voice-pill">Joven 12-16a</span>
+                    <span class="voice-pill">Lírico</span>
+                    <span class="voice-pill">OpenAI</span>
+                  </div>
+                </div>
+              </div>
+              <p class="selected-voice-desc text-muted mt-2" id="selected-voice-desc">
+                Voz juvenil masculina con inflexión sosegada, lírica y contemplativa. Perfecta para un narrador joven, íntimo y sensible.
+              </p>
+            </div>
+
+            <!-- Botones de Audición Rápida (1 clic para comparar voces) -->
+            <div class="quick-audition-bar mt-3">
+              <span class="quick-audition-label">Audición rápida con 1 clic:</span>
+              <div class="quick-audition-buttons">
+                <button type="button" class="btn-quick-voice" data-voice="openai_fable" title="Voz recomendada para Platero: Joven poeta de Moguer">
+                  ✨ Fable (OpenAI - Joven)
+                </button>
+                <button type="button" class="btn-quick-voice" data-voice="eleven_TX3LPaxmHKxFdv7VOQHJ" title="Voz de ElevenLabs joven y expresiva">
+                  ⚡ Liam (ElevenLabs - Joven)
+                </button>
+                <button type="button" class="btn-quick-voice" data-voice="eleven_bIHbv24MWmeRgasZH58o" title="Voz juvenil afable">
+                  🍃 Will (ElevenLabs)
+                </button>
+                <button type="button" class="btn-quick-voice" data-voice="eleven_george" title="Cuentacuentos clásico adulto">
+                  📖 George (Cuentacuentos)
+                </button>
+              </div>
+            </div>
+
+            <!-- Fragmento de Muestra para Prueba -->
+            <div class="form-group mt-3">
+              <div class="sample-text-header">
+                <label class="form-label" for="narrator-sample-text">Fragmento de Prueba para Audición</label>
+                <button type="button" class="btn btn-link btn-xs" id="btn-reset-sample-text" title="Restaurar fragmento original del libro">
+                  Restaurar muestra
+                </button>
+              </div>
+              <textarea id="narrator-sample-text" class="form-textarea" rows="3" 
+                        placeholder="Escribe o edita el fragmento que leerá el narrador para audicionar su voz..."></textarea>
+            </div>
+
+            <!-- Botón de Prueba y Reproductor de Audio -->
+            <div class="voice-tester-actions mt-3">
+              <button type="button" class="btn btn-primary btn-md" id="btn-test-narrator-voice">
+                <span class="btn-icon-symbol">▶</span> Probar Voz Seleccionada
+              </button>
+              <span class="voice-test-status text-muted" id="voice-test-status"></span>
+            </div>
+
+            <!-- Reproductor de Audio Inline con onda / feedback -->
+            <div class="audio-audition-player-card mt-3" id="audio-audition-player-card" style="display: none;">
+              <div class="player-header">
+                <div class="player-title">
+                  <span class="audio-wave-anim" id="audio-wave-anim">
+                    <span></span><span></span><span></span><span></span>
+                  </span>
+                  <span id="player-voice-title">Audición de Narrador</span>
+                </div>
+                <span class="badge badge-success" id="player-duration-badge">0.0s</span>
+              </div>
+              <audio id="narrator-audio-element" controls style="width: 100%; margin-top: 10px; border-radius: 8px;"></audio>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Acciones Finales de la Capa Genérica -->
+        <div class="universe-footer-actions mt-4 border-top pt-3">
+          <button class="btn btn-secondary btn-lg" id="btn-save-universe">
+            💾 Guardar Universo, Personajes, Escenarios y Narrador
+          </button>
+          <button class="btn btn-primary btn-lg" id="btn-go-to-chapters">
+            Ir a Producción de Capítulos 🎬 ➔
+          </button>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ========================================================
+         VISTA 2: CAPA ESPECÍFICA (CAPÍTULOS, STORYBOARD Y VÍDEOS)
+         ======================================================== -->
+    <section class="layer-view" id="view-specific" style="display: none;">
+      
+      <!-- ==========================================
+           1. UNIVERSO ACTIVO (PRIMERO EN CAPA ESPECÍFICA)
+           ========================================== -->
+      <div class="card project-banner-mini mb-3" id="mini-banner" style="margin-bottom: 1.25rem;">
+        <div class="mini-banner-left">
+          <span class="banner-tag">UNIVERSO ACTIVO</span>
+          <h3 id="mini-banner-title">Platero y Yo</h3>
+          <div class="mini-banner-badges">
+            <span class="meta-pill" id="mini-banner-audience">👥 Todos los públicos</span>
+            <span class="meta-pill" id="mini-banner-style">🎨 Cinemático 4K</span>
+            <span class="meta-pill" id="mini-banner-chars-count">👥 0 personajes</span>
+            <span class="meta-pill" id="mini-banner-envs-count">🏛️ 0 escenarios</span>
+          </div>
+        </div>
+        <div class="mini-banner-right">
+          <button type="button" class="btn btn-ghost btn-sm" id="btn-switch-to-generic">
+            ⚙️ Ajustar Biblia & Estilo
+          </button>
+        </div>
+      </div>
+
+      <div class="main-layout specific-studio-layout">
+        
+        <!-- ==========================================
+             COLUMNA 1: ÁRBOL / ESQUEMA DE CAPÍTULOS
+             ========================================== -->
+        <aside class="chapters-tree-sidebar" id="chapters-tree-sidebar">
+          <div class="card tree-card">
+            <div class="tree-header">
+              <div class="tree-title-group">
+                <span class="tree-icon">📑</span>
+                <div>
+                  <h3 class="tree-title">Esquema de Capítulos</h3>
+                  <span class="tree-counter text-muted" id="tree-chapters-counter">0 capítulos</span>
+                </div>
+              </div>
+              <div class="tree-actions-row">
+                <button type="button" class="btn btn-primary btn-xs" id="btn-tree-new-chapter" title="Crear nuevo capítulo en blanco o desde el libro">
+                  ➕ Nuevo
+                </button>
+                <button type="button" class="btn btn-outline-glow btn-xs" id="btn-tree-import-doc" title="Importar capítulos en lote desde el manuscrito">
+                  ⚡ Importar
+                </button>
+              </div>
+            </div>
+
+            <!-- Buscador rápido en el árbol -->
+            <div class="tree-search-wrapper mt-2">
+              <input type="text" id="tree-search-input" class="tree-search-input" placeholder="🔍 Filtrar capítulos...">
+            </div>
+
+            <!-- Lista / Árbol de Nodos de Capítulos -->
+            <div class="chapters-tree-list mt-3" id="chapters-tree-list">
+              <!-- Inyectado dinámicamente -->
+            </div>
+
+            <!-- Acciones inferiores del árbol -->
+            <div class="tree-footer mt-3">
+              <button type="button" class="btn btn-ghost btn-xs btn-block" id="btn-tree-refresh" title="Recargar capítulos de disco">
+                🔄 Refrescar Lista
+              </button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ==========================================
+             COLUMNA 2: ESPACIO CENTRAL (PRODUCCIÓN)
+             ========================================== -->
+        <div class="workspace-column">
+
+          <!-- Panel Entrada y Selección desde Manuscrito -->
+          <div class="card script-card mt-3">
+            <div class="card-header border-bottom">
+              <div class="card-title-group">
+                <span class="card-icon">📖</span>
+                <div>
+                  <h2 class="card-title" id="current-chapter-heading">Producción de Capítulo</h2>
+                  <p class="card-subtitle">Elige de qué parte del manuscrito proviene o redacta tu guion.</p>
+                </div>
+              </div>
+
+              <div class="chapter-origin-badge-wrap">
+                <span class="origin-tag-pill" id="current-chapter-origin-pill" style="display: none;">
+                  📄 Pág. 1
+                </span>
+              </div>
+            </div>
+
+            <!-- Pestañas de Selección del Manuscrito: Capítulos primero -->
+            <div class="manuscript-source-tabs mt-3" id="manuscript-source-tabs">
+              <button type="button" class="source-tab-btn active" data-source="chapter" id="tab-src-chapter">
+                📑 Por Capítulos / Secciones (<span id="source-chapters-count">0</span>)
+              </button>
+              <button type="button" class="source-tab-btn" data-source="page" id="tab-src-page">
+                📄 Por Páginas del Libro (<span id="source-pages-count">0</span>)
+              </button>
+              <button type="button" class="source-tab-btn" data-source="manual" id="tab-src-manual">
+                ✍️ Texto Libre / Edición
+              </button>
+            </div>
+
+            <!-- Panel 1 (Por defecto): Por Capítulos / Secciones Detectadas -->
+            <div class="source-panel mt-3" id="panel-source-chapter" style="display: block;">
+              <div class="page-navigator-bar">
+                <select id="select-manuscript-section" class="form-select form-select-sm" style="flex: 1;" title="Selecciona una sección o capítulo del manuscrito">
+                  <option value="">Cargando capítulos detectados...</option>
+                </select>
+                <button type="button" class="btn btn-accent btn-sm" id="btn-assign-section-to-chapter">
+                  📥 Asignar a este Capítulo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-create-chapter-from-section">
+                  ➕ Nuevo con esta Sección
+                </button>
+              </div>
+
+              <div class="page-preview-box mt-2">
+                <div class="page-preview-header">
+                  <span class="page-preview-badge" id="section-preview-badge">Sección 1</span>
+                  <span class="text-muted" id="section-preview-stats">0 palabras</span>
+                </div>
+                <p class="page-preview-text" id="section-preview-text">Selecciona una sección...</p>
+              </div>
+            </div>
+
+            <!-- Panel 2: Por Páginas del Libro -->
+            <div class="source-panel mt-3" id="panel-source-page" style="display: none;">
+              <div class="page-navigator-bar">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-prev-page" title="Página anterior">◀</button>
+                <select id="select-manuscript-page" class="form-select form-select-sm" style="flex: 1;" title="Selecciona la página del manuscrito">
+                  <option value="">Cargando páginas del documento...</option>
+                </select>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-next-page" title="Página siguiente">▶</button>
+                <button type="button" class="btn btn-accent btn-sm" id="btn-assign-page-to-chapter" title="Carga el texto de esta página en el capítulo actual">
+                  📥 Asignar a este Capítulo
+                </button>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-create-chapter-from-page" title="Crea un nuevo capítulo con esta página">
+                  ➕ Nuevo con esta Página
+                </button>
+              </div>
+
+              <!-- Vista previa del texto de la página seleccionada -->
+              <div class="page-preview-box mt-2">
+                <div class="page-preview-header">
+                  <span class="page-preview-badge" id="page-preview-badge">Página 1</span>
+                  <span class="text-muted" id="page-preview-stats">0 palabras</span>
+                </div>
+                <p class="page-preview-text" id="page-preview-text">Selecciona una página para ver su contenido...</p>
+              </div>
+            </div>
+
+            <!-- Panel 3: Editor de Texto del Capítulo Activo -->
+            <div class="chapter-content-editor mt-3">
+              <!-- Encabezado y Título del Capítulo (Al principio) -->
+              <div class="chapter-title-header-card p-3 mb-3" style="background: rgba(255,255,255,0.025); border: 1px solid var(--border-color); border-radius: 10px;">
+                <div class="form-grid-3" style="align-items: flex-end; gap: 12px;">
+                  <div class="form-group form-span-2 mb-0">
+                    <label for="chapter-title-input" class="form-label d-flex align-items-center justify-content-between" style="font-weight: 600; color: var(--text-highlight);">
+                      <span>🏷️ Nombre / Título del Capítulo o Episodio</span>
+                      <small class="text-muted" style="font-weight: normal;">(Editable libremente)</small>
+                    </label>
+                    <input type="text" id="chapter-title-input" class="form-input" style="font-size: 1.05rem; font-weight: 600;" placeholder="Ej: Capítulo 1: Platero">
+                  </div>
+                  <div class="form-group mb-0">
+                    <label for="scenes-count" class="form-label" style="font-weight: 600;">
+                      🎬 Escenas Deseadas
+                    </label>
+                    <select id="scenes-count" class="form-select">
+                      <option value="3">3 Escenas (~25 - 35s) • Rápido</option>
+                      <option value="4" selected>4 Escenas (~35 - 50s) • Estándar</option>
+                      <option value="5">5 Escenas (~50 - 65s) • Detallado</option>
+                      <option value="6">6 Escenas (~65 - 80s) • Largo</option>
+                      <option value="8">8 Escenas (~80 - 100s) • Épico</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="mt-2" style="font-size: 0.78rem; color: var(--text-muted); line-height: 1.35;">
+                  💡 <b>¿Por qué varias escenas?</b> Cada escena cambia la ilustración y el movimiento de cámara (Ken Burns) cada 8–12 segundos sincronizado con la voz, reteniendo la atención del espectador en TikTok y Shorts.
+                </div>
+              </div>
+
+              <!-- Texto Base del Capítulo -->
+              <div class="form-group">
+                <div class="form-label-row">
+                  <label for="raw-chapter-text" class="form-label">📖 Texto Base para la Locución y Guion Gráfico</label>
+                  <span class="label-hint" id="chapter-words-counter">0 palabras</span>
+                </div>
+                <textarea id="raw-chapter-text" class="form-textarea" rows="4" 
+                          placeholder="El texto seleccionado del manuscrito o escrito manualmente aparecerá aquí..."></textarea>
+              </div>
+
+              <div class="action-bar-split mt-3">
+                <div class="action-bar-left">
+                  <button type="button" class="btn btn-secondary btn-md" id="btn-quick-save-chapter">
+                    💾 Guardar Borrador
+                  </button>
+                  <button type="button" class="btn btn-ghost btn-sm text-danger" id="btn-delete-active-chapter" style="display: none;">
+                    🗑️ Eliminar Capítulo
+                  </button>
+                </div>
+                <div class="action-bar-right">
+                  <button type="button" class="btn btn-primary btn-lg" id="btn-generate-storyboard">
+                    <span class="btn-icon-symbol">✨</span> Desglosar con Biblia de Personajes
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel Storyboard y Control HITL -->
+          <div class="card storyboard-card mt-4" id="storyboard-container" style="display: none;">
+            <div class="card-header border-bottom">
+              <div class="card-title-group">
+                <span class="card-icon">🎞️</span>
+                <div>
+                  <h2 class="card-title" id="storyboard-title">Storyboard: Capítulo</h2>
+                  <p class="card-subtitle">Control de calidad escena por escena antes del renderizado.</p>
+                </div>
+              </div>
+              <div class="batch-actions">
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-generate-all-audio">
+                  🔊 Generar Todos los Audios
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" id="btn-generate-all-images">
+                  🎨 Generar Todas las Fotos
+                </button>
+                <button type="button" class="btn btn-ghost btn-sm" id="btn-add-scene">
+                  ➕ Añadir Escena
+                </button>
+              </div>
+            </div>
+
+            <!-- Contenedor dinámico de tarjetas de escena -->
+            <div class="scenes-grid mt-4" id="scenes-grid">
+              <!-- Escenas inyectadas mediante JS -->
+            </div>
+
+            <!-- Barra inferior de Render -->
+            <div class="render-banner mt-4">
+              <div class="render-options">
+                <label class="toggle-control">
+                  <input type="checkbox" id="chk-kenburns" checked>
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-label">Movimiento Dinámico Ken Burns (Zoom/Pan)</span>
+                </label>
+
+                <label class="toggle-control">
+                  <input type="checkbox" id="chk-subtitles" checked>
+                  <span class="toggle-slider"></span>
+                  <span class="toggle-label">Subtítulos Quemados de Alto Contraste</span>
+                </label>
+              </div>
+
+              <div class="render-cta-group">
+                <button type="button" class="btn btn-secondary btn-lg" id="btn-save-chapter-draft">
+                  💾 Guardar Capítulo
+                </button>
+                <button type="button" class="btn btn-accent btn-lg" id="btn-render-video">
+                  <span class="btn-icon-symbol">🎬</span> Renderizar Vídeo Final
+                </button>
+              </div>
+            </div>
+
+            <div class="render-progress" id="render-progress" style="display: none;">
+              <div class="progress-bar">
+                <div class="progress-fill" id="progress-fill"></div>
+              </div>
+              <span class="progress-text" id="progress-text">Ensamblando vídeo con FFmpeg...</span>
+            </div>
+
+          </div>
+
+        </div>
+
+        <!-- ==========================================
+             COLUMNA 3: PREVISUALIZADOR SMARTPHONE 9:16
+             ========================================== -->
+        <aside class="preview-column">
+          <div class="phone-frame-wrapper">
+            <div class="phone-frame">
+              <div class="phone-speaker"></div>
+              <div class="phone-camera"></div>
+
+              <!-- Pantalla del Smartphone -->
+              <div class="phone-screen" id="phone-screen">
+                
+                <!-- Estado Vacío -->
+                <div class="phone-empty-state" id="phone-empty">
+                  <span class="empty-icon">📱</span>
+                  <h3>Previsualizador Vertical</h3>
+                  <p>Genera las escenas y pulsa en "Renderizar Vídeo Final" para ver el resultado aquí.</p>
+                  <div class="spec-pills">
+                    <span>1080 × 1920</span>
+                    <span>9:16 Vertical</span>
+                    <span>30 FPS</span>
+                  </div>
+                </div>
+
+                <!-- Reproductor de Vídeo Activo -->
+                <div class="phone-video-container" id="phone-video-container" style="display: none;">
+                  <video id="final-video-player" class="phone-video" playsinline loop controls></video>
+                  
+                  <!-- Overlays simulados de Redes Sociales -->
+                  <div class="social-overlay">
+                    <div class="social-right-rail">
+                      <div class="social-action-btn like-btn">
+                        <span class="action-icon">❤️</span>
+                        <span class="action-count">42.5k</span>
+                      </div>
+                      <div class="social-action-btn">
+                        <span class="action-icon">💬</span>
+                        <span class="action-count">830</span>
+                      </div>
+                      <div class="social-action-btn">
+                        <span class="action-icon">🔖</span>
+                        <span class="action-count">3.1k</span>
+                      </div>
+                      <div class="social-action-btn share-btn">
+                        <span class="action-icon">↗️</span>
+                        <span class="action-count">Compartir</span>
+                      </div>
+                    </div>
+
+                    <div class="social-bottom-info">
+                      <div class="creator-tag" id="phone-project-tag">@LibroSeries • Capítulo</div>
+                      <div class="caption-text" id="phone-caption">Vídeo generado con VideoStudio AI 🚀</div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- Acciones del Vídeo Renderizado -->
+            <div class="video-meta-card mt-3" id="video-meta-card" style="display: none;">
+              <div class="meta-row">
+                <div>
+                  <strong id="meta-duration">0s</strong>
+                  <small>Duración</small>
+                </div>
+                <div>
+                  <strong id="meta-size">0 MB</strong>
+                  <small>Tamaño</small>
+                </div>
+                <div>
+                  <strong id="meta-scenes">0</strong>
+                  <small>Escenas</small>
+                </div>
+              </div>
+              <div class="meta-actions mt-3">
+                <a id="btn-download-video" class="btn btn-primary btn-block" download="short_video.mp4">
+                  ⬇️ Descargar MP4 (1080x1920)
+                </a>
+              </div>
+            </div>
+
+          </div>
+        </aside>
+
+      </div>
+
+    </section>
+  </main>
+
+  <!-- MODAL: Centro de Proyectos y Selector Inicial (Lanzador) -->
+  <div class="modal-backdrop" id="modal-projects-hub">
+    <div class="modal-box modal-xl project-hub-modal">
+      <div class="modal-header">
+        <div class="modal-title-group">
+          <span class="modal-icon">📚</span>
+          <div>
+            <h3>Centro de Proyectos & Libros</h3>
+            <p class="modal-subtitle">Continúa la producción de un libro existente o crea un nuevo universo desde cero.</p>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modal-projects-hub">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div class="hub-header-actions mb-3">
+          <div class="hub-stats-badge" id="hub-projects-count">Proyectos disponibles en disco</div>
+          <button class="btn btn-primary btn-sm" id="btn-hub-new-project">
+            ➕ Empezar Nuevo Libro / Proyecto
+          </button>
+        </div>
+        
+        <div class="projects-hub-grid" id="projects-hub-grid">
+          <!-- Tarjetas de proyectos generadas dinámicamente -->
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-projects-hub">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Crear Nuevo Proyecto / Libro -->
+  <div class="modal-backdrop" id="modal-project-create">
+    <div class="modal-box">
+      <div class="modal-header">
+        <h3>➕ Crear Nuevo Proyecto / Libro</h3>
+        <button class="modal-close" data-close="modal-project-create">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p class="modal-desc">
+          Se creará una carpeta dedicada en <code>2026_Proyecto_Videos/proyectos/</code> con su estructura para personajes, documentos y capítulos.
+        </p>
+        <div class="form-group mt-3">
+          <label class="form-label" for="new-proj-title">Título del Libro o Proyecto</label>
+          <input type="text" id="new-proj-title" class="form-input" placeholder="Ej: Las Crónicas del Faro">
+        </div>
+        <div class="form-group mt-3">
+          <label class="form-label" for="new-proj-desc">Sinopsis o Premisa Breve</label>
+          <input type="text" id="new-proj-desc" class="form-input" placeholder="Ej: Serie de misterio ambientada en una costa solitaria.">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" data-close="modal-project-create">Cancelar</button>
+        <button class="btn btn-primary" id="btn-confirm-create-project">Crear Proyecto</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Ajustes de API Keys -->
+  <div class="modal-backdrop" id="modal-settings">
+    <div class="modal-box modal-md">
+      <div class="modal-header border-bottom">
+        <div class="modal-title-group">
+          <span class="modal-icon">⚙️</span>
+          <div>
+            <h3>Ajustes & Credenciales de IA</h3>
+            <p class="modal-subtitle">Configuración de proveedores de inteligencia artificial y síntesis de voz guardados localmente en <code>.env</code>.</p>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modal-settings">&times;</button>
+      </div>
+      <div class="modal-body mt-3">
+        <!-- OpenAI -->
+        <div class="setting-card-item mb-3">
+          <div class="setting-card-head" style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label mb-0" for="setting-openai"><strong>OpenAI API Key</strong></label>
+            <span class="badge" id="badge-status-openai" style="font-size:0.75rem;">Verificando...</span>
+          </div>
+          <div class="setting-masked-hint text-muted" id="masked-openai" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <input type="password" id="setting-openai" class="form-input mt-1" placeholder="Pega aquí tu clave (sk-proj-...) para guardarla o actualizarla">
+          <small class="form-hint">🧠 Análisis literario del libro, deducción de biblia de personajes y adaptación a escenas.</small>
+        </div>
+
+        <!-- ElevenLabs -->
+        <div class="setting-card-item mb-3">
+          <div class="setting-card-head" style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label mb-0" for="setting-eleven"><strong>ElevenLabs API Key</strong></label>
+            <span class="badge" id="badge-status-eleven" style="font-size:0.75rem;">Verificando...</span>
+          </div>
+          <div class="setting-masked-hint text-muted" id="masked-eleven" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <input type="password" id="setting-eleven" class="form-input mt-1" placeholder="Pega aquí tu clave (sk_...) para guardarla o actualizarla">
+          <small class="form-hint">🎙️ Locución neuronal humana de alta fidelidad. <em>Si no la tienes, el sistema conmuta automáticamente a Microsoft Edge TTS (100% gratuita y sin límite).</em></small>
+        </div>
+
+        <!-- Pollinations -->
+        <div class="setting-card-item mb-3">
+          <div class="setting-card-head" style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label mb-0" for="setting-pollinations"><strong>Pollinations AI Key (Opcional)</strong></label>
+            <span class="badge" id="badge-status-pollinations" style="font-size:0.75rem;">Verificando...</span>
+          </div>
+          <div class="setting-masked-hint text-muted" id="masked-pollinations" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <input type="password" id="setting-pollinations" class="form-input mt-1" placeholder="Opcional: clave de enter.pollinations.ai para cola prioritaria">
+          <small class="form-hint">🎨 Generación de fotogramas verticales FLUX. <em>Por defecto funciona de forma gratuita en el servidor público.</em></small>
+        </div>
+
+        <!-- Gemini -->
+        <div class="setting-card-item mb-3">
+          <div class="setting-card-head" style="display:flex; justify-content:space-between; align-items:center;">
+            <label class="form-label mb-0" for="setting-gemini"><strong>Google Gemini API Key (Opcional)</strong></label>
+            <span class="badge" id="badge-status-gemini" style="font-size:0.75rem;">Verificando...</span>
+          </div>
+          <div class="setting-masked-hint text-muted" id="masked-gemini" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <input type="password" id="setting-gemini" class="form-input mt-1" placeholder="Opcional: clave de Google AI Studio (AIzaSy...)">
+          <small class="form-hint">✨ Proveedor secundario opcional para análisis de textos.</small>
+        </div>
+
+        <!-- Tarjeta Informativa -->
+        <div class="mt-3 p-3" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; font-size: 0.82rem; line-height: 1.5;">
+          <strong style="color:var(--primary-glow);">💡 ¿Qué ocurre si no configuras alguna clave?</strong>
+          <ul style="margin: 0.35rem 0 0 1.2rem; padding: 0; color: var(--text-secondary);">
+            <li><strong>FFmpeg:</strong> Motor de renderizado local que une el vídeo con Ken Burns y subtítulos. <em>No requiere clave ni conexión externa (0€).</em></li>
+            <li><strong>Imágenes:</strong> El modelo FLUX de Pollinations funciona de forma 100% gratuita por defecto.</li>
+            <li><strong>Voces:</strong> Si no configuras ElevenLabs, dispones del sintetizador gratuito Edge TTS con voces profesionales en español.</li>
+            <li><strong>Guiones:</strong> Con OpenAI se obtienen los prompts visuales más consistentes con la biblia de personajes.</li>
+          </ul>
+        </div>
+      </div>
+      <div class="modal-footer mt-3">
+        <button class="btn btn-secondary" data-close="modal-settings">Cerrar</button>
+        <button class="btn btn-primary" id="btn-save-settings">💾 Guardar Cambios en .env</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Importación en Lote desde el Manuscrito -->
+  <div class="modal-backdrop" id="modal-batch-import">
+    <div class="modal-box modal-md">
+      <div class="modal-header border-bottom">
+        <div class="modal-title-group">
+          <span class="modal-icon">⚡</span>
+          <div>
+            <h3>Importar Capítulos en Lote desde el Manuscrito</h3>
+            <p class="modal-subtitle">Genera automáticamente el esquema de capítulos de tu libro en el árbol.</p>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modal-batch-import">&times;</button>
+      </div>
+
+      <div class="modal-body mt-3">
+        <p class="text-muted" style="font-size:0.88rem;">
+          Elige cómo deseas dividir el manuscrito guardado para estructurar los episodios de tu serie:
+        </p>
+
+        <div class="import-options-grid mt-3">
+          <div class="import-option-card active" id="opt-import-pages" data-val="pages">
+            <div class="import-opt-header">
+              <span class="import-opt-icon">📄</span>
+              <strong>Página por Página (Recomendado)</strong>
+            </div>
+            <p>Convierte cada página del manuscrito en un borrador de capítulo de 20 a 40 segundos. Ideal para Platero y Yo, cuentos y microrrelatos.</p>
+            <div class="import-badge mt-2" id="badge-import-pages-count">30 páginas disponibles</div>
+          </div>
+
+          <div class="import-option-card" id="opt-import-chapters" data-val="chapters">
+            <div class="import-opt-header">
+              <span class="import-opt-icon">📑</span>
+              <strong>Por Capítulos / Secciones</strong>
+            </div>
+            <p>Divide el libro según los títulos de capítulos y actos detectados en el texto.</p>
+            <div class="import-badge mt-2" id="badge-import-chapters-count">4 secciones disponibles</div>
+          </div>
+        </div>
+
+        <div class="mt-3 p-2" style="font-size:0.8rem; background:rgba(99,102,241,0.1); border:1px solid rgba(99,102,241,0.25); border-radius:8px;">
+          💡 Cada capítulo se creará como borrador independiente en tu árbol. Podrás editarlos, reorganizarlos o eliminarlos en cualquier momento.
+        </div>
+      </div>
+
+      <div class="modal-footer mt-4">
+        <button class="btn btn-secondary" data-close="modal-batch-import">Cancelar</button>
+        <button class="btn btn-primary" id="btn-confirm-batch-import">⚡ Iniciar Importación al Árbol</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Confirmación de Análisis con IA -->
+  <div class="modal-backdrop" id="modal-ai-analyze-confirm">
+    <div class="modal-box modal-md">
+      <div class="modal-header border-bottom">
+        <div class="modal-title-group">
+          <span class="modal-icon">🔮</span>
+          <div>
+            <h3>Analizar Manuscrito con IA</h3>
+            <p class="modal-subtitle">Construcción y enriquecimiento de la Biblia del Universo a partir de tu libro base.</p>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modal-ai-analyze-confirm">&times;</button>
+      </div>
+      <div class="modal-body mt-3">
+        <div class="ai-confirm-doc-banner p-3 mb-3" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px;">
+          <div style="display: flex; align-items: center; gap: 0.75rem;">
+            <span style="font-size: 1.6rem;">📄</span>
+            <div>
+              <div style="font-weight: 600; font-size: 0.95rem;" id="modal-analyze-doc-name">manuscrito.pdf</div>
+              <small class="text-muted" id="modal-analyze-doc-hint">Manuscrito oficial guardado en documentos/ del proyecto</small>
+            </div>
+          </div>
+        </div>
+
+        <h4 style="font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.5px; color: var(--accent-purple); margin-bottom: 0.6rem;">
+          ¿Qué cambiará al proceder?
+        </h4>
+        <div class="ai-confirm-steps-grid" style="display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.85rem;">
+          <div style="padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px;">
+            <b>🌌 Punto 2 (Universo & Estilo):</b> Redacta una descripción ambiental profunda (luz, aromas, atmósfera y geografía), tono y técnica visual recomendada.
+          </div>
+          <div style="padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px;">
+            <b>👥 Punto 3 (Personajes Recurrentes):</b> Extrae y detalla entre 6 y 10 personajes/animales con citas textuales del libro y prompts de hojas de modelo 360°.
+          </div>
+          <div style="padding: 0.65rem 0.85rem; background: rgba(255,255,255,0.03); border: 1px solid rgba(255,255,255,0.07); border-radius: 6px;">
+            <b>🏛️ Punto 4 (Escenarios Recurrentes):</b> Detecta de 5 a 8 localizaciones clave (calles, colinas, interiores rústicos) para mantener coherencia escénica.
+          </div>
+        </div>
+
+        <div class="mt-3 p-2" style="font-size: 0.8rem; background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.25); border-radius: 6px; color: #86efac;">
+          🛡️ <b>Tranquilidad total:</b> NO se borran ni modifican tus capítulos creados en la Capa Específica, guiones ni vídeos ya renderizados. Además, podrás editar manualmente todo tras el análisis.
+        </div>
+      </div>
+      <div class="modal-footer mt-4">
+        <button class="btn btn-secondary" data-close="modal-ai-analyze-confirm">Cancelar</button>
+        <button class="btn btn-accent" id="btn-confirm-ai-analyze">
+          <span class="btn-icon-symbol">🚀</span> Proceder al Análisis con IA
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL: Historial de Vídeos -->
+  <div class="modal-backdrop" id="modal-history">
+    <div class="modal-box modal-lg">
+      <div class="modal-header border-bottom">
+        <div class="modal-title-group">
+          <span class="modal-icon">🎞️</span>
+          <div>
+            <h3>Vídeos Finales Renderizados</h3>
+            <p class="modal-subtitle">Biblioteca de episodios y vídeos verticales (.mp4 a 1080x1920) ensamblados listos para reproducir y descargar.</p>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modal-history">&times;</button>
+      </div>
+      <div class="modal-body mt-2">
+        <!-- Filtro y ubicación de carpeta -->
+        <div class="d-flex align-items-center justify-content-between mb-3 p-2" style="background:rgba(255,255,255,0.03); border:1px solid var(--border-color); border-radius:8px; flex-wrap:wrap; gap:8px;">
+          <div class="d-flex gap-2">
+            <button class="btn btn-xs btn-primary" id="history-filter-project">📂 Este Proyecto</button>
+            <button class="btn btn-xs btn-secondary" id="history-filter-all">🌐 Todos los Proyectos</button>
+          </div>
+          <small class="text-muted" id="history-storage-hint">📁 Carpeta física: <code id="history-folder-code">proyectos/&hellip;/videos/</code></small>
+        </div>
+
+        <div id="history-grid" class="history-grid">
+          <p class="text-muted">Cargando biblioteca de vídeos...</p>
+        </div>
+      </div>
+      <div class="modal-footer mt-3">
+        <button class="btn btn-secondary" data-close="modal-history">Cerrar</button>
+      </div>
+  <!-- MODAL: Auditoría de Coherencia Visual con IA -->
+  <div class="modal-backdrop" id="modal-audit-results">
+    <div class="modal-box modal-lg" style="max-width: 840px;">
+      <div class="modal-header border-bottom">
+        <div class="modal-title-group">
+          <span class="modal-icon">🔍</span>
+          <div>
+            <h3 class="modal-title" id="audit-modal-title">Auditoría de Coherencia Visual con IA</h3>
+            <p class="modal-subtitle" id="audit-modal-subtitle">
+              Diagnóstico con visión artificial de perspectivas, fondo aislado y técnica plástica uniforme.
+            </p>
+          </div>
+        </div>
+        <button class="modal-close" data-close="modal-audit-results">&times;</button>
+      </div>
+
+      <div class="modal-body mt-3">
+        <!-- Resumen de Métricas -->
+        <div class="audit-summary-bar" id="audit-summary-bar" style="display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap;">
+          <span class="meta-pill" id="audit-stat-total" style="background: rgba(255,255,255,0.06); padding: 6px 14px; border-radius: 20px; font-weight: 600;">📊 Total: 0</span>
+          <span class="meta-pill" id="audit-stat-approved" style="background: rgba(34,197,94,0.15); color: #4ade80; padding: 6px 14px; border-radius: 20px; font-weight: 600;">✅ Coherentes: 0</span>
+          <span class="meta-pill" id="audit-stat-healed" style="background: rgba(245,158,11,0.15); color: #fbbf24; padding: 6px 14px; border-radius: 20px; font-weight: 600;">🔄 Corregidos y Regenerados: 0</span>
+          <span class="meta-pill" id="audit-stat-rejected" style="background: rgba(239,68,68,0.15); color: #f87171; padding: 6px 14px; border-radius: 20px; font-weight: 600;">❌ Requieren Acción: 0</span>
+        </div>
+
+        <!-- Lista Detallada de Elementos -->
+        <div id="audit-results-list" style="display: flex; flex-direction: column; gap: 12px; max-height: 480px; overflow-y: auto; padding-right: 6px;">
+          <!-- Inyectado por JS -->
+        </div>
+      </div>
+
+      <div class="modal-footer mt-3" style="display: flex; justify-content: flex-end;">
+        <button class="btn btn-secondary" data-close="modal-audit-results">Cerrar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast de Notificaciones -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <script src="/static/js/app.js?v=3.5"></script>
+</body>
+</html>

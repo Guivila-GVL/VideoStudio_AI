@@ -1,0 +1,283 @@
+{
+  "name": "Fase 1: OpenAI + Bucle Ciego",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4",
+          "mode": "list",
+          "cachedResultName": "Generador de Vídeos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Texto_Inicial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4/edit#gid=0"
+        },
+        "event": "rowAdded"
+      },
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ]
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "={{ '¡Borrador generado por OpenAI!\\n\\n' + JSON.stringify($json.message.content) + '\\n\\n¿Qué hacemos?' }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Procesar",
+                    "url": "URL_DEL_WEBHOOK_WAIT_AQUI?status=approved"
+                  },
+                  {
+                    "text": "❌ Ignorar",
+                    "url": "URL_DEL_WEBHOOK_WAIT_AQUI?status=rejected"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Avisar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        400,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+      "position": [
+        600,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aprobado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "2",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "rejected",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Rechazado"
+            }
+          ]
+        }
+      },
+      "name": "Switch (Decisión)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        800,
+        0
+      ]
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "¡Perfecto! Procesando el capítulo."
+      },
+      "name": "Telegram: Confirmar Aprobado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        -100
+      ]
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "Capítulo ignorado."
+      },
+      "name": "Telegram: Confirmar Rechazo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1000,
+        100
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "model": "gpt-4o",
+        "prompt": "={{ $('Google Sheets Trigger').first().json.Texto_Capitulo }}",
+        "systemMessage": "Eres un director de vídeo experto. Divide el texto del usuario en 2 a 5 escenas.\n\nReglas:\n- Devuelve ÚNICAMENTE un objeto JSON puro (sin markdown, sin bloques ```json).\n- El JSON debe tener una propiedad 'escenas' que sea un array.\n- Cada escena debe tener:\n  'narrador': el texto que se leerá en off (español).\n  'prompt_imagen': descripción en inglés hiper-detallada para Midjourney.\n\nSi notas que esto es un reintento, intenta generar una versión ligeramente diferente.",
+        "options": {
+          "temperature": 0.8
+        }
+      },
+      "name": "OpenAI (Generar Guion)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        200,
+        0
+      ]
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Generar Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (Generar Guion)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Avisar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Avisar": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Switch (Decisión)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Decisión)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Confirmar Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Confirmar Rechazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Confirmar Rechazo": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Generar Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

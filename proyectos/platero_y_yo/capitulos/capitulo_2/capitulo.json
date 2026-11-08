@@ -1,0 +1,74 @@
+{
+  "project_id": "platero_y_yo",
+  "chapter_id": "capitulo_2",
+  "titulo": "Capítulo 2",
+  "texto_original": "Mariposas blancas\nLa noche cae, brumosa ya y morada. Vagas claridades malvas y\nverdes perduran tras la torre de la iglesia. El camino sube, lleno de\nsombras, de campanillas, de fragancia de hierba, de canciones, de\ncansancio y de anhelo. De pronto, un hombre oscuro, con una gorra\ny un pincho, roja un instante la cara fea por la luz del cigarro, baja\na nosotros de una casucha miserable, perdida entre sacas de carbón.\nPlatero se amedrenta.\n—¿Va argo?\n—Vea usted… Mariposas blancas…\nEl hombre quiere clavar su pincho de hierro en el seroncillo, y\nno lo evito. Abro la alforja y él no ve nada. Y el alimento ideal pasa,\nlibre y cándido, sin pagar su tributo a los Consumos…",
+  "scenes": [
+    {
+      "id": 1,
+      "narrador": "La noche brumosa cae sobre el camino, lleno de sombras, fragancias y anhelos.",
+      "prompt_imagen": "A dimly lit path at twilight, with purple and green hues in the sky. Platero, the small, fluffy donkey with soft fur and black eyes, looks apprehensive. An ominous man wearing a cap and holding a pitchfork is descending from a shabby hut hidden among coal sacks. The atmosphere is filled with the scent of herbs and the sounds of nature. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "personajes_en_escena": [
+        "Platero",
+        "El Poeta"
+      ],
+      "escenario_clave": "Escenario específico",
+      "duracion_estimada": 6,
+      "audio_url": null,
+      "image_url": null,
+      "duracion_real": null
+    },
+    {
+      "id": 2,
+      "narrador": "El hombre oscuro se acerca, con su mirada voraz, mientras Platero se amedrenta.",
+      "prompt_imagen": "Close-up of the menacing man with a cap and pitchfork, his face illuminated for a moment by a glowing cigarette, casting shadows. Platero, the small and fluffy donkey, stands nervously nearby, his eyes wide. The background is the dimly lit path, evoking tension. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "personajes_en_escena": [
+        "Platero",
+        "El Poeta",
+        "El Hombre Oscuro"
+      ],
+      "escenario_clave": "Escenario específico",
+      "duracion_estimada": 5,
+      "audio_url": null,
+      "image_url": null,
+      "duracion_real": null
+    },
+    {
+      "id": 3,
+      "narrador": "—¿Va argo? El hombre pregunta, con un tono amenazante y ansioso.",
+      "prompt_imagen": "The menacing man, leaning forward, asks a question with a threatening tone. Platero, the small, fluffy donkey, looks frightened, his ears pinned back. The Poet stands protectively near Platero, observing the situation with concern. The background remains the dark, shadowy path. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "personajes_en_escena": [
+        "Platero",
+        "El Poeta",
+        "El Hombre Oscuro"
+      ],
+      "escenario_clave": "Escenario específico",
+      "duracion_estimada": 5,
+      "audio_url": null,
+      "image_url": null,
+      "duracion_real": null
+    },
+    {
+      "id": 4,
+      "narrador": "Mariposas blancas… La esperanza brilla en la oscuridad.",
+      "prompt_imagen": "A whimsical image of white butterflies fluttering in the twilight, symbolizing hope amidst the darkness. Platero, the small, fluffy donkey, watches in awe, while the Poet observes the butterflies with a sense of wonder. The background is the dimly lit path, creating a magical atmosphere. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "personajes_en_escena": [
+        "Platero",
+        "El Poeta"
+      ],
+      "escenario_clave": "Escenario específico",
+      "duracion_estimada": 6,
+      "audio_url": null,
+      "image_url": null,
+      "duracion_real": null
+    }
+  ],
+  "video_url": null,
+  "duracion": null,
+  "origen_tipo": "manual",
+  "origen_ref": "",
+  "orden": 2,
+  "id": "capitulo_2",
+  "creado_en": "2026-10-22 18:34:49",
+  "actualizado_en": "2026-10-22 18:34:49"
+}

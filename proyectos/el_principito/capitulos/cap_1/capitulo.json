@@ -1,0 +1,54 @@
+{
+  "id": "cap_1",
+  "titulo": "El Principito - Capítulo 1: El Dibujo en las Estrellas",
+  "texto_original": "Viví así, solo, sin nadie con quien hablar verdaderamente, hasta que tuve una avería en el desierto del Sahara, hace seis años. Algo se había roto en mi motor. Y como no llevaba conmigo ni mecánico ni pasajeros, me dispuse a realizar, solo, una difícil reparación. Era para mí una cuestión de vida o muerte: apenas tenía agua de beber para ocho días.\n\nLa primera noche me dormí sobre la arena, a mil millas de toda tierra habitada. Estaba más aislado que un náufrago en una balsa en medio del océano. Imaginaos, pues, mi sorpresa cuando, al romper el día, me despertó una extraña vocecita que decía:\n\n—Por favor... ¡dibújame un cordero!",
+  "origen_tipo": "section",
+  "origen_ref": "Capítulo 1",
+  "orden": 1,
+  "scenes": [
+    {
+      "id": 1,
+      "narrador": "Seis años de soledad en el desierto, hasta que una extraña voz rompió el silencio de la mañana.",
+      "prompt_imagen": "A small boy with tousled golden hair and a long golden scarf, wearing a green-blue prince suit with red lapels, standing in the vast golden dunes of the Sahara at dawn. The sky is painted in soft purples and twinkling stars in the horizon. The boy looks surprised, with his eyes wide open. delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Ilustración poética de cuento en acuarela y tinta suave, tonos pastel cálidos, textura de papel de arte, cielo estrellado azul profundo.",
+      "personajes_en_escena": [
+        "El Principito"
+      ],
+      "escenario_clave": "Dunas del Sahara",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_b19e2fb7c5.mp3",
+      "image_url": "/static/media/img_48e73e29b6.jpg",
+      "duracion_real": 6.13
+    },
+    {
+      "id": 2,
+      "narrador": "Desperté sobresaltado, y ante mí, un pequeño ser que pedía algo increíble.",
+      "prompt_imagen": "The small boy with tousled golden hair and golden scarf stands in front of a little man with a serious expression. The man is tiny, with a curious demeanor, set against the vast golden dunes of the Sahara at dawn. The sandy landscape glows softly under the purple sky. delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Ilustración poética de cuento en acuarela y tinta suave, tonos pastel cálidos, textura de papel de arte, cielo estrellado azul profundo.",
+      "personajes_en_escena": [
+        "El Principito",
+        "El Zorro"
+      ],
+      "escenario_clave": "Dunas del Sahara",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_a2472dff35.mp3",
+      "image_url": "/static/media/img_b4897ab70b.jpg",
+      "duracion_real": 4.6
+    },
+    {
+      "id": 3,
+      "narrador": "—Por favor... ¡dibújame un cordero! —dijo el hombrecito, con una voz que resonaba en mi corazón.",
+      "prompt_imagen": "The little man with a serious expression, standing confidently and looking up at the small boy with tousled golden hair. The boy's face shows surprise and curiosity, with the golden sands of the Sahara and a soft purple sky behind them. delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Ilustración poética de cuento en acuarela y tinta suave, tonos pastel cálidos, textura de papel de arte, cielo estrellado azul profundo.",
+      "personajes_en_escena": [
+        "El Principito",
+        "El Zorro"
+      ],
+      "escenario_clave": "Dunas del Sahara",
+      "duracion_estimada": 6,
+      "audio_url": "/static/media/audio_48dfecabbc.mp3",
+      "image_url": "/static/media/img_347df082e7.jpg",
+      "duracion_real": 6.78
+    }
+  ],
+  "video_url": "/static/media/video_short_a24d8bb8.mp4",
+  "duracion": 17.51,
+  "actualizado_en": "2026-10-18 17:21:11"
+}

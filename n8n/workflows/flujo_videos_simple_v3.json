@@ -1,0 +1,210 @@
+{
+  "name": "Proyecto Videos (Prueba Simple)",
+  "nodes": [
+    {
+      "name": "On clicking 'execute'",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {}
+    },
+    {
+      "name": "OpenAI (Guion)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "model": "gpt-4o-mini",
+        "messages": {
+          "messageValues": [
+            {
+              "role": "user",
+              "content": "Escribe un pequeño guion de 15 palabras para un vídeo corto sobre un robot que descubre el amor."
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Telegram (Aprobación)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [650, 100],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "7156474626",
+        "text": "={{ $('OpenAI (Guion)').item.json.message.content }}\n\n¿Apruebas este guion para generar la imagen y la voz?\n\nHaz clic aquí para aprobar: {{ $execution.resumeUrl }}"
+      }
+    },
+    {
+      "name": "Wait (Aprobación)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      }
+    },
+    {
+      "name": "OpenAI (DALL-E 3)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [850, 200],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "resource": "image",
+        "operation": "generate",
+        "prompt": "={{ $('OpenAI (Guion)').item.json.message.content }}",
+        "size": "1024x1024",
+        "quality": "standard"
+      }
+    },
+    {
+      "name": "Telegram (Final Imagen)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1050, 200],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "7156474626",
+        "file": "={{ $json.data[0].url }}",
+        "caption": "¡Imagen generada con éxito!"
+      }
+    },
+    {
+      "name": "ElevenLabs",
+      "type": "n8n-nodes-base.elevenLabs",
+      "typeVersion": 1,
+      "position": [850, 400],
+      "credentials": {
+        "elevenLabsApi": {
+          "id": "elevenlabs-cred-123",
+          "name": "ElevenLabs account"
+        }
+      },
+      "parameters": {
+        "operation": "textToSpeech",
+        "text": "={{ $('OpenAI (Guion)').item.json.message.content }}",
+        "voiceId": "21m00Tcm4TlvDq8ikWAM"
+      }
+    },
+    {
+      "name": "Telegram (Final Audio)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1050, 400],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "7156474626",
+        "file": "data",
+        "caption": "¡Audio generado con éxito!"
+      }
+    }
+  ],
+  "connections": {
+    "On clicking 'execute'": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (Guion)": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Aprobación)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram (Aprobación)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Aprobación)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Aprobación)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (DALL-E 3)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ElevenLabs",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (DALL-E 3)": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Final Imagen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Final Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

@@ -1,0 +1,54 @@
+{
+  "id": "cap_01_platero",
+  "titulo": "Capítulo 1: Platero",
+  "scenes": [
+    {
+      "id": 1,
+      "narrador": "Platero es pequeño, peludo, suave; tan blando por fuera que se diría todo de algodón. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro.",
+      "prompt_imagen": "Platero, small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, standing on all four legs, grazing in a sunny green meadow filled with pink, blue, and yellow wildflowers. In the background, rolling golden hills and an iconic whitewashed windmill under a clear Mediterranean sky. 2D traditional storybook watercolor illustration, Studio Ghibli aesthetic, soft translucent washes, visible textured paper grain, subtle sepia ink outlines, warm golden sunlight, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels, no title.",
+      "personajes_en_escena": [
+        "Platero"
+      ],
+      "escenario_clave": "Las Colinas y el Molino de Viento",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_8a97c723db.mp3",
+      "image_url": "/proyectos_data/platero_y_yo/capitulos/cap_01_platero/sc1_platero_colinas.jpg?t=1792675316",
+      "duracion_real": 14.62
+    },
+    {
+      "id": 2,
+      "narrador": "Lo llamo dulcemente: «¿Platero?», y viene a mí con un trotecillo alegre que parece que se ríe, en un cascabeleo ideal, a comer uvas moscateles y mandarinas frescas.",
+      "prompt_imagen": "Platero, small fluffy silver-grey donkey, trotting happily towards the young Spanish poet who is kneeling gently with an outstretched hand holding amber grapes, in a sunlit Andalusian orchard beside an ancient stone well and ivy-covered adobe wall with lush fig trees and green foliage. 2D traditional storybook watercolor illustration, Studio Ghibli aesthetic, soft translucent washes, visible textured paper grain, subtle sepia ink outlines, warm golden Mediterranean sunlight, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels.",
+      "personajes_en_escena": [
+        "Platero",
+        "El Poeta"
+      ],
+      "escenario_clave": "El Pozo Viejo y el Huerto de los Frailes",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_c8ada28994.mp3",
+      "image_url": "/proyectos_data/platero_y_yo/capitulos/cap_01_platero/sc2_poeta_platero.jpg?t=1792675372",
+      "duracion_real": 14.04
+    },
+    {
+      "id": 3,
+      "narrador": "Los domingos, por las callejas de cal blanca de Moguer, los hombres del campo se quedan mirándolo: «Tiene acero... Acero y plata de luna al mismo tiempo».",
+      "prompt_imagen": "Platero, small fluffy silver-grey donkey, walking proudly down a narrow picturesque cobblestone street of Moguer beside the young Spanish poet wearing a wide-brim hat. Dazzling whitewashed houses with wrought iron balconies adorned with red geraniums and bougainvillea under a bright cobalt blue sky. Andalusian villagers watching in the warm background. 2D traditional storybook watercolor illustration, Studio Ghibli aesthetic, soft translucent washes, visible textured paper grain, subtle sepia ink outlines, warm golden Mediterranean sunlight, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels.",
+      "personajes_en_escena": [
+        "Platero",
+        "El Poeta"
+      ],
+      "escenario_clave": "Calles Blancas y Azoteas de Moguer",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_a449a161d7.mp3",
+      "image_url": "/proyectos_data/platero_y_yo/capitulos/cap_01_platero/sc3_calles_moguer.jpg?t=1792675429",
+      "duracion_real": 12.19
+    }
+  ],
+  "video_url": "/proyectos_data/platero_y_yo/capitulos/cap_01_platero/video_final.mp4?t=1792877561",
+  "duracion": 40.85,
+  "peso_mb": 8.03,
+  "origen_tipo": "capitulo",
+  "origen_ref": "Capítulo 1",
+  "creado_en": "2026-10-22 17:13:42",
+  "actualizado_en": "2026-10-22 17:13:42"
+}

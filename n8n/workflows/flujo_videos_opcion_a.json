@@ -1,0 +1,270 @@
+{
+  "name": "Proyecto Videos (Opción A - Agente IA)",
+  "nodes": [
+    {
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [100, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      }
+    },
+    {
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1,
+      "position": [400, 300],
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.message.text }}",
+        "options": {
+          "systemMessage": "Eres un asistente de guiones de vídeo. Escribes guiones de máximo 15 palabras. Responde siempre con el guion. Si el usuario te aprueba el guion diciendo 'Sí' o 'Aprobado', debes incluir al principio de tu respuesta EXACTAMENTE el texto '[APROBADO]' seguido del guion final. Si el usuario te pide cambios, aplica los cambios sin poner [APROBADO]."
+        }
+      }
+    },
+    {
+      "name": "OpenAI Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenAi",
+      "typeVersion": 1,
+      "position": [400, 500],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "model": "gpt-4o-mini"
+      }
+    },
+    {
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1,
+      "position": [550, 500],
+      "parameters": {
+        "sessionId": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+      }
+    },
+    {
+      "name": "If (Aprobado?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [700, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.output }}",
+              "operation": "contains",
+              "value2": "[APROBADO]"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Telegram (Respuesta Chat)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [950, 100],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}\n\n💬 *Dime si quieres cambiar algo, o responde 'Sí' para aprobarlo y generar el vídeo.*",
+        "parseMode": "Markdown"
+      }
+    },
+    {
+      "name": "OpenAI (DALL-E 3)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [950, 500],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "resource": "image",
+        "operation": "generate",
+        "prompt": "={{ $json.output.replace('[APROBADO]', '').trim() }}",
+        "size": "1024x1024",
+        "quality": "standard"
+      }
+    },
+    {
+      "name": "ElevenLabs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [950, 700],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "elevenlabs-header-123",
+          "name": "ElevenLabs API Key"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.output.replace('[APROBADO]', '').trim() }}\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.7\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Telegram (Enviar Imagen)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1150, 500],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "file": "={{ $json.data[0].url }}",
+        "caption": "¡Imagen lista!"
+      }
+    },
+    {
+      "name": "Telegram (Enviar Audio)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1150, 700],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "file": "data",
+        "caption": "¡Audio listo!"
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "If (Aprobado?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (Aprobado?)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (DALL-E 3)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ElevenLabs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram (Respuesta Chat)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (DALL-E 3)": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Enviar Imagen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Enviar Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

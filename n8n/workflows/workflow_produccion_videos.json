@@ -1,0 +1,499 @@
+{
+  "name": "Producción de Vídeos con Human-in-the-Loop",
+  "nodes": [
+    {
+      "parameters": {},
+      "name": "Trigger (Nuevos Capítulos)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.1,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        }
+      },
+      "name": "Leer Google Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.1,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {},
+      "name": "OpenAI: Generar Guion y Prompts",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "",
+          "mode": "id"
+        }
+      },
+      "name": "Guardar Borrador en Sheets",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.1,
+      "position": [600, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "Nuevo guion listo. Por favor revisa y aprueba para continuar con el audio e imágenes.",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Aprobar Guion",
+                    "url": "URL_DEL_WEBHOOK_WAIT_AQUI?status=approved"
+                  },
+                  {
+                    "text": "🔄 Regenerar",
+                    "url": "URL_DEL_WEBHOOK_WAIT_AQUI?status=rejected"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Enviar Guion para Revisión",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [800, 0]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook 1)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "UUID_AQUI",
+      "position": [1000, 0]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aprobado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "2",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "rejected",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Rechazado"
+            }
+          ]
+        }
+      },
+      "name": "Switch (Aprobación Guion)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [1200, 0]
+    },
+    {
+      "parameters": {
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/voice_id",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "xi-api-key",
+              "value": "API_KEY"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"text\": \"{{ $json.text }}\",\n  \"model_id\": \"eleven_multilingual_v2\"\n}"
+      },
+      "name": "ElevenLabs API (Generar Voz)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1500, -100]
+    },
+    {
+      "parameters": {
+        "url": "URL_API_MIDJOURNEY_O_STABLE_DIFFUSION",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"prompt\": \"{{ $json.prompt }} --cref URL_PERSONAJE\"\n}"
+      },
+      "name": "Generador de Imágenes API (Midjourney)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1500, 100]
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "Medios generados. Revisa los archivos de audio y vídeo.",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Todo Correcto",
+                    "url": "URL_DEL_WEBHOOK_WAIT_2?status=approved"
+                  },
+                  {
+                    "text": "🔄 Repetir Imagen",
+                    "url": "URL_DEL_WEBHOOK_WAIT_2?status=rejected"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Enviar Medios (Audio/Img)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [1800, 0]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook 2)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "UUID_2_AQUI",
+      "position": [2000, 0]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Medios Aprobados"
+            }
+          ]
+        }
+      },
+      "name": "Switch (Aprobación Medios)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [2200, 0]
+    },
+    {
+      "parameters": {
+        "url": "URL_API_RUNWAY_O_LUMA",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "{\n  \"image_url\": \"{{ $json.image_url }}\",\n  \"prompt\": \"{{ $json.prompt }}\"\n}"
+      },
+      "name": "Runway / Luma API (Generar Vídeo)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [2500, 0]
+    },
+    {
+      "parameters": {
+        "command": "python d:/OneDrive/04_Desarrollo_proyectos/2026_Proyecto_Videos/ensamblar_video.py"
+      },
+      "name": "Execute Command (MoviePy)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [2700, 0]
+    },
+    {
+      "parameters": {
+        "chatId": "",
+        "text": "¡Vídeo final ensamblado! ¿Publicar?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "🚀 Publicar",
+                    "url": "URL_DEL_WEBHOOK_WAIT_3?status=publish"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Aprobación Final",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [2900, 0]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook 3)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "UUID_3_AQUI",
+      "position": [3100, 0]
+    }
+  ],
+  "connections": {
+    "Trigger (Nuevos Capítulos)": {
+      "main": [
+        [
+          {
+            "node": "Leer Google Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer Google Sheets": {
+      "main": [
+        [
+          {
+            "node": "OpenAI: Generar Guion y Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI: Generar Guion y Prompts": {
+      "main": [
+        [
+          {
+            "node": "Guardar Borrador en Sheets",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Guardar Borrador en Sheets": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Enviar Guion para Revisión",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Enviar Guion para Revisión": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook 1)": {
+      "main": [
+        [
+          {
+            "node": "Switch (Aprobación Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Aprobación Guion)": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs API (Generar Voz)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generador de Imágenes API (Midjourney)",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI: Generar Guion y Prompts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs API (Generar Voz)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Enviar Medios (Audio/Img)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generador de Imágenes API (Midjourney)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Enviar Medios (Audio/Img)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Enviar Medios (Audio/Img)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook 2)": {
+      "main": [
+        [
+          {
+            "node": "Switch (Aprobación Medios)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Aprobación Medios)": {
+      "main": [
+        [
+          {
+            "node": "Runway / Luma API (Generar Vídeo)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Runway / Luma API (Generar Vídeo)": {
+      "main": [
+        [
+          {
+            "node": "Execute Command (MoviePy)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Execute Command (MoviePy)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Aprobación Final",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Aprobación Final": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook 3)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

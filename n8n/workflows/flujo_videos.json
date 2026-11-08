@@ -1,0 +1,287 @@
+{
+  "name": "Proyecto Videos (Auto-Insertado Conectado)",
+  "nodes": [
+    {
+      "name": "Webhook (Inicio de Proyecto)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [250, 300],
+      "parameters": {
+        "path": "iniciar-video",
+        "httpMethod": "POST",
+        "responseMode": "onReceived",
+        "options": {}
+      }
+    },
+    {
+      "name": "OpenAI (Extraer Guion)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [450, 300],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "prompt": "={{$json.body.texto}}\n\nPor favor extrae de este texto un guion para un vídeo corto y redacta 5 prompts para generar imágenes en Midjourney manteniendo la coherencia del protagonista."
+      }
+    },
+    {
+      "name": "Telegram (Aprobación 1)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [650, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "7156474626",
+        "text": "={{$json.message.content}}\n\n¿Apruebas este guion?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Aprobar",
+                    "callbackData": "aprobar_guion"
+                  },
+                  {
+                    "text": "Regenerar",
+                    "callbackData": "regenerar_guion"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Wait (Esperar Click Telegram)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [850, 300],
+      "parameters": {
+        "resume": "webhook",
+        "webhookPath": "aprobar-guion"
+      }
+    },
+    {
+      "name": "ElevenLabs (Generar Voz)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1050, 200],
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/ID_VOZ",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "text",
+              "value": "={{$node[\"OpenAI (Extraer Guion)\"].json.message.content}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Generador Imagen (Placeholder)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [1050, 400],
+      "parameters": {
+        "method": "POST",
+        "url": "https://httpbin.org/post",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "prompt",
+              "value": "={{$node[\"OpenAI (Extraer Guion)\"].json.message.content}}"
+            }
+          ]
+        },
+        "options": {}
+      }
+    },
+    {
+      "name": "Merge",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 2,
+      "position": [1250, 300],
+      "parameters": {
+        "mode": "wait"
+      }
+    },
+    {
+      "name": "Telegram (Aprobación 2)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [1450, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "7156474626",
+        "text": "Audios e imágenes generadas. ¿Montar el vídeo?",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "Montar",
+                    "callbackData": "montar_video"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Wait (Esperar Montaje)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1,
+      "position": [1650, 300],
+      "parameters": {
+        "resume": "webhook",
+        "webhookPath": "montar-video"
+      }
+    },
+    {
+      "name": "Execute Command (Python)",
+      "type": "n8n-nodes-base.executeCommand",
+      "typeVersion": 1,
+      "position": [1850, 300],
+      "parameters": {
+        "command": "python /data/2026_Proyecto_Videos/ensamblar_video.py --audio /tmp/audio.mp3 --imagenes /tmp/imagenes --output /tmp/video_final.mp4"
+      }
+    }
+  ],
+  "connections": {
+    "Webhook (Inicio de Proyecto)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (Extraer Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (Extraer Guion)": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Aprobación 1)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram (Aprobación 1)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Esperar Click Telegram)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Esperar Click Telegram)": {
+      "main": [
+        [
+          {
+            "node": "ElevenLabs (Generar Voz)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Generador Imagen (Placeholder)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs (Generar Voz)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Generador Imagen (Placeholder)": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Aprobación 2)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram (Aprobación 2)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Esperar Montaje)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Esperar Montaje)": {
+      "main": [
+        [
+          {
+            "node": "Execute Command (Python)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

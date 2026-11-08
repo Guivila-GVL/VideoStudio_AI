@@ -1,0 +1,236 @@
+{
+  "name": "Proyecto Videos (Bucle Telegram)",
+  "nodes": [
+    {
+      "name": "Telegram Trigger",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1,
+      "position": [100, 300],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "updates": [
+          "message"
+        ]
+      }
+    },
+    {
+      "name": "If (Aprobado?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [300, 300],
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message.text.toLowerCase().trim() }}",
+              "operation": "regex",
+              "value2": "^(sí|si|ok|aprobado|dale|dispara)$"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "OpenAI (Generar/Editar Guion)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [500, 100],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "model": "gpt-4o-mini",
+        "messages": {
+          "messageValues": [
+            {
+              "role": "user",
+              "content": "={{ $json.message.reply_to_message ? 'Guion anterior: ' + $json.message.reply_to_message.text + '\\nNuevos cambios: ' + $json.message.text : 'Escribe un pequeño guion de 15 palabras para un vídeo sobre: ' + $json.message.text }}"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "name": "Telegram (Enviar Guion)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [700, 100],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendMessage",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.message.content }}\n\n💬 *¿Apruebas este guion?*\nResponde a este mensaje con un 'Sí' para generar el vídeo, o respóndeme con los cambios que quieres hacerle.",
+        "parseMode": "Markdown"
+      }
+    },
+    {
+      "name": "OpenAI (DALL-E 3)",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [500, 500],
+      "credentials": {
+        "openAiApi": {
+          "id": "openAi-cred-123",
+          "name": "OpenAI account"
+        }
+      },
+      "parameters": {
+        "resource": "image",
+        "operation": "generate",
+        "prompt": "={{ $json.message.reply_to_message.text.split('\\n\\n')[0] }}",
+        "size": "1024x1024",
+        "quality": "standard"
+      }
+    },
+    {
+      "name": "ElevenLabs",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 3,
+      "position": [500, 700],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "elevenlabs-header-123",
+          "name": "ElevenLabs API Key"
+        }
+      },
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.elevenlabs.io/v1/text-to-speech/21m00Tcm4TlvDq8ikWAM",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "httpHeaderAuth",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"text\": \"{{ $json.message.reply_to_message.text.split('\\n\\n')[0] }}\",\n  \"model_id\": \"eleven_multilingual_v2\",\n  \"voice_settings\": {\n    \"stability\": 0.5,\n    \"similarity_boost\": 0.7\n  }\n}",
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "file",
+              "outputPropertyName": "data"
+            }
+          }
+        }
+      }
+    },
+    {
+      "name": "Telegram (Enviar Imagen)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [700, 500],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendPhoto",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "file": "={{ $json.data[0].url }}",
+        "caption": "¡Imagen lista!"
+      }
+    },
+    {
+      "name": "Telegram (Enviar Audio)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1,
+      "position": [700, 700],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "operation": "sendAudio",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "file": "data",
+        "caption": "¡Audio listo!"
+      }
+    }
+  ],
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "If (Aprobado?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (Aprobado?)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI (DALL-E 3)",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "ElevenLabs",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "OpenAI (Generar/Editar Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (Generar/Editar Guion)": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Enviar Guion)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI (DALL-E 3)": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Enviar Imagen)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "ElevenLabs": {
+      "main": [
+        [
+          {
+            "node": "Telegram (Enviar Audio)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {}
+}

@@ -1,0 +1,224 @@
+{
+  "name": "Test: Sheets a Telegram",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4",
+          "mode": "list",
+          "cachedResultName": "Generador de Vídeos",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Texto_Inicial",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4/edit#gid=0"
+        },
+        "event": "rowAdded"
+      },
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [0, 0]
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "={{ 'Nuevo capítulo detectado:\\n\\n' + $json.Texto_Capitulo + '\\n\\n¿Deseas procesarlo?' }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Procesar",
+                    "url": "URL_DEL_WEBHOOK_WAIT_AQUI?status=approved"
+                  },
+                  {
+                    "text": "❌ Ignorar",
+                    "url": "URL_DEL_WEBHOOK_WAIT_AQUI?status=rejected"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Avisar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [200, 0]
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "9b1deb4d-3b7d-4bad-9bdd-2b0d7b3dcb6d",
+      "position": [400, 0]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "1",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aprobado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict"
+                },
+                "conditions": [
+                  {
+                    "id": "2",
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "rejected",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Rechazado"
+            }
+          ]
+        }
+      },
+      "name": "Switch (Decisión)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [600, 0]
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "¡Perfecto! Procesando el capítulo."
+      },
+      "name": "Telegram: Confirmar Aprobado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [800, -100]
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "Capítulo ignorado."
+      },
+      "name": "Telegram: Confirmar Rechazo",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [800, 100]
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Avisar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Avisar": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook)": {
+      "main": [
+        [
+          {
+            "node": "Switch (Decisión)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Decisión)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Confirmar Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Confirmar Rechazo",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

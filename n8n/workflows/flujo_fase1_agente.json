@@ -1,0 +1,379 @@
+{
+  "name": "Fase 1: Agente con Memoria (Voz)",
+  "nodes": [
+    {
+      "parameters": {
+        "pollTimes": {
+          "item": [
+            {
+              "mode": "everyMinute"
+            }
+          ]
+        },
+        "documentId": {
+          "__rl": true,
+          "value": "1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4",
+          "mode": "list",
+          "cachedResultName": "Generador de Vídeos"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Texto_Inicial"
+        },
+        "event": "rowAdded"
+      },
+      "name": "Google Sheets Trigger",
+      "type": "n8n-nodes-base.googleSheetsTrigger",
+      "typeVersion": 1,
+      "position": [
+        0,
+        0
+      ],
+      "id": "ac8c403c-cd89-4e67-8b2a-161ae804d265"
+    },
+    {
+      "parameters": {
+        "jsCode": "\nlet history = \"\";\ntry {\n  let prevCode = $('Gestionar Historial').last();\n  let previousHistory = prevCode ? (prevCode.json.history || \"\") : \"\";\n  let lastDraft = $('OpenAI').last().json.message.content;\n  \n  let waitNode = $('Wait (Webhook Feedback)').last();\n  let feedback = \"Corregir (sin detalles)\";\n  if (waitNode && waitNode.json) {\n    feedback = (waitNode.json.query && waitNode.json.query.feedback) || (waitNode.json.body && waitNode.json.body.feedback) || feedback;\n  }\n  \n  history = previousHistory + \"\\n\\n--- INTENTO ANTERIOR ---\\n\" + lastDraft + \"\\n\\n--- FEEDBACK DEL USUARIO ---\\n\" + feedback;\n} catch (e) {\n  history = \"\"; // Primera ejecución\n}\nreturn { history: history };\n"
+      },
+      "name": "Gestionar Historial",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        200,
+        0
+      ],
+      "id": "8e0ec99d-9621-4e74-85e9-9475ef4ced1f"
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "operation": "create",
+        "model": "gpt-4o",
+        "prompt": "={{ 'Texto original: ' + $('Google Sheets Trigger').first().json.Texto_Capitulo + '\\n\\n' + $json.history }}",
+        "systemMessage": "Eres un director de vídeo experto. Divide el texto del usuario en escenas lógicas.\\n\\nReglas:\\n- Devuelve ÚNICAMENTE un objeto JSON puro (sin markdown, sin etiquetas ```json).\\n- El JSON debe tener una propiedad 'escenas' que sea un array.\\n- Cada escena debe tener:\\n  'narrador': el texto a locutar (español).\\n  'prompt_imagen': descripción visual ultra detallada (inglés).\\n\\nSi hay historial de intentos anteriores y feedback, adapta la nueva versión exactamente a las correcciones pedidas, manteniendo el formato JSON estricto.",
+        "options": {
+          "temperature": 0.7
+        }
+      },
+      "name": "OpenAI",
+      "type": "n8n-nodes-base.openAi",
+      "typeVersion": 1,
+      "position": [
+        400,
+        0
+      ],
+      "id": "dcc7700f-f8b0-4e08-8df4-494aaee75add"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "={{ '¡Guion generado!\\n\\n' + JSON.stringify($json.message.content) + '\\n\\n¿Qué hacemos?' }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Aprobar",
+                    "url": "={{ $execution.resumeUrl }}?status=approved"
+                  },
+                  {
+                    "text": "🔄 Corregir (Nota de voz)",
+                    "url": "={{ $execution.resumeUrl }}?status=rejected"
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      },
+      "name": "Telegram: Avisar",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        600,
+        0
+      ],
+      "id": "dde8ba2f-f5f6-451e-987f-f2f4cfa431be"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook Aprobación)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "f7df771c-4f9f-4a49-8d63-dd3389e51e21",
+      "position": [
+        800,
+        0
+      ],
+      "id": "39b08f5a-6f5a-456f-b75f-6a50e170e553"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "approved",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Aprobado"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.query.status }}",
+                    "rightValue": "rejected",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Rechazado"
+            }
+          ]
+        }
+      },
+      "name": "Switch (Decisión)",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        1000,
+        0
+      ],
+      "id": "b0530e00-3ed1-457f-b5b8-09265095de26"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "¡Perfecto! Guion aprobado. Avanzando a la siguiente fase..."
+      },
+      "name": "Telegram: Confirmar Aprobado",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        -100
+      ],
+      "id": "aacc1bf1-f3fc-463e-9b8d-b2d73adad11e"
+    },
+    {
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      },
+      "parameters": {
+        "chatId": "7156474626",
+        "text": "Has rechazado el guion. Por favor, mándame una nota de voz explicándome qué quieres cambiar.\\n(El sistema guardará tu respuesta y regenerará el guion automáticamente)."
+      },
+      "name": "Telegram: Pedir Voice",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [
+        1200,
+        100
+      ],
+      "id": "84e00991-9c0b-4d7f-ac3a-8fc16b98c49d"
+    },
+    {
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "S3I8PdYk18jMX8jG",
+          "name": "Google Sheets Trigger account"
+        }
+      },
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1frOoJEpplnjSKdgjg0vbCtBQhaxrYglSCocvn2C2F-4",
+          "mode": "list"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Webhook_Feedback": "={{ $execution.resumeUrl }}"
+          }
+        },
+        "options": {}
+      },
+      "name": "Google Sheets (Guardar URL)",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1400,
+        100
+      ],
+      "id": "bc06cdd6-79e6-4ff8-8ad6-f435c8bfeb5d"
+    },
+    {
+      "parameters": {
+        "resume": "webhook",
+        "options": {}
+      },
+      "name": "Wait (Webhook Feedback)",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "webhookId": "e0e58910-09ad-40a9-91df-7baec7c1769d",
+      "position": [
+        1600,
+        100
+      ],
+      "id": "36bfa115-d362-4c40-917c-37675af7a933"
+    }
+  ],
+  "connections": {
+    "Google Sheets Trigger": {
+      "main": [
+        [
+          {
+            "node": "Gestionar Historial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Gestionar Historial": {
+      "main": [
+        [
+          {
+            "node": "OpenAI",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Avisar",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Avisar": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook Aprobación)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook Aprobación)": {
+      "main": [
+        [
+          {
+            "node": "Switch (Decisión)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch (Decisión)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Confirmar Aprobado",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Telegram: Pedir Voice",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram: Pedir Voice": {
+      "main": [
+        [
+          {
+            "node": "Google Sheets (Guardar URL)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Sheets (Guardar URL)": {
+      "main": [
+        [
+          {
+            "node": "Wait (Webhook Feedback)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait (Webhook Feedback)": {
+      "main": [
+        [
+          {
+            "node": "Gestionar Historial",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

@@ -1,0 +1,155 @@
+{
+  "id": "platero_y_yo",
+  "titulo": "Platero y Yo",
+  "descripcion": "Elegía andaluza y crónica lírica de la vida en el pueblo de Moguer a través de las andanzas del poeta y su inseparable burrito Platero.",
+  "audiencia": "Todos los públicos",
+  "ambiente": "Moguer y la campiña andaluza a comienzos del siglo XX, envueltos en una luz dorada y deslumbrante que baña las fachadas encaladas y las azoteas de cal blanca. El aire está impregnado de aromas campesinos: el azahar de los naranjales, el aroma resinoso de los pinares de Mazagón, la tierra seca al mediodía y el mosto dulce de las bodegas al caer la tarde.\n\nUn universo poético donde la sencillez rústica y el aislamiento provinciano conviven con una profunda contemplación lírica de la vida. Los caminos polvorientos, los olivares plateados bajo la brisa atlántica y el silencio solemne de las siestas crean una atmósfera nostálgica, tierna y teñida de serena melancolía.",
+  "estilo_visual": "watercolor",
+  "estilo_detalles": "Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI.",
+  "voz_defecto": "eleven_george",
+  "perfil_narrador": {
+    "nombre": "El Poeta / Muchacho de Moguer (Narrador Lírico)",
+    "genero": "masculino",
+    "edad_aprox": "12-14 años (Joven / Adolescente)",
+    "rango_edad": "joven",
+    "tono": "Lírico, contemplativo, tierno, pausado y reflexivo",
+    "justificacion": "En Platero y yo el narrador es una voz lírica joven (el autor recordando su adolescencia en Moguer) en complicidad sensible con su borriquillo.",
+    "voz_recomendada": "eleven_george",
+    "texto_muestra": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro."
+  },
+  "personajes_recurrentes_texto": "Platero (Protagonista), El Poeta / Yo lírico (Narrador), Diana (Perrita blanca), Darbón (Médico veterinario), Lord (Viejo galgo), El Canario Verde (Ave cantora), La Niña Chica (Amiga angelical), Anilla la Húngara (Bailarina)",
+  "personajes": [
+    {
+      "id": "platero",
+      "nombre": "Platero",
+      "rol": "Protagonista",
+      "tipo": "animal",
+      "descripcion_visual": "Platero es pequeño, peludo, suave; tan blando por fuera que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro. Anda con trotecillo alegre haciendo tintinear sus alforjas, acariciando con su belfo tibio las florecillas del camino. Es tierno y mimoso como un niño, pero recio y resistente por dentro como de piedra.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1793118642686",
+      "prompt_retrato": "Character turnaround model sheet of Platero is a small, fluffy, and soft creature, resembling a cotton ball with no bones, while his jet-black, glassy eyes shine like two beetles. He has a cheerful trot that jingles his saddlebags, and his warm muzzle gently brushes against the flowers along his path, embodying both tenderness and inner strength., standing naturally on all four legs, authentic quadruped animal anatomy, no humans, no bipedal figures, no clothing, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "el_poeta",
+      "nombre": "El Poeta (Narrador)",
+      "rol": "Compañero y Narrador Lírico",
+      "tipo": "humano",
+      "descripcion_visual": "Joven escritor de 13 años de edad y paseante solitario de Moguer, de mirada serena, profunda y melancólica. Viste camisa de lino crudo con cuello abierto, chaleco oscuro de paño fino y sombrero de ala ancha que le sombrea los ojos. Camina con paso tranquilo, observando con asombro reverente los detalles del campo andaluz.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1793118642686",
+      "prompt_retrato": "Character turnaround model sheet of A 13-year-old solitary writer with a serene, deep, and melancholic gaze, he wears a light linen shirt with an open collar, a dark fine wool vest, and a wide-brimmed hat that shades his eyes. His tranquil demeanor reflects a sense of wonder as he observes the intricate details of his surroundings., authentic human child/adolescent anatomy, single individual, full body standing head to toe, entire body completely visible from shoes/feet to head, no cropped feet, no cropped head, complete standing posture, no other characters, no animals, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, complete figures standing head to toe with boots resting on the floor in all four views, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, blank white void, no paper texture, no parchment texture, no yellow tint, no shadows, no background elements, zero scenery, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "diana",
+      "nombre": "Diana",
+      "rol": "Perrita Blanca Alegre",
+      "tipo": "animal",
+      "descripcion_visual": "La bella perra blanca que se parece a la luna creciente, ágil, estilizada y graciosa. De pelaje níveo inmaculado y orejas despiertas y móviles, corretea alocada entre las patas de Platero simulando mordisquearle con infinita ternura. Sus ojos castaños brillan con lealtad y viveza contagiosa ante cualquier paseo matinal.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/diana.jpg?t=1793118642687",
+      "prompt_retrato": "Character turnaround model sheet of Diana is a graceful, agile white dog with a sleek, immaculate coat resembling the crescent moon, her lively, mobile ears perked up in excitement. Her bright brown eyes sparkle with loyalty and infectious energy, embodying a playful spirit as she bounds around with boundless affection., standing naturally on all four legs, authentic quadruped animal anatomy, no humans, no bipedal figures, no clothing, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "darbon",
+      "nombre": "Darbón",
+      "rol": "Médico Veterinario",
+      "tipo": "humano",
+      "descripcion_visual": "Darbón, el médico de Platero, es grande como el buey pío y rojo como una sandía madura. Pesa siete arrobas y cuando habla con su vozarrón cascado parece que se le van a caer las muelas. Viste jubón de pana parda, delantal manchado de ungüentos y botas de cuero de montar; bajo su corpulencia desmedida guarda un corazón tan tierno como una hogaza de pan recién horneada.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1793118642687",
+      "prompt_retrato": "Character turnaround model sheet of Darbón is a large, robust man with a deep, raspy voice that suggests his weighty presence; his skin is a ripe watermelon red. He wears a brown corduroy jacket, a stained apron filled with ointments, and sturdy leather riding boots, embodying both strength and a gentle heart beneath his imposing exterior., authentic adult human anatomy, single individual, standing head to toe, no other characters, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "lord",
+      "nombre": "Lord",
+      "rol": "Viejo Galgo Noble",
+      "tipo": "animal",
+      "descripcion_visual": "Viejo galgo inglés de porte aristocrático y mirada triste y sabia. De costillas marcadas bajo un pelaje atigrado y canoso alrededor del hocico, camina con lentitud solemne rememorando antiguas jornadas de caza. Acepta con dignidad paciente las caricias de Platero y busca los rincones más soleados del corral para sestear.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/lord.jpg?t=1793118642687",
+      "prompt_retrato": "Character turnaround model sheet of An elderly English greyhound with an aristocratic bearing, he has a wise, melancholic gaze and prominent ribs beneath his brindled, graying fur, especially around his muzzle. He walks slowly and solemnly, exuding dignity as he seeks out sunny corners to rest., standing naturally on all four legs, authentic quadruped animal anatomy, no humans, no bipedal figures, no clothing, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "canario_verde",
+      "nombre": "El Canario Verde",
+      "rol": "Pájaro Cantor Libre",
+      "tipo": "animal",
+      "descripcion_visual": "Pajarillo menudo y vivaz de plumaje verde esmeralda con reflejos amarillos como limón fresco. Posee una mirada diminuta y vivaz como una semilla brillante y un pico fino siempre listo para desplegar un trino cristalino. Su presencia evoca la pureza del aire libre y el canto inocente ante los amaneceres primaverales.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1793118642687",
+      "prompt_retrato": "Character turnaround model sheet of El Canario Verde is a small, lively bird with emerald green plumage accented by fresh lemon-yellow highlights. Its bright, seed-like eyes and slender beak are perfectly suited for producing crystal-clear trills, embodying the purity of the outdoors., winged avian bird anatomy with fine beak, plumage and claws, no humans, no quadrupeds, four distinct views arranged in a balanced 2x2 grid layout: top-left front view perched facing forward, top-right left side profile view perched, bottom-left three-quarters angle view perched, bottom-right rear back view showing folded wings and tail feathers, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "la_nina_chica",
+      "nombre": "La Niña Chica",
+      "rol": "Amiga Angelical del Pueblo",
+      "tipo": "humano",
+      "descripcion_visual": "Niña menuda y angelical de Moguer, de mejillas sonrosadas, cabello rubio trenzado con cintas y ojos claros llenos de asombro infantil. Viste un sencillo vestidito de percal con delantal blanco de volantes y zapatitos gastados. Adora a Platero con devoción cándida, coronándole las orejas con guirnaldas de margaritas y dándole uvas frescas en la palma de su mano.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1793118642688",
+      "prompt_retrato": "Character turnaround model sheet of A petite, angelic girl from Moguer with rosy cheeks, braided blonde hair adorned with ribbons, and wide, wonder-filled light eyes. She wears a simple percale dress with a frilly white apron and worn-out shoes, often seen lovingly crowning her companion's ears with daisy garlands while offering fresh grapes in her palm., authentic adult human anatomy, single individual, standing head to toe, no other characters, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    },
+    {
+      "id": "anilla_la_hungara",
+      "nombre": "Anilla la Húngara",
+      "rol": "Bailarina y Gitana Alegre",
+      "tipo": "humano",
+      "descripcion_visual": "Mujer de tez morena y ojos de brasa chispeante, llena de salero y vitalidad callejera. Luce faldas amplias de múltiples volantes de colores vivos, mantón de manila sobre los hombros y peineta de carey en el pelo negro ondulado. Al pasar por las esquinas hace sonar sus panderetas y castañuelas, provocando el trote curioso de Platero.",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1793118642688",
+      "prompt_retrato": "Character turnaround model sheet of Anilla la Húngara is a lively woman with a warm complexion and sparkling ember-like eyes, exuding street vitality. She wears a vibrant, multi-layered skirt, a Manila shawl draped over her shoulders, and a tortoiseshell comb in her wavy black hair, while her hands skillfully play castanets and tambourines., authentic adult human anatomy, single individual, standing head to toe, no other characters, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
+      "sin_fondo": true,
+      "formato_vista": "giro_360"
+    }
+  ],
+  "escenarios": [
+    {
+      "id": "calles_blancas_moguer",
+      "nombre": "Calles Blancas y Azoteas de Moguer",
+      "tipo": "exterior_urbano",
+      "descripcion_visual": "Perspectiva de un pueblo andaluz con calles estrechas empedradas con guijarros de río, flanqueadas por casas encaladas de un blanco cegador con zócalos de azulejos andaluces. Balcones con rejas de hierro forjado repletos de geranios rojos, buganvillas moradas y macetas de albahaca, bajo un cielo azul cobalto sin una sola nube.",
+      "imagen_url": "/proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1793118642688",
+      "prompt_escenario": "Children's book watercolor illustration of Scenic background illustration of Calles Blancas y Azoteas de Moguer: A picturesque Andalusian village features narrow, cobblestone streets lined with dazzling whitewashed houses adorned with colorful tile friezes. Wrought iron balconies overflow with vibrant red geraniums, purple bougainvillea, and pots of basil, all beneath a clear cobalt blue sky., delicate poetic watercolor and ink storybook scenery, hand-painted watercolor art on textured paper, soft artistic translucent washes, subtle ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., empty scene, no people, no animals, vertical 9:16 background scenery, masterpiece, no 3D CGI, no photorealism"
+    },
+    {
+      "id": "colinas_molino_viento",
+      "nombre": "Las Colinas y el Molino de Viento",
+      "tipo": "naturaleza",
+      "descripcion_visual": "Lomas onduladas tostadas por el estío y salpicadas de olivos plateados y viñas verdes. En la cumbre se alza un molino de viento tradicional de paredes redondas de piedra encalada y aspas de madera, recortándose solitario y majestuoso contra la inmensidad del horizonte.",
+      "imagen_url": "/proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1793118642688",
+      "prompt_escenario": "Children's book watercolor illustration of Scenic background illustration of Las Colinas y el Molino de Viento: Rolling, sun-baked hills are dotted with silvery olive trees and vibrant green vineyards, while a solitary, majestic windmill with round whitewashed stone walls and wooden blades stands proudly atop the summit, silhouetted against the vast horizon., delicate poetic watercolor and ink storybook scenery, hand-painted watercolor art on textured paper, soft artistic translucent washes, subtle ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., empty scene, no people, no animals, vertical 9:16 background scenery, masterpiece, no 3D CGI, no photorealism"
+    },
+    {
+      "id": "pozo_viejo_huerto",
+      "nombre": "El Pozo Viejo y el Huerto de los Frailes",
+      "tipo": "naturaleza",
+      "descripcion_visual": "Rincón umbrío y fresco de tapial antiguo cubierto de hiedra y madreselva. Un brocal de pozo de piedra gastada con su arco de hierro y cubo de zinc, rodeado por higueras centenarias, granados de frutos abiertos y una alberca de aguas verdes donde danzan los zapateros.",
+      "imagen_url": "/proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1793118642689",
+      "prompt_escenario": "Children's book watercolor illustration of Scenic background illustration of El Pozo Viejo y el Huerto de los Frailes: A shaded, cool nook features ancient adobe walls draped in ivy and honeysuckle, with a worn stone well adorned by a wrought iron arch and a zinc bucket. Surrounding it are centuries-old fig trees and pomegranate bushes bursting with ripe fruit, alongside a green pool where water striders glide gracefully., delicate poetic watercolor and ink storybook scenery, hand-painted watercolor art on textured paper, soft artistic translucent washes, subtle ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., empty scene, no people, no animals, vertical 9:16 background scenery, masterpiece, no 3D CGI, no photorealism"
+    },
+    {
+      "id": "establo_platero",
+      "nombre": "El Establo y el Corral de Platero",
+      "tipo": "interior",
+      "descripcion_visual": "Cuadra rústica andaluza techada con tejas árabes y vigas de castaño oscurecido. El pesebre de pino gastado huele a heno fresco, alfalfa y paja dorada; rayos de luz solar entran por las hendiduras de la puerta de madera dibujando polvo brillante en el aire tibio.",
+      "imagen_url": "/proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1793118642689",
+      "prompt_escenario": "Children's book watercolor illustration of Scenic background illustration of El Establo y el Corral de Platero: A rustic Andalusian stable features a tiled roof and darkened chestnut beams, with a weathered pine trough exuding the scent of fresh hay, alfalfa, and golden straw; beams of sunlight filter through the wooden door's gaps, illuminating swirling dust in the warm air., delicate poetic watercolor and ink storybook scenery, hand-painted watercolor art on textured paper, soft artistic translucent washes, subtle ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., empty scene, no people, no animals, vertical 9:16 background scenery, masterpiece, no 3D CGI, no photorealism"
+    },
+    {
+      "id": "ribera_rio_tinto",
+      "nombre": "La Ribera del Río Tinto y los Marjales",
+      "tipo": "panoramica",
+      "descripcion_visual": "Orillas misteriosas del río de aguas rojizas y cobrizas que reflejan el cielo atardecido con destellos de fuego y púrpura. Tierras bajas de marismas salpicadas de cañaverales mecidos por la brisa marina, con barcas pescadoras varadas en la arena fangosa.",
+      "imagen_url": "/proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1793118642689",
+      "prompt_escenario": "Children's book watercolor illustration of Scenic background illustration of La Ribera del Río Tinto y los Marjales: Mysterious banks of the reddish, copper-hued Río Tinto reflect the fiery and purple hues of the sunset, while low marshlands are dotted with swaying reeds and fishing boats stranded in the muddy sand., delicate poetic watercolor and ink storybook scenery, hand-painted watercolor art on textured paper, soft artistic translucent washes, subtle ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., empty scene, no people, no animals, vertical 9:16 background scenery, masterpiece, no 3D CGI, no photorealism"
+    }
+  ],
+  "creado_en": "2026-10-10 13:32:50",
+  "actualizado_en": "2026-10-27 17:31:39"
+}

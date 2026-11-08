@@ -1,0 +1,51 @@
+{
+  "id": "el_principito",
+  "titulo": "El Principito",
+  "descripcion": "Cuento poético y filosófico sobre la amistad y el amor",
+  "audiencia": "Todos los públicos (Cuento poético)",
+  "ambiente": "Entre el infinito cielo estrellado del universo y las doradas arenas silenciosas del desierto del Sahara. El tono es nostálgico, tierno, lírico y profundamente conmovedor.",
+  "estilo_visual": "watercolor",
+  "estilo_detalles": "Ilustración poética de cuento en acuarela y tinta suave, tonos pastel cálidos, textura de papel de arte, cielo estrellado azul profundo.",
+  "voz_defecto": "eleven_george",
+  "personajes_recurrentes_texto": "El Principito (niño de cabello dorado y bufanda), El Zorro (amigo sabio), El Aviador (narrador)",
+  "personajes": [
+    {
+      "id": "principito",
+      "nombre": "El Principito",
+      "rol": "Protagonista",
+      "tipo": "humano",
+      "descripcion_visual": "Niño pequeño con pelo rubio dorado revuelto por el viento, bufanda dorada larga flotante, traje de príncipe verde azulado con solapas rojas y botas suaves",
+      "imagen_url": null,
+      "prompt_retrato": "Full body character turnaround model sheet of The Little Prince, an adorable young boy with messy bright golden blonde hair, long flowing yellow scarf, vintage teal-blue prince tunic with red lapels and soft boots, delicate watercolor and ink storybook illustration, soft artistic color washes, four distinct views: full front view, side profile, three-quarters angle, and full back view standing pose from head to toe, isolated on solid plain pure white background, no shadows, vertical 9:16, masterpiece"
+    },
+    {
+      "id": "el_zorro",
+      "nombre": "El Zorro",
+      "rol": "Amigo sabio",
+      "tipo": "animal",
+      "descripcion_visual": "Zorro esbelto y elegante con pelaje anaranjado dorado, pecho y punta de la cola blanca como la nieve, grandes ojos almendrados y expresión bondadosa",
+      "imagen_url": null,
+      "prompt_retrato": "Full body character turnaround model sheet of the wise Little Prince Fox, a slender adorable fox with vibrant golden orange fur, fluffy white chest and white-tipped bushy tail, gentle expressive almond eyes, standing naturally on all four paws, delicate watercolor and ink storybook illustration, four distinct views: full front view, side profile, three-quarters angle, and rear back view, isolated on solid plain pure white background, no shadows, vertical 9:16, masterpiece"
+    }
+  ],
+  "escenarios": [
+    {
+      "id": "asteroide_b612",
+      "nombre": "Asteroide B-612",
+      "tipo": "exterior_espacial",
+      "descripcion_visual": "Pequeño planeta esférico flotando en el cosmos azul oscuro lleno de estrellas brillantes, con dos pequeños volcanes apagados y una hermosa rosa roja protegida bajo una cúpula de cristal",
+      "imagen_url": null,
+      "prompt_escenario": "Scenic background art of asteroid B-612, a tiny round celestial planet floating in deep blue starry space, two small volcanoes, a single glowing red rose under a glass cloche, glowing nebulae, delicate watercolor and ink storybook illustration, empty scene, no people, vertical 9:16 background scenery, masterpiece"
+    },
+    {
+      "id": "desierto_sahara",
+      "nombre": "Dunas del Sahara",
+      "tipo": "naturaleza",
+      "descripcion_visual": "Vastas dunas de arena dorada ondulante bajo un cielo crepuscular de tonos púrpuras y estrellas titilantes en el horizonte lejano",
+      "imagen_url": null,
+      "prompt_escenario": "Scenic background art of vast rolling golden sand dunes of the Sahara desert under a magical twilight purple sky with early twinkling stars, delicate watercolor and ink storybook illustration, empty scene, no people, vertical 9:16 background scenery, masterpiece"
+    }
+  ],
+  "creado_en": "2026-10-18 17:19:00",
+  "actualizado_en": "2026-10-18 17:19:00"
+}

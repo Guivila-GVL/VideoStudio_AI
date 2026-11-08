@@ -1,0 +1,52 @@
+{
+  "id": "cap_1",
+  "titulo": "El Guardián del Faro - Capítulo 1: El Destello Dorado en la Niebla",
+  "texto_original": "La tormenta golpeaba con furia los acantilados de Punta Esmeralda. El faro de piedra blanca se erguía como un titán solitario en medio del océano rugiente. Lucas, con su impermeable amarillo empapado por el rocío marino, subía los peldaños de la escalera de caracol sosteniendo firmemente su linterna de bronce.\n\nAl llegar a la sala de la linterna, entre los aullidos del vendaval, un destello dorado vibró a lo lejos, atravesando la densa niebla como un latido ancestral. Desde las profundidades de las olas, un eco melodioso pareció susurrar su nombre: era Marina, la guardiana de los misterios marinos.",
+  "origen_tipo": "section",
+  "origen_ref": "Capítulo 1",
+  "orden": 1,
+  "scenes": [
+    {
+      "id": 1,
+      "narrador": "En la tormenta, el faro de Punta Esmeralda se erguía como un gigante, mientras Lucas subía los escalones en busca de respuestas.",
+      "prompt_imagen": "A young lighthouse keeper, Lucas, 25 years old, with tousled brown hair and a determined face, wearing a bright yellow raincoat and holding a bronze lantern, climbing spiral stairs in the old Punta Esmeralda lighthouse, dramatic storm outside with dark clouds and lightning, cinematic lighting, photorealistic 8k, shot on 35mm lens, atmospheric depth of field, dramatic shadows, particles of sea mist, and golden light reflections in the rain.",
+      "personajes_en_escena": [
+        "Lucas"
+      ],
+      "escenario_clave": "Faro de Punta Esmeralda",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_f965d6a5d3.mp3",
+      "image_url": "/static/media/img_e85e015032.jpg",
+      "duracion_real": 8.45
+    },
+    {
+      "id": 2,
+      "narrador": "El viento aullaba, y en la niebla, Lucas percibe un destello dorado, pulsando como un corazón antiguo.",
+      "prompt_imagen": "Close-up of Lucas's face, determined expression, with the ominous storm outside the lighthouse visible through the glass dome, a golden light pulsating in the foggy distance, cinematic lighting, photorealistic 8k, shot on 35mm lens, atmospheric depth of field, dramatic shadows, particles of sea mist, and golden light reflections in the rain.",
+      "personajes_en_escena": [
+        "Lucas"
+      ],
+      "escenario_clave": "Sala de la Linterna",
+      "duracion_estimada": 5,
+      "audio_url": "/static/media/audio_3ce962f0dc.mp3",
+      "image_url": "/static/media/img_2da2a93a89.jpg",
+      "duracion_real": 6.69
+    },
+    {
+      "id": 3,
+      "narrador": "De las profundidades del mar, un murmullo ancestral llama a Lucas por su nombre, desvelando un misterio oculto.",
+      "prompt_imagen": "A mysterious ethereal light emerging from the ocean waves, with Marina, a young woman with long wavy sea-blue hair and deep turquoise eyes, dressed in a flowing marine tunic with luminous sparkles, standing on a rocky cliff, surrounded by mist, cinematic lighting, photorealistic 8k, shot on 35mm lens, atmospheric depth of field, dramatic shadows, particles of sea mist, and golden light reflections in the rain.",
+      "personajes_en_escena": [
+        "Marina"
+      ],
+      "escenario_clave": "Escenario específico",
+      "duracion_estimada": 7,
+      "audio_url": "/static/media/audio_f41597a08a.mp3",
+      "image_url": "/static/media/img_10d35d1e89.jpg",
+      "duracion_real": 7.06
+    }
+  ],
+  "video_url": "/static/media/video_short_83a5ff1c.mp4",
+  "duracion": 22.2,
+  "actualizado_en": "2026-10-18 17:20:41"
+}
