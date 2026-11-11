@@ -6,15 +6,15 @@
   "ambiente": "Moguer y la campiña andaluza a comienzos del siglo XX, envueltos en una luz dorada y deslumbrante que baña las fachadas encaladas y las azoteas de cal blanca. El aire está impregnado de aromas campesinos: el azahar de los naranjales, el aroma resinoso de los pinares de Mazagón, la tierra seca al mediodía y el mosto dulce de las bodegas al caer la tarde.\n\nUn universo poético donde la sencillez rústica y el aislamiento provinciano conviven con una profunda contemplación lírica de la vida. Los caminos polvorientos, los olivares plateados bajo la brisa atlántica y el silencio solemne de las siestas crean una atmósfera nostálgica, tierna y teñida de serena melancolía.",
   "estilo_visual": "watercolor",
   "estilo_detalles": "Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI.",
-  "voz_defecto": "eleven_george",
+  "voz_defecto": "edge_alvaro_joven",
   "perfil_narrador": {
     "nombre": "El Poeta / Muchacho de Moguer (Narrador Lírico)",
     "genero": "masculino",
     "edad_aprox": "12-14 años (Joven / Adolescente)",
     "rango_edad": "joven",
-    "tono": "Lírico, contemplativo, tierno, pausado y reflexivo",
-    "justificacion": "En Platero y yo el narrador es una voz lírica joven (el autor recordando su adolescencia en Moguer) en complicidad sensible con su borriquillo.",
-    "voz_recomendada": "eleven_george",
+    "tono": "Lírico, contemplativo, tierno, pausado y reflexivo en español nativo",
+    "justificacion": "En Platero y yo el narrador es una voz lírica joven (el autor recordando su adolescencia en Moguer) en complicidad sensible con su borriquillo. Requiere una voz juvenil masculina en español peninsular nativo (12-14 años), tierna y pausada, sin acento foráneo ni pesadez adulta.",
+    "voz_recomendada": "edge_alvaro_joven",
     "texto_muestra": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro."
   },
   "personajes_recurrentes_texto": "Platero (Protagonista), El Poeta / Yo lírico (Narrador), Diana (Perrita blanca), Darbón (Médico veterinario), Lord (Viejo galgo), El Canario Verde (Ave cantora), La Niña Chica (Amiga angelical), Anilla la Húngara (Bailarina)",
@@ -231,5 +231,5 @@
     }
   ],
   "creado_en": "2026-10-10 13:32:50",
-  "actualizado_en": "2026-11-11 13:35:31"
+  "actualizado_en": "2026-11-11 18:36:08"
 }

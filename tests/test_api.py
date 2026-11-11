@@ -194,7 +194,26 @@ def test_api():
     assert "<lora:" in inj_scene["prompt_tecnico_cref"]
     print(f"[OK] Generador de prompts accedio al Banco de Consistencia e inyecto referencias: {inj_scene['prompt_tecnico_cref'][:140]}...")
 
-    print("\n[EXITO] Todos los tests de la API, Consistencia Visual y Pipeline de Produccion pasaron al 100%!")
+    print("\n=== TEST API: 12. Comprobando Voces Nativas Espanolas y Sintesis de Narrador ===")
+    narrator_res = client.get("/api/projects/platero_y_yo/narrator")
+    assert narrator_res.status_code == 200
+    narrator_info = narrator_res.json()
+    assert narrator_info["success"] is True
+    assert narrator_info["voz_defecto"] == "edge_alvaro_joven"
+
+    # Test voz sintetizada en tiempo real con edge_alvaro_joven
+    test_voice_res = client.post("/api/projects/platero_y_yo/narrator/test-voice", json={
+        "voice_id": "edge_alvaro_joven",
+        "sample_text": "Platero es pequeno, peludo, suave; tan blando por fuera, que se diria todo de algodon."
+    })
+    assert test_voice_res.status_code == 200
+    voice_audio = test_voice_res.json()
+    assert voice_audio["success"] is True
+    assert voice_audio["provider"] == "edge"
+    assert voice_audio["duration"] > 0
+    print(f"[OK] Sintesis de voz en espanol nativo verificada con exito: {voice_audio['url']} ({voice_audio['duration']}s)")
+
+    print("\n[EXITO] Todos los tests de la API, Consistencia Visual, Pipeline y Voces Espanolas pasaron al 100%!")
 
 if __name__ == "__main__":
     test_api()

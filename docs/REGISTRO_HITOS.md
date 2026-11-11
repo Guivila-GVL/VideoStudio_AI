@@ -1,5 +1,20 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [11/11/2026 18:36:00] ✅ ¿Puedes abrirme igual otro análisis en OneNote para ver cómo podemos
+
+- **ID Tarea:** `102`
+- **Prioridad:** MEDIA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** `Verificar que '¿Puedes abrirme igual otro análisis en OneNote para ver cómo podemos' funciona correctamente y cumple con el objetivo descrito.`
+- **Resultado Técnico:** Análisis exhaustivo, resolución técnica e integración en VideoStudio AI del problema de acento anglosajón en la narración. 1) Diagnóstico raíz: OpenAI TTS y ElevenLabs Multilingual imponen la fonética de sus actores anglosajones de base (diptongación foránea, 'r' inglesa), y las cuentas gratuitas de ElevenLabs bloquean la librería comunitaria con error HTTP 402 (paid plan required). 2) Se creó en OneNote la página '04. Análisis y Estrategia de Selección de Voces y Narración en Español Nativo' en la sección VideoStudio AI con diagnóstico, matriz comparativa de soluciones (Edge-TTS 0€ vs Voice Cloning 0€ vs ElevenLabs Starter 5$/mes), guía de configuración paso a paso y modulación para voces de niños/adolescentes de 12-14 años. 3) Integración en tts_engine.py de Microsoft Edge-TTS con Álvaro Joven (pitch +12Hz, rate -3% para timbre de muchacho nativo sin acento), Álvaro Adulto y Elvira Cálida, con ejecución segura concurrente. 4) Actualización de index.html y app.js con pastillas de audición rápida de 1 clic y categoría prioritaria de voces españolas nativas. 5) Actualizado recomendador IA y perfil de Platero y yo fijando edge_alvaro_joven por defecto. 6) Documentado en docs/ESTRATEGIA_VOCES_NARRACION.md e indexado. 7) Verificado al 100% con tests de API y síntesis real con ffprobe.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen, 02. Listado de Actividades y 04. Análisis y Estrategia)
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [11/11/2026 18:21:43] ✅ Pónmelo en una hoja de OneNote: estrategia para mejorar
 
 - **ID Tarea:** `101`

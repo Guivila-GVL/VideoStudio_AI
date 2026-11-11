@@ -39,9 +39,9 @@
       "seed_consistencia": 177970,
       "estado_aprobacion": "aprobado",
       "motivo_rechazo": "",
-      "telegram_message_id": 84,
-      "aprobado_en": "2026-11-11T13:34:56.998258",
-      "propuesta_enviada_en": "2026-11-11T13:34:41.794741",
+      "telegram_message_id": 223,
+      "aprobado_en": "2026-11-11T18:36:55.505818",
+      "propuesta_enviada_en": "2026-11-11T18:36:40.273171",
       "cref_directive": "--cref /proyectos_data/el_principito/personajes/principito.jpg --cw 100",
       "lora_directive": "<lora:el_principito_principito_v1:0.85> chr_principito"
     },
@@ -66,7 +66,7 @@
       "estado_aprobacion": "rechazado",
       "motivo_rechazo": "rechazar, no cuadra la expresión del rostro",
       "telegram_message_id": null,
-      "aprobado_en": "2026-11-11T13:34:57.938560",
+      "aprobado_en": "2026-11-11T18:37:11.582416",
       "propuesta_enviada_en": "2026-11-11T12:00:00",
       "cref_directive": "--cref /proyectos_data/el_principito/personajes/el_zorro.jpg --cw 100",
       "lora_directive": "<lora:el_principito_el_zorro_v1:0.85> chr_el_zorro"
@@ -108,9 +108,9 @@
       "prompt_escenario": "Scenic background art of asteroid B-612, a tiny round celestial planet floating in deep blue starry space, two small volcanoes, a single glowing red rose under a glass cloche, glowing nebulae, delicate watercolor and ink storybook illustration, empty scene, no people, vertical 9:16 background scenery, masterpiece",
       "estado_aprobacion": "aprobado",
       "motivo_rechazo": "",
-      "telegram_message_id": 87,
-      "aprobado_en": "2026-11-11T13:34:57.590922",
-      "propuesta_enviada_en": "2026-11-11T13:34:57.390678"
+      "telegram_message_id": 226,
+      "aprobado_en": "2026-11-11T18:37:11.210601",
+      "propuesta_enviada_en": "2026-11-11T18:36:55.943802"
     },
     {
       "id": "desierto_sahara",
@@ -127,5 +127,5 @@
     }
   ],
   "creado_en": "2026-10-18 17:19:00",
-  "actualizado_en": "2026-11-11 13:35:31"
+  "actualizado_en": "2026-11-11 18:37:26"
 }

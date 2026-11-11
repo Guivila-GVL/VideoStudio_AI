@@ -436,11 +436,12 @@ document.addEventListener("DOMContentLoaded", () => {
       narratorVoiceSelect.innerHTML = "";
 
       const groups = [
-        { label: "🌟 Narradores Juveniles & Adolescentes (12-16 años)", filter: v => v.category === "juvenil" || v.age_group === "joven" },
+        { label: "🇪🇸 Voces Nativas en Español (España Peninsular - Sin Acento Inglés)", filter: v => v.category === "espanol_nativo" || (v.tags && v.tags.some(t => t.includes("España") || t.includes("Español"))) },
+        { label: "🌟 Narradores Juveniles & Adolescentes Multilingües", filter: v => v.category === "juvenil" || v.age_group === "joven" },
         { label: "📖 Cuentacuentos & Narradores Clásicos", filter: v => v.category === "cuentacuentos" },
         { label: "🎭 Voces Dramáticas & Solemnes", filter: v => v.category === "dramatico" },
         { label: "🌸 Voces Femeninas & Cuentos", filter: v => v.category === "femenino" || v.gender === "femenino" },
-        { label: "⚡ Voces Neutras & Fallback Gratuito", filter: v => v.category === "neutro" || v.category === "gratuito" || v.category === "elevenlabs_custom" }
+        { label: "⚡ Voces Neutras, Fallback & Otras", filter: v => v.category === "neutro" || v.category === "gratuito" || v.category === "elevenlabs_custom" }
       ];
 
       const addedIds = new Set();
@@ -484,7 +485,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selectedVoiceDesc) selectedVoiceDesc.textContent = v.description || "Voz seleccionada para la narración.";
     if (selectedVoiceTags) {
       selectedVoiceTags.innerHTML = (v.tags || [v.gender || "Voz", v.provider || "TTS"]).map(t => {
-        const isHighlight = t.toLowerCase().includes("joven") || t.toLowerCase().includes("lírico") || t.toLowerCase().includes("12-16");
+        const isHighlight = t.toLowerCase().includes("joven") || t.toLowerCase().includes("lírico") || t.toLowerCase().includes("12-16") || t.toLowerCase().includes("españa") || t.toLowerCase().includes("sin acento");
         return `<span class="voice-pill ${isHighlight ? 'highlight' : ''}">${t}</span>`;
       }).join("");
     }
@@ -514,9 +515,9 @@ document.addEventListener("DOMContentLoaded", () => {
         genero: "masculino",
         edad_aprox: "12-14 años (Joven / Adolescente)",
         rango_edad: "joven",
-        tono: "Lírico, contemplativo, tierno, pausado y reflexivo",
-        justificacion: "En Platero y yo el narrador es una voz lírica joven que dialoga en complicidad sensible con su borriquillo.",
-        voz_recomendada: "openai_fable",
+        tono: "Lírico, contemplativo, tierno, pausado y reflexivo en español nativo",
+        justificacion: "En Platero y yo el narrador es una voz lírica joven (12-14 años) en español peninsular nativo, sin acento foráneo.",
+        voz_recomendada: "edge_alvaro_joven",
         texto_muestra: "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro."
       };
     }
@@ -531,7 +532,7 @@ document.addEventListener("DOMContentLoaded", () => {
       narratorSampleText.value = narrator.texto_muestra || "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro.";
     }
 
-    const chosenVoice = voiceId || narrator.voz_recomendada || "openai_fable";
+    const chosenVoice = voiceId || narrator.voz_recomendada || "edge_alvaro_joven";
     updateSelectedVoiceCard(chosenVoice);
   }
 

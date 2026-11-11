@@ -1036,9 +1036,9 @@ def recommend_narrator_with_ai(project_id: str) -> Dict[str, Any]:
                 "genero": "masculino",
                 "edad_aprox": "12-14 años (Joven / Adolescente)",
                 "rango_edad": "joven",
-                "tono": "Lírico, contemplativo, tierno, pausado y reflexivo",
-                "justificacion": "En Platero y yo el narrador es una voz lírica joven (el autor recordando su adolescencia en Moguer) en diálogo íntimo y confidente con su burrillo Platero. Requiere una voz juvenil masculina, melancólica y pausada, alejada de la pesadez o impostación de un narrador adulto convencional.",
-                "voz_recomendada": "openai_fable",
+                "tono": "Lírico, contemplativo, tierno, pausado y reflexivo en español nativo",
+                "justificacion": "En Platero y yo el narrador es una voz lírica joven (el autor recordando su adolescencia en Moguer) en diálogo íntimo y confidente con su burrillo Platero. Requiere una voz juvenil masculina en español peninsular nativo (12-14 años), tierna y pausada, sin acento foráneo ni pesadez adulta.",
+                "voz_recomendada": "edge_alvaro_joven",
                 "texto_muestra": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro."
             }
         else:
@@ -1047,9 +1047,9 @@ def recommend_narrator_with_ai(project_id: str) -> Dict[str, Any]:
                 "genero": "masculino",
                 "edad_aprox": "Adulto (30-40 años)",
                 "rango_edad": "adulto",
-                "tono": "Cálido, envolvente y literario",
-                "justificacion": "Narrador omnisciente estándar para relatos narrativos.",
-                "voz_recomendada": "openai_fable",
+                "tono": "Cálido, envolvente y literario en español peninsular",
+                "justificacion": "Narrador omnisciente estándar en español castellano neutro para relatos narrativos.",
+                "voz_recomendada": "edge_alvaro",
                 "texto_muestra": "Había una vez un lugar donde las historias cobraban vida."
             }
     return narrator
