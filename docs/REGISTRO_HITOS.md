@@ -1,5 +1,20 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [11/11/2026 18:21:43] ✅ Pónmelo en una hoja de OneNote: estrategia para mejorar
+
+- **ID Tarea:** `101`
+- **Prioridad:** BAJA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Elaborada y documentada la estrategia integral para resolver la incoherencia visual y de personajes en Platero y yo y la producción de libros ilustrados. Se analizó la causa raíz del fallo en el Capítulo 1 (uso de Text-to-Image estocástico en Pollinations sin condicionamiento latente y filtrado de directivas --cref/LoRA). Se creó en OneNote la página '03. Estrategia de Consistencia de Personajes y Motores Gráficos' en la sección VideoStudio AI con diagnóstico, tabla comparativa de motores (Midjourney v6/v7 con --cref/--sref vs FLUX.1 Dev con micro-LoRA en Fal.ai vs ComfyUI ControlNet), estrategia de 5 pilares (Activos Canónicos, matriz de escala relativa, generación en capas con rembg/inpainting, prompts 70/30 y validación HITL por Telegram), estimación de costes (~ a  por libro) y plan de acción inmediato. Documentado en docs/ESTRATEGIA_CONSISTENCIA_VISUAL.md e indexado. Verificado al 100% con tests de API y lectura de OneNote.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen y 02. Listado de Actividades)
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [11/11/2026 13:36:17] ✅ Alineación de Flujo Telegram para Aprobaciones Humanas
 
 - **ID Tarea:** `23`

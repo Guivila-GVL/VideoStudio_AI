@@ -1,0 +1,365 @@
+
+[2026-11-11 16:29:02] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [18988]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54255 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54302 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794410959443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54257 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794410959443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794410959444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54302 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54257 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794410959445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794410959445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54302 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794410959446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794410959446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794410959447 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54257 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794410959447 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794410959447 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54255 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794410959447 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54257 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794410959448 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794410959448 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54304 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1791658458 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54684 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54684 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/sc1_platero_colinas.jpg?t=1792675316 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54687 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/sc2_poeta_platero.jpg?t=1792675372 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54689 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/sc3_calles_moguer.jpg?t=1792675429 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54691 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1792875929 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54694 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1792945125 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54692 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1792876009 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54694 - "GET /static/media/audio_8a97c723db.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54692 - "GET /static/media/audio_c8ada28994.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54691 - "GET /static/media/audio_a449a161d7.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54684 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/video_final.mp4?t=1792877561 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54687 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/video_final.mp4?t=1792877561 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54687 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/video_final.mp4?t=1792877561 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54974 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54974 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55202 - "POST /api/storyboard/inject-anchors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55202 - "POST /api/storyboard/inject-anchors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55202 - "POST /api/storyboard/inject-anchors HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55254 - "POST /api/storyboard/inject-anchors HTTP/1.1" 200 OK
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.417808 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.760549 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-1-mini no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.394627 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.903756 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI chatgpt-image-latest no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.429164 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.826892 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-2 no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:     127.0.0.1:55303 - "POST /api/image/generate HTTP/1.1" 200 OK
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.474121 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.982761 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-1-mini no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.375681 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.843477 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI chatgpt-image-latest no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.467605 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.950186 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-2 no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+[POLLINATIONS] Respetando ritmo del tier gratuito (esperando 38s)...
+INFO:     127.0.0.1:55328 - "POST /api/image/generate HTTP/1.1" 200 OK
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.422618 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.911711 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-1-mini no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.453031 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.921970 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI chatgpt-image-latest no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.410211 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.942004 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-2 no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+[POLLINATIONS] Respetando ritmo del tier gratuito (esperando 38s)...
+[POLLINATIONS] Límite por IP alcanzado en 'sana'. Esperando 46s de enfriamiento...
+[IMAGE] No se pudo generar imagen en Pollinations: ['flux: HTTP 503', 'sana: HTTP 503']
+INFO:     127.0.0.1:55333 - "POST /api/image/generate HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55303 - "GET /static/media/img_91af74decf.jpg?t=1794411135157 HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.398268 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.796647 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-1-mini no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.386320 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.766452 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI chatgpt-image-latest no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.397615 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.938381 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/images/generations "HTTP/1.1 429 Too Many Requests"
+[IMAGE] OpenAI gpt-image-2 no disponible: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Probando siguiente opción...
+[POLLINATIONS] Respetando ritmo del tier gratuito (esperando 39s)...
+INFO:     127.0.0.1:55430 - "POST /api/image/generate HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55328 - "GET /static/media/img_795c663960.jpg?t=1794411185799 HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55333 - "GET /static/media/img_387d6130f5.jpg?t=1794411283436 HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55333 - "GET /static/media/img_9aab7c3ccf.jpg?t=1794411329744 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794415016593 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62665 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794415016594 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62702 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62706 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794415016594 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62707 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794415016594 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62708 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794415016595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62702 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794415016595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62665 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794415016595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794415016595 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62707 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794415016596 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62665 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794415016596 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62663 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794415016596 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62707 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794415016596 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62706 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794415016597 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62706 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62706 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54206 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54206 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54206 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54485 - "POST /api/video/render HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:54692 - "GET /api/videos/history?project_id=platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54692 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:54694 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54694 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54694 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54704 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54704 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56557 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56559 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794415894322 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56575 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794415894323 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794415894323 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56577 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794415894323 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56580 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794415894323 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56581 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794415894324 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56575 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794415894324 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56559 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794415894325 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56577 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794415894324 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56575 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794415894325 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56559 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794415894326 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56577 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794415894326 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56557 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794415894326 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56575 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56575 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
