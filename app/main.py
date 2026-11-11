@@ -8,7 +8,14 @@ from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from dotenv import load_dotenv
 
-from app.core.script_generator import breakdown_storyboard, rewrite_scene, enrich_scene_prompt_with_anchors, STYLE_PRESETS
+from app.core.script_generator import (
+    breakdown_storyboard,
+    rewrite_scene,
+    enrich_scene_prompt_with_anchors,
+    attach_consistency_metadata_to_scene,
+    resolve_scene_character_references,
+    STYLE_PRESETS
+)
 from app.core.tts_engine import synthesize_speech, list_voices
 from app.core.image_engine import generate_image, save_uploaded_image
 from app.core.video_renderer import render_final_video
@@ -40,6 +47,9 @@ from app.core.project_manager import (
     sync_project_style,
     delete_project_video,
     recommend_narrator_with_ai,
+    get_character_reference_bank,
+    sync_character_reference_bank,
+    update_character_consistency_config,
     slugify
 )
 from app.core.coherence_auditor import audit_and_heal_characters, audit_and_heal_environments
@@ -110,14 +120,36 @@ class CharacterModel(BaseModel):
     tipo: Optional[str] = "humano"
     descripcion_visual: str
     imagen_url: Optional[str] = None
+    hoja_referencia_path: Optional[str] = None
     prompt_retrato: Optional[str] = None
     sin_fondo: Optional[bool] = True
     formato_vista: Optional[str] = "giro_360"
+    cref_url: Optional[str] = None
+    cref_weight: Optional[int] = 100
+    cref_directive: Optional[str] = None
+    lora_model: Optional[str] = None
+    lora_weight: Optional[float] = 0.85
+    lora_trigger: Optional[str] = None
+    lora_directive: Optional[str] = None
+    ancla_visual: Optional[str] = None
+    seed_consistencia: Optional[int] = None
     estado_aprobacion: Optional[str] = "pendiente"
     motivo_rechazo: Optional[str] = ""
     telegram_message_id: Optional[Any] = None
     aprobado_en: Optional[str] = None
     propuesta_enviada_en: Optional[str] = None
+
+class UpdateCharacterConsistencyRequest(BaseModel):
+    cref_url: Optional[str] = None
+    cref_weight: Optional[int] = None
+    lora_model: Optional[str] = None
+    lora_weight: Optional[float] = None
+    lora_trigger: Optional[str] = None
+    ancla_visual: Optional[str] = None
+    seed_consistencia: Optional[int] = None
+
+class SyncCharacterBankRequest(BaseModel):
+    auto_generate_missing: Optional[bool] = False
 
 class EscenarioModel(BaseModel):
     id: Optional[str] = None
@@ -207,6 +239,7 @@ class StoryboardRequest(BaseModel):
     target_scenes: int = 4
 
 class RewriteSceneRequest(BaseModel):
+    project_id: Optional[str] = None
     scene: Dict[str, Any]
     feedback: str
     characters: Optional[List[Dict[str, Any]]] = None
@@ -227,11 +260,13 @@ class ImageRequest(BaseModel):
     reference_image: Optional[str] = None
 
 class InjectAnchorsRequest(BaseModel):
+    project_id: Optional[str] = None
     scene: Dict[str, Any]
     characters: Optional[List[Dict[str, Any]]] = None
     escenarios: Optional[List[Dict[str, Any]]] = None
     style_key: Optional[str] = "cinematic"
     style_details: Optional[str] = ""
+    include_technical_flags: Optional[bool] = False
 
 class RenderVideoRequest(BaseModel):
     title: str = "Mi Video Short"
@@ -515,6 +550,52 @@ async def api_delete_character(project_id: str, character_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+# Endpoints del Banco de Consistencia de Personajes (--cref / LoRA)
+@app.get("/api/character-bank")
+async def api_get_global_character_bank():
+    """Devuelve el catálogo consolidado del Banco de Consistencia de Personajes (--cref / LoRA) de todos los proyectos."""
+    try:
+        bank = get_character_reference_bank()
+        return {"success": True, **bank}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/projects/{project_id}/character-bank")
+async def api_get_project_character_bank(project_id: str):
+    """Devuelve el Banco de Consistencia de Personajes (--cref / LoRA) de un proyecto específico."""
+    try:
+        bank = get_character_reference_bank(project_id=project_id)
+        return {"success": True, **bank}
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/character-bank/sync")
+async def api_sync_project_character_bank(project_id: str, req: Optional[SyncCharacterBankRequest] = None):
+    """Cataloga las hojas de referencia en disco y genera opcionalmente las hojas faltantes."""
+    try:
+        auto_gen = bool(req.auto_generate_missing) if req else False
+        bank = sync_character_reference_bank(project_id=project_id, auto_generate_missing=auto_gen)
+        return {"success": True, **bank}
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.put("/api/projects/{project_id}/characters/{character_id}/consistency")
+async def api_update_character_consistency(project_id: str, character_id: str, req: UpdateCharacterConsistencyRequest):
+    """Actualiza los parámetros técnicos (--cref, --cw, LoRA, trigger, ancla_visual, seed) de un personaje."""
+    try:
+        res = update_character_consistency_config(project_id, character_id, req.model_dump(exclude_none=True))
+        return res
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 # Endpoints de Escenarios Recurrentes del Entorno
 @app.post("/api/projects/{project_id}/environments/generate")
 async def api_generate_environment(project_id: str, req: GenerateEnvironmentRequest):
@@ -723,7 +804,8 @@ async def api_generate_storyboard(req: StoryboardRequest):
             style_details=req.style_details or "",
             audiencia=req.audiencia or "",
             ambiente=req.ambiente or "",
-            target_scenes=req.target_scenes
+            target_scenes=req.target_scenes,
+            project_id=req.project_id
         )
         return {"success": True, "scenes": scenes}
     except Exception as e:
@@ -738,7 +820,8 @@ async def api_rewrite_scene(req: RewriteSceneRequest):
             characters=req.characters,
             character_desc=req.character_desc or "",
             style_key=req.style_key or "cinematic",
-            style_details=req.style_details or ""
+            style_details=req.style_details or "",
+            project_id=req.project_id
         )
         return {"success": True, "scene": updated}
     except Exception as e:
@@ -756,9 +839,12 @@ async def api_inject_anchors(req: InjectAnchorsRequest):
             project_characters=req.characters or [],
             escenario_clave=req.scene.get("escenario_clave"),
             project_escenarios=req.escenarios or [],
-            style_prompt=style_prompt
+            style_prompt=style_prompt,
+            project_id=req.project_id,
+            include_technical_flags=bool(req.include_technical_flags)
         )
         req.scene["prompt_imagen"] = enriched
+        attach_consistency_metadata_to_scene(req.scene, req.characters, project_id=req.project_id)
         return {"success": True, "scene": req.scene}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

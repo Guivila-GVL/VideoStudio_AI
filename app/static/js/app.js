@@ -1277,6 +1277,29 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
           <textarea class="char-input-prompt" rows="2" placeholder="Prompt en inglés optimizado para FLUX/SD (ej: Full body character turnaround sheet...)...">${char.prompt_retrato || ''}</textarea>
         </div>
+
+        <!-- Banco de Consistencia (--cref / LoRA) -->
+        <div class="char-consistency-bank-section mt-2" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 6px; padding: 6px 8px; font-size: 0.74rem;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+            <strong style="color: #a5b4fc;">🗂️ Banco Consistencia (--cref / LoRA)</strong>
+            <span class="text-muted" title="Semilla determinista de consistencia">🎲 Seed: <code>${char.seed_consistencia || 'auto'}</code></span>
+          </div>
+          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+            <label style="display: flex; align-items: center; gap: 4px;" title="Peso de fidelidad de referencia (--cw 0-100)">
+              <span>--cw:</span>
+              <input type="number" class="char-input-cref-weight form-input" min="0" max="100" value="${char.cref_weight !== undefined ? char.cref_weight : 100}" style="width: 56px; padding: 2px 4px; font-size: 0.72rem;">
+            </label>
+            <label style="display: flex; align-items: center; gap: 4px; flex: 1;" title="Identificador de modelo LoRA del personaje">
+              <span>LoRA:</span>
+              <input type="text" class="char-input-lora-model form-input" value="${char.lora_model || ''}" placeholder="modelo_lora" style="padding: 2px 6px; font-size: 0.72rem; flex: 1;">
+            </label>
+            <label style="display: flex; align-items: center; gap: 4px;" title="Trigger word del personaje">
+              <span>Trigger:</span>
+              <input type="text" class="char-input-lora-trigger form-input" value="${char.lora_trigger || ''}" placeholder="chr_id" style="width: 90px; padding: 2px 6px; font-size: 0.72rem;">
+            </label>
+          </div>
+          ${char.cref_directive ? `<div style="margin-top: 4px; color: #94a3b8; font-family: monospace; font-size: 0.68rem; word-break: break-all;"><code>${char.cref_directive}</code> | <code>${char.lora_directive || ''}</code></div>` : ''}
+        </div>
       </div>
     `;
 
@@ -1398,6 +1421,9 @@ document.addEventListener("DOMContentLoaded", () => {
       const imgUrl = img ? img.getAttribute("src") : null;
       const formatoVista = card.querySelector(".char-select-view")?.value || "giro_360";
       const sinFondo = card.querySelector(".char-check-nobg") ? card.querySelector(".char-check-nobg").checked : true;
+      const crefWeight = parseInt(card.querySelector(".char-input-cref-weight")?.value || "100", 10);
+      const loraModel = card.querySelector(".char-input-lora-model")?.value.trim() || "";
+      const loraTrigger = card.querySelector(".char-input-lora-trigger")?.value.trim() || "";
 
       characters.push({
         id: charId,
@@ -1409,6 +1435,9 @@ document.addEventListener("DOMContentLoaded", () => {
         prompt_retrato: prompt,
         sin_fondo: sinFondo,
         formato_vista: formatoVista,
+        cref_weight: isNaN(crefWeight) ? 100 : crefWeight,
+        lora_model: loraModel || null,
+        lora_trigger: loraTrigger || null,
         estado_aprobacion: card.dataset.estadoAprobacion || "pendiente",
         motivo_rechazo: card.dataset.motivoRechazo || "",
         telegram_message_id: card.dataset.telegramMessageId || null
@@ -2053,6 +2082,45 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  async function syncCharacterBank() {
+    if (!state.currentProject) {
+      showToast("Selecciona un proyecto primero", "warning");
+      return;
+    }
+    await saveUniverse(false);
+    const btn = document.getElementById("btn-sync-character-bank");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳ Catalogando...";
+    }
+    setSystemStatus("busy", "Sincronizando Banco de Consistencia (--cref / LoRA)...", "Catalogando hojas de referencia de personajes principales y directivas para el generador de prompts...");
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/character-bank/sync`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auto_generate_missing: false })
+      });
+      const data = await res.json();
+      if (data.success) {
+        await selectProject(state.currentProject.id);
+        showToast(`✅ Banco de Consistencia catalogado: ${data.referencias_listas}/${data.total_personajes} hojas de referencia listas (--cref / LoRA)`, "success");
+        setSystemStatus("success", "Banco de Consistencia sincronizado", `${data.referencias_listas} de ${data.total_personajes} personajes con hoja de referencia lista.`);
+      } else {
+        showToast(data.detail || "Error sincronizando banco", "error");
+        setSystemStatus("error", "Error en Banco de Consistencia", data.detail || "");
+      }
+    } catch (e) {
+      showToast(`Error: ${e.message}`, "error");
+      setSystemStatus("error", "Error de red", e.message);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "🗂️ Catalogar Banco (--cref / LoRA)";
+      }
+    }
+  }
+
+  document.getElementById("btn-sync-character-bank")?.addEventListener("click", syncCharacterBank);
   document.getElementById("btn-telegram-proposals-all")?.addEventListener("click", sendAllInitialProposalsToTelegram);
   document.getElementById("btn-telegram-poll")?.addEventListener("click", syncTelegramUpdates);
 
@@ -2959,6 +3027,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          project_id: state.currentProject.id,
           scene: sc,
           characters: state.currentProject.personajes,
           escenarios: state.currentProject.escenarios || [],

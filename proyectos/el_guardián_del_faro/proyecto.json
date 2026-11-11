@@ -15,8 +15,18 @@
       "rol": "Protagonista, vigía del faro",
       "tipo": "humano",
       "descripcion_visual": "Joven vigía de 25 años, cabello castaño revuelto por el viento, rostro decidido, viste un impermeable impermeable amarillo brillante y sostiene una linterna de bronce",
-      "imagen_url": null,
-      "prompt_retrato": "Full body character turnaround model sheet of Lucas, a 25 year old handsome lighthouse keeper, tousled brown hair, determined expression, wearing a classic bright yellow rain coat slicker jacket and holding a vintage brass lantern, cinematic 35mm film lighting, dramatic atmospheric look, isolated on plain solid pure white background, vertical 9:16, masterpiece"
+      "imagen_url": "/proyectos_data/el_guardián_del_faro/personajes/lucas.jpg?t=1794398793",
+      "prompt_retrato": "Full body character turnaround model sheet of Lucas, a 25 year old handsome lighthouse keeper, tousled brown hair, determined expression, wearing a classic bright yellow rain coat slicker jacket and holding a vintage brass lantern, cinematic 35mm film lighting, dramatic atmospheric look, isolated on plain solid pure white background, vertical 9:16, masterpiece",
+      "hoja_referencia_path": "proyectos/el_guardián_del_faro/personajes/lucas.jpg",
+      "cref_url": "/proyectos_data/el_guardián_del_faro/personajes/lucas.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/el_guardián_del_faro/personajes/lucas.jpg --cw 100",
+      "lora_model": "el_guardián_del_faro_lucas_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_lucas",
+      "lora_directive": "<lora:el_guardián_del_faro_lucas_v1:0.85> chr_lucas",
+      "ancla_visual": "Lucas (25-year-old handsome coastal lighthouse keeper, wind-tousled brown hair, determined gaze, wearing a bright yellow waterproof slicker raincoat and holding a vintage brass lantern)",
+      "seed_consistencia": 744067
     },
     {
       "id": "marina",
@@ -24,8 +34,18 @@
       "rol": "Mística guardiana del océano",
       "tipo": "humano",
       "descripcion_visual": "Joven mujer etérea de largos cabellos ondulados azul mar, mirada profunda color turquesa, vestida con túnica marina fluida con destellos fosforescentes",
-      "imagen_url": null,
-      "prompt_retrato": "Full body character turnaround model sheet of Marina, an ethereal ocean guardian maiden, long wavy sea-blue hair flowing with gentle breeze, deep turquoise eyes, wearing a glowing translucent sea-green dress with luminescent oceanic accents, cinematic lighting, isolated on plain solid pure white background, vertical 9:16, masterpiece"
+      "imagen_url": "/proyectos_data/el_guardián_del_faro/personajes/marina.jpg?t=1794398793",
+      "prompt_retrato": "Full body character turnaround model sheet of Marina, an ethereal ocean guardian maiden, long wavy sea-blue hair flowing with gentle breeze, deep turquoise eyes, wearing a glowing translucent sea-green dress with luminescent oceanic accents, cinematic lighting, isolated on plain solid pure white background, vertical 9:16, masterpiece",
+      "hoja_referencia_path": "proyectos/el_guardián_del_faro/personajes/marina.jpg",
+      "cref_url": "/proyectos_data/el_guardián_del_faro/personajes/marina.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/el_guardián_del_faro/personajes/marina.jpg --cw 100",
+      "lora_model": "el_guardián_del_faro_marina_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_marina",
+      "lora_directive": "<lora:el_guardián_del_faro_marina_v1:0.85> chr_marina",
+      "ancla_visual": "Marina (ethereal ocean guardian maiden, long wavy sea-blue hair, deep turquoise eyes, wearing a flowing translucent sea-green dress with luminescent oceanic accents)",
+      "seed_consistencia": 891046
     }
   ],
   "escenarios": [
@@ -47,5 +67,5 @@
     }
   ],
   "creado_en": "2026-10-18 12:00:00",
-  "actualizado_en": "2026-10-18 17:18:00"
+  "actualizado_en": "2026-11-11 13:08:53"
 }

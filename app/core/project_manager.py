@@ -10,7 +10,13 @@ from dotenv import load_dotenv
 
 from app.core.document_parser import parse_document
 from app.core.image_engine import generate_image, crop_and_resize_to_vertical, remove_image_background
-from app.core.script_generator import STYLE_PRESETS, clean_json_string
+from app.core.script_generator import (
+    STYLE_PRESETS,
+    clean_json_string,
+    extract_character_visual_anchor,
+    get_character_consistency_tokens,
+    compute_character_seed
+)
 
 load_dotenv()
 
@@ -153,7 +159,7 @@ def get_project(project_id: str) -> Dict[str, Any]:
     data.setdefault("personajes_recurrentes_texto", "")
     data.setdefault("escenarios", [])
 
-    # Verificar si existen imágenes físicas para cada personaje
+    # Verificar si existen imágenes físicas para cada personaje y enriquecer con Banco de Consistencia (--cref / LoRA)
     personajes_dir = folder / "personajes"
     for p in data["personajes"]:
         p_id = p.get("id") or slugify(p.get("nombre", "char"))
@@ -165,23 +171,42 @@ def get_project(project_id: str) -> Dict[str, Any]:
         p.setdefault("telegram_message_id", None)
         p.setdefault("aprobado_en", None)
         p.setdefault("propuesta_enviada_en", None)
+
+        resolved_img_url = None
+        resolved_file_path = None
+
         # Si ya tiene una imagen_url válida registrada y el archivo físico existe, respetarla
         if p.get("imagen_url"):
             clean_url = p["imagen_url"].split("?")[0]
             if clean_url.startswith(f"/proyectos_data/{folder.name}/personajes/"):
                 fname = clean_url.split("/")[-1]
                 target_f = personajes_dir / fname
-                if target_f.exists() and target_f.stat().st_size > 5000:
-                    p["imagen_url"] = f"/proyectos_data/{folder.name}/personajes/{fname}?t={int(target_f.stat().st_mtime)}"
-                    continue
-        img_png = personajes_dir / f"{p_id}.png"
-        img_jpg = personajes_dir / f"{p_id}.jpg"
-        if img_jpg.exists() and img_jpg.stat().st_size > 10000:
-            p["imagen_url"] = f"/proyectos_data/{folder.name}/personajes/{img_jpg.name}?t={int(img_jpg.stat().st_mtime)}"
-        elif img_png.exists() and img_png.stat().st_size > 10000:
-            p["imagen_url"] = f"/proyectos_data/{folder.name}/personajes/{img_png.name}?t={int(img_png.stat().st_mtime)}"
-        elif not p.get("imagen_url"):
-            p["imagen_url"] = None
+                if target_f.exists() and target_f.stat().st_size > 2000:
+                    resolved_img_url = f"/proyectos_data/{folder.name}/personajes/{fname}?t={int(target_f.stat().st_mtime)}"
+                    resolved_file_path = f"proyectos/{folder.name}/personajes/{fname}"
+
+        if not resolved_img_url:
+            img_png = personajes_dir / f"{p_id}.png"
+            img_jpg = personajes_dir / f"{p_id}.jpg"
+            if img_jpg.exists() and img_jpg.stat().st_size > 2000:
+                resolved_img_url = f"/proyectos_data/{folder.name}/personajes/{img_jpg.name}?t={int(img_jpg.stat().st_mtime)}"
+                resolved_file_path = f"proyectos/{folder.name}/personajes/{img_jpg.name}"
+            elif img_png.exists() and img_png.stat().st_size > 2000:
+                resolved_img_url = f"/proyectos_data/{folder.name}/personajes/{img_png.name}?t={int(img_png.stat().st_mtime)}"
+                resolved_file_path = f"proyectos/{folder.name}/personajes/{img_png.name}"
+
+        p["imagen_url"] = resolved_img_url or p.get("imagen_url")
+        p["hoja_referencia_path"] = resolved_file_path or p.get("hoja_referencia_path")
+        tokens = get_character_consistency_tokens(p, project_id=folder.name)
+        p["cref_url"] = tokens["cref_url"]
+        p["cref_weight"] = tokens["cref_weight"]
+        p["cref_directive"] = tokens["cref_directive"]
+        p["lora_model"] = tokens["lora_model"]
+        p["lora_weight"] = tokens["lora_weight"]
+        p["lora_trigger"] = tokens["lora_trigger"]
+        p["lora_directive"] = tokens["lora_directive"]
+        p["ancla_visual"] = tokens["ancla_visual"]
+        p["seed_consistencia"] = tokens["seed_consistencia"]
 
     # Verificar si existen imágenes físicas para escenarios en la carpeta escenarios/
     escenarios_dir = folder / "escenarios"
@@ -298,26 +323,57 @@ def save_or_update_project(project_data: Dict[str, Any]) -> Dict[str, Any]:
         except Exception:
             existing = {}
 
-    # Normalizar personajes asegurando que tengan un ID seguro, tipo y prompt limpio
+    # Normalizar personajes asegurando que tengan un ID seguro, tipo y metadatos del Banco de Consistencia (--cref / LoRA)
     clean_characters = []
+    personajes_dir = folder / "personajes"
     for idx, c in enumerate(project_data.get("personajes", existing.get("personajes", []))):
         c_id = c.get("id") or slugify(c.get("nombre") or f"char_{idx+1}")
-        clean_characters.append({
+        img_url = c.get("imagen_url")
+        ref_path = c.get("hoja_referencia_path")
+        if not img_url:
+            if (personajes_dir / f"{c_id}.jpg").exists():
+                img_url = f"/proyectos_data/{folder.name}/personajes/{c_id}.jpg?t={int((personajes_dir / f'{c_id}.jpg').stat().st_mtime)}"
+                ref_path = f"proyectos/{folder.name}/personajes/{c_id}.jpg"
+            elif (personajes_dir / f"{c_id}.png").exists():
+                img_url = f"/proyectos_data/{folder.name}/personajes/{c_id}.png?t={int((personajes_dir / f'{c_id}.png').stat().st_mtime)}"
+                ref_path = f"proyectos/{folder.name}/personajes/{c_id}.png"
+
+        char_entry = {
             "id": c_id,
             "nombre": c.get("nombre", f"Personaje {idx+1}").strip(),
             "rol": c.get("rol", "").strip(),
             "tipo": c.get("tipo", "humano").strip().lower(),
             "descripcion_visual": c.get("descripcion_visual", "").strip(),
-            "imagen_url": c.get("imagen_url"),
+            "imagen_url": img_url,
+            "hoja_referencia_path": ref_path,
             "prompt_retrato": c.get("prompt_retrato", "").strip(),
             "sin_fondo": c.get("sin_fondo", True) if c.get("sin_fondo") is not None else True,
             "formato_vista": c.get("formato_vista", "giro_360"),
-            "estado_aprobacion": c.get("estado_aprobacion", "pendiente" if c.get("imagen_url") else "pendiente"),
+            "cref_url": c.get("cref_url"),
+            "cref_weight": int(c.get("cref_weight") if c.get("cref_weight") is not None else 100),
+            "lora_model": c.get("lora_model"),
+            "lora_weight": float(c.get("lora_weight") if c.get("lora_weight") is not None else 0.85),
+            "lora_trigger": c.get("lora_trigger"),
+            "ancla_visual": c.get("ancla_visual"),
+            "seed_consistencia": c.get("seed_consistencia"),
+            "estado_aprobacion": c.get("estado_aprobacion", "aprobado" if img_url else "pendiente"),
             "motivo_rechazo": c.get("motivo_rechazo", ""),
             "telegram_message_id": c.get("telegram_message_id"),
             "aprobado_en": c.get("aprobado_en"),
             "propuesta_enviada_en": c.get("propuesta_enviada_en")
-        })
+        }
+        tokens = get_character_consistency_tokens(char_entry, project_id=folder.name)
+        char_entry["hoja_referencia_path"] = tokens["hoja_referencia_path"]
+        char_entry["cref_url"] = tokens["cref_url"]
+        char_entry["cref_weight"] = tokens["cref_weight"]
+        char_entry["cref_directive"] = tokens["cref_directive"]
+        char_entry["lora_model"] = tokens["lora_model"]
+        char_entry["lora_weight"] = tokens["lora_weight"]
+        char_entry["lora_trigger"] = tokens["lora_trigger"]
+        char_entry["lora_directive"] = tokens["lora_directive"]
+        char_entry["ancla_visual"] = tokens["ancla_visual"]
+        char_entry["seed_consistencia"] = tokens["seed_consistencia"]
+        clean_characters.append(char_entry)
 
     # Normalizar escenarios recurrentes
     clean_environments = []
@@ -1086,13 +1142,29 @@ def generate_character_portrait(
 
     relative_url = f"/proyectos_data/{folder.name}/personajes/{dest_filename}?t={int(time.time())}"
     char_match["imagen_url"] = relative_url
+    char_match["hoja_referencia_path"] = f"proyectos/{folder.name}/personajes/{dest_filename}"
     char_match["prompt_retrato"] = final_prompt
     char_match["estado_aprobacion"] = "pendiente"
     char_match["motivo_rechazo"] = ""
+    tokens = get_character_consistency_tokens(char_match, project_id=folder.name)
+    char_match["cref_url"] = tokens["cref_url"]
+    char_match["cref_weight"] = tokens["cref_weight"]
+    char_match["cref_directive"] = tokens["cref_directive"]
+    char_match["lora_model"] = tokens["lora_model"]
+    char_match["lora_weight"] = tokens["lora_weight"]
+    char_match["lora_trigger"] = tokens["lora_trigger"]
+    char_match["lora_directive"] = tokens["lora_directive"]
+    char_match["ancla_visual"] = tokens["ancla_visual"]
+    char_match["seed_consistencia"] = tokens["seed_consistencia"]
 
     # Actualizar metadata del proyecto
     with open(meta_file, "w", encoding="utf-8") as f:
         json.dump(project_data, f, ensure_ascii=False, indent=2)
+
+    try:
+        sync_character_reference_bank(folder.name, auto_generate_missing=False)
+    except Exception:
+        pass
 
     return {
         "success": True,
@@ -1773,4 +1845,215 @@ def get_env_settings() -> Dict[str, Any]:
             "fallback": "OpenAI o analizador estructural regex local."
         }
     }
+
+
+def sync_character_reference_bank(
+    project_id: str,
+    auto_generate_missing: bool = False
+) -> Dict[str, Any]:
+    """
+    Sincroniza y cataloga el Banco de Consistencia de Personajes (--cref / LoRA) de un proyecto:
+    - Verifica cada hoja de referencia física en `proyectos/{project_id}/personajes/`
+    - Genera hojas de referencia faltantes si `auto_generate_missing=True`
+    - Calcula y persiste los descriptores `--cref`, `--cw`, `<lora:...:weight>`, `lora_trigger`,
+      `ancla_visual` y `seed_consistencia` en `proyecto.json` y en `personajes/catalogo_consistencia.json`
+    """
+    folder = get_project_folder(project_id)
+    meta_file = folder / "proyecto.json"
+    if not meta_file.exists():
+        raise FileNotFoundError(f"Proyecto '{project_id}' no encontrado.")
+
+    with open(meta_file, "r", encoding="utf-8") as f:
+        project_data = json.load(f)
+
+    personajes_dir = folder / "personajes"
+    personajes_dir.mkdir(parents=True, exist_ok=True)
+
+    catalog_entries = []
+    generated_now = []
+
+    for idx, char in enumerate(project_data.get("personajes", [])):
+        c_id = char.get("id") or slugify(char.get("nombre") or f"char_{idx+1}")
+        char["id"] = c_id
+
+        img_jpg = personajes_dir / f"{c_id}.jpg"
+        img_png = personajes_dir / f"{c_id}.png"
+        target_file = img_jpg if (img_jpg.exists() and img_jpg.stat().st_size > 2000) else (
+            img_png if (img_png.exists() and img_png.stat().st_size > 2000) else None
+        )
+
+        if not target_file and auto_generate_missing:
+            try:
+                gen_res = generate_character_portrait(
+                    project_id=folder.name,
+                    character_id=c_id,
+                    sin_fondo=bool(char.get("sin_fondo", True)),
+                    formato_vista=char.get("formato_vista", "giro_360")
+                )
+                generated_now.append(c_id)
+                img_jpg = personajes_dir / f"{c_id}.jpg"
+                img_png = personajes_dir / f"{c_id}.png"
+                target_file = img_jpg if img_jpg.exists() else (img_png if img_png.exists() else None)
+            except Exception as e:
+                print(f"[CHARACTER_BANK] Error generando hoja de referencia para {c_id}: {e}")
+
+        if target_file and target_file.exists():
+            mtime = int(target_file.stat().st_mtime)
+            size_bytes = target_file.stat().st_size
+            char["imagen_url"] = f"/proyectos_data/{folder.name}/personajes/{target_file.name}?t={mtime}"
+            char["hoja_referencia_path"] = f"proyectos/{folder.name}/personajes/{target_file.name}"
+        else:
+            size_bytes = 0
+
+        tokens = get_character_consistency_tokens(char, project_id=folder.name)
+        char["hoja_referencia_path"] = tokens["hoja_referencia_path"]
+        char["cref_url"] = tokens["cref_url"]
+        char["cref_weight"] = tokens["cref_weight"]
+        char["cref_directive"] = tokens["cref_directive"]
+        char["lora_model"] = tokens["lora_model"]
+        char["lora_weight"] = tokens["lora_weight"]
+        char["lora_trigger"] = tokens["lora_trigger"]
+        char["lora_directive"] = tokens["lora_directive"]
+        char["ancla_visual"] = tokens["ancla_visual"]
+        char["seed_consistencia"] = tokens["seed_consistencia"]
+
+        entry = {
+            "project_id": folder.name,
+            "project_title": project_data.get("titulo", folder.name),
+            "id": c_id,
+            "nombre": char.get("nombre", c_id),
+            "rol": char.get("rol", ""),
+            "tipo": char.get("tipo", "humano"),
+            "descripcion_visual": char.get("descripcion_visual", ""),
+            "prompt_retrato": char.get("prompt_retrato", ""),
+            "formato_vista": char.get("formato_vista", "giro_360"),
+            "sin_fondo": char.get("sin_fondo", True),
+            "imagen_url": char.get("imagen_url"),
+            "clean_image_url": tokens["clean_image_url"],
+            "hoja_referencia_path": tokens["hoja_referencia_path"],
+            "reference_exists": bool(target_file and target_file.exists()),
+            "file_size_bytes": size_bytes,
+            "file_size_formatted": format_file_size(size_bytes) if size_bytes else "0 B",
+            "cref_url": tokens["cref_url"],
+            "cref_weight": tokens["cref_weight"],
+            "cref_directive": tokens["cref_directive"],
+            "lora_model": tokens["lora_model"],
+            "lora_weight": tokens["lora_weight"],
+            "lora_trigger": tokens["lora_trigger"],
+            "lora_directive": tokens["lora_directive"],
+            "ancla_visual": tokens["ancla_visual"],
+            "seed_consistencia": tokens["seed_consistencia"],
+            "estado_aprobacion": char.get("estado_aprobacion", "aprobado" if target_file else "pendiente")
+        }
+        catalog_entries.append(entry)
+
+    # Guardar proyecto actualizado
+    project_data["actualizado_en"] = time.strftime("%Y-%m-%d %H:%M:%S")
+    with open(meta_file, "w", encoding="utf-8") as f:
+        json.dump(project_data, f, ensure_ascii=False, indent=2)
+
+    # Guardar catálogo del proyecto en personajes/catalogo_consistencia.json
+    catalog_payload = {
+        "project_id": folder.name,
+        "titulo": project_data.get("titulo", folder.name),
+        "estilo_visual": project_data.get("estilo_visual", "cinematic"),
+        "total_personajes": len(catalog_entries),
+        "referencias_listas": sum(1 for e in catalog_entries if e["reference_exists"]),
+        "generados_en_sincronizacion": generated_now,
+        "actualizado_en": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "personajes": catalog_entries
+    }
+    catalog_file = personajes_dir / "catalogo_consistencia.json"
+    with open(catalog_file, "w", encoding="utf-8") as f:
+        json.dump(catalog_payload, f, ensure_ascii=False, indent=2)
+
+    return catalog_payload
+
+
+def get_character_reference_bank(project_id: Optional[str] = None) -> Dict[str, Any]:
+    """
+    Devuelve el catálogo del Banco de Consistencia de Personajes (--cref / LoRA)
+    para un proyecto específico o consolidado para todos los proyectos del estudio.
+    """
+    if project_id:
+        return sync_character_reference_bank(project_id, auto_generate_missing=False)
+
+    all_projects_catalogs = []
+    all_characters = []
+    for item in sorted(PROYECTOS_DIR.iterdir(), key=os.path.getmtime, reverse=True):
+        if item.is_dir() and (item / "proyecto.json").exists():
+            try:
+                cat = sync_character_reference_bank(item.name, auto_generate_missing=False)
+                all_projects_catalogs.append({
+                    "project_id": cat["project_id"],
+                    "titulo": cat["titulo"],
+                    "estilo_visual": cat["estilo_visual"],
+                    "total_personajes": cat["total_personajes"],
+                    "referencias_listas": cat["referencias_listas"]
+                })
+                all_characters.extend(cat.get("personajes", []))
+            except Exception as e:
+                print(f"[CHARACTER_BANK] Error leyendo banco de {item.name}: {e}")
+
+    global_payload = {
+        "total_proyectos": len(all_projects_catalogs),
+        "total_personajes": len(all_characters),
+        "referencias_listas": sum(1 for c in all_characters if c.get("reference_exists")),
+        "actualizado_en": time.strftime("%Y-%m-%d %H:%M:%S"),
+        "proyectos": all_projects_catalogs,
+        "personajes": all_characters
+    }
+    global_bank_file = PROYECTOS_DIR / "banco_consistencia_global.json"
+    try:
+        with open(global_bank_file, "w", encoding="utf-8") as f:
+            json.dump(global_payload, f, ensure_ascii=False, indent=2)
+    except Exception:
+        pass
+    return global_payload
+
+
+def update_character_consistency_config(
+    project_id: str,
+    character_id: str,
+    config: Dict[str, Any]
+) -> Dict[str, Any]:
+    """
+    Actualiza los parámetros técnicos de consistencia (--cref, --cw, LoRA, trigger, ancla_visual, seed)
+    de un personaje y sincroniza el catálogo del proyecto.
+    """
+    folder = get_project_folder(project_id)
+    meta_file = folder / "proyecto.json"
+    if not meta_file.exists():
+        raise FileNotFoundError(f"Proyecto '{project_id}' no encontrado.")
+
+    with open(meta_file, "r", encoding="utf-8") as f:
+        project_data = json.load(f)
+
+    char_match = None
+    for c in project_data.get("personajes", []):
+        if c.get("id") == character_id or slugify(c.get("nombre", "")) == character_id:
+            char_match = c
+            break
+
+    if not char_match:
+        raise ValueError(f"Personaje '{character_id}' no encontrado en el proyecto '{project_id}'.")
+
+    for field in ("cref_url", "cref_weight", "lora_model", "lora_weight", "lora_trigger", "ancla_visual", "seed_consistencia"):
+        if field in config and config[field] is not None:
+            char_match[field] = config[field]
+
+    with open(meta_file, "w", encoding="utf-8") as f:
+        json.dump(project_data, f, ensure_ascii=False, indent=2)
+
+    bank = sync_character_reference_bank(folder.name, auto_generate_missing=False)
+    updated_entry = next((p for p in bank.get("personajes", []) if p.get("id") == char_match.get("id")), char_match)
+    return {
+        "success": True,
+        "character": updated_entry,
+        "bank_summary": {
+            "total_personajes": bank["total_personajes"],
+            "referencias_listas": bank["referencias_listas"]
+        }
+    }
+
 

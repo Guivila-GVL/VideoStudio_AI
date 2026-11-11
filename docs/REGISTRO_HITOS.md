@@ -1,5 +1,20 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [11/11/2026 13:08:54] ✅ Banco de Consistencia de Personajes (--cref / LoRA)
+
+- **ID Tarea:** `24`
+- **Prioridad:** MEDIA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Implementado y verificado el Banco de Consistencia de Personajes (--cref / LoRA): 1) Creadas y catalogadas las 13 hojas de referencia (1080x1920, 4 vistas en cuadricula 2x2) en los 3 proyectos (platero_y_yo, el_principito, el_guardian_del_faro), persistidas en catalogo_consistencia.json y banco_consistencia_global.json. 2) Integrado acceso directo en el generador de prompts (script_generator.py e image_engine.py) con inyeccion automatica de anclas visuales inmutables, directivas --cref / --cw, etiquetas <lora:model:weight>, trigger words y semillas deterministas. 3) Expuestos endpoints REST (/api/character-bank, /api/projects/{id}/character-bank, /sync, /consistency) y controles UI. 4) Validadas todas las pruebas end-to-end (test_api.py y test_telegram_approvals.py) al 100%.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen y 02. Listado de Actividades)
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [11/11/2026 12:53:40] ✅ Aprobación también de los personajes. Creo que una de las cosas que...
 
 - **ID Tarea:** `64`

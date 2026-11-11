@@ -155,6 +155,45 @@ def test_api():
     assert video_abs_path.stat().st_size > 500000, "El archivo de video debe tener un tamaño válido (>500KB)"
     print(f"[OK] Video validado: {cap1['video_url']} ({video_abs_path.stat().st_size / (1024*1024):.2f} MB, duracion {cap1.get('duracion')}s)")
 
+    print("\n=== TEST API: 11. Comprobando Banco de Consistencia de Personajes (--cref / LoRA) y acceso desde Generador de Prompts ===")
+    bank_res = client.get("/api/character-bank")
+    assert bank_res.status_code == 200, f"Error en GET /api/character-bank: {bank_res.status_code}"
+    bank_data = bank_res.json()
+    assert bank_data["success"] is True
+    assert bank_data["total_personajes"] >= 13
+    assert bank_data["referencias_listas"] == bank_data["total_personajes"], "Todas las hojas de referencia deben existir en disco"
+    print(f"[OK] Banco Global de Consistencia: {bank_data['referencias_listas']}/{bank_data['total_personajes']} personajes con hoja de referencia verificada en disco")
+
+    # Verificar banco por proyecto y actualización de parámetros --cref / LoRA
+    p_bank_res = client.get("/api/projects/platero_y_yo/character-bank")
+    assert p_bank_res.status_code == 200
+    p_bank = p_bank_res.json()
+    assert p_bank["referencias_listas"] == 8
+    platero_ref = next(c for c in p_bank["personajes"] if c["id"] == "platero")
+    assert "--cref /proyectos_data/platero_y_yo/personajes/platero.jpg" in platero_ref["cref_directive"]
+    assert "<lora:" in platero_ref["lora_directive"]
+
+    # Verificar que el generador de prompts accede automáticamente a las hojas de referencia guardadas en disco (incluso sin pasarle 'characters' en el request)
+    inj_bank_res = client.post("/api/storyboard/inject-anchors", json={
+        "project_id": "platero_y_yo",
+        "scene": {
+            "id": 1,
+            "narrador": "Platero y Diana pasean juntos al amanecer.",
+            "prompt_imagen": "Walking together in the morning light",
+            "personajes_en_escena": ["Platero", "Diana"],
+            "escenario_clave": "Las Colinas y el Molino de Viento"
+        },
+        "style_key": "watercolor",
+        "include_technical_flags": True
+    })
+    assert inj_bank_res.status_code == 200
+    inj_scene = inj_bank_res.json()["scene"]
+    assert len(inj_scene.get("referencias_personajes", [])) == 2
+    assert inj_scene["reference_image"] is not None
+    assert "--cref /proyectos_data/platero_y_yo/personajes/platero.jpg" in inj_scene["prompt_tecnico_cref"]
+    assert "<lora:" in inj_scene["prompt_tecnico_cref"]
+    print(f"[OK] Generador de prompts accedio al Banco de Consistencia e inyecto referencias: {inj_scene['prompt_tecnico_cref'][:140]}...")
+
     print("\n[EXITO] Todos los tests de la API, Consistencia Visual y Pipeline de Produccion pasaron al 100%!")
 
 if __name__ == "__main__":

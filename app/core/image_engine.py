@@ -69,7 +69,10 @@ def crop_and_resize_to_vertical(input_path: Path, output_path: Path, fit_mode: s
 
 def sanitize_image_prompt(prompt: str, max_chars: int = 2000) -> str:
     """Limpia y normaliza un prompt para evitar errores en motores de difusión sin recortar detalles."""
-    cleaned = " ".join(prompt.strip().split())
+    # Remover directivas técnicas (--cref / --cw / <lora:...>) del texto plano enviado a APIs estándar
+    cleaned_raw = re.sub(r"--cref\s+\S+(?:\s+--cw\s+\d+)?", "", prompt or "", flags=re.IGNORECASE)
+    cleaned_raw = re.sub(r"<lora:[^>]+>", "", cleaned_raw, flags=re.IGNORECASE)
+    cleaned = " ".join(cleaned_raw.strip().split())
     # Eliminar posibles citas o caracteres problemáticos
     cleaned = cleaned.replace('"', '').replace("'", "")
     if len(cleaned) > max_chars:
@@ -79,6 +82,33 @@ def sanitize_image_prompt(prompt: str, max_chars: int = 2000) -> str:
         else:
             cleaned = cut.rsplit(" ", 1)[0].strip()
     return cleaned
+
+def resolve_reference_image_info(reference_image: Optional[str]) -> Dict[str, Any]:
+    """Resuelve una referencia visual (--cref / imagen_url) tanto si es URL remota como ruta local del proyecto."""
+    if not reference_image:
+        return {"reference_url": None, "local_path": None, "exists": False}
+    clean_ref = reference_image.split("?")[0].strip()
+    base_dir = Path(__file__).resolve().parent.parent.parent
+    if clean_ref.startswith("/proyectos_data/"):
+        rel = clean_ref[len("/proyectos_data/"):]
+        local_candidate = base_dir / "proyectos" / rel
+        return {
+            "reference_url": clean_ref,
+            "local_path": str(local_candidate) if local_candidate.exists() else None,
+            "exists": local_candidate.exists()
+        }
+    elif clean_ref.startswith("proyectos/"):
+        local_candidate = base_dir / clean_ref
+        return {
+            "reference_url": f"/proyectos_data/{clean_ref[len('proyectos/'):]}",
+            "local_path": str(local_candidate) if local_candidate.exists() else None,
+            "exists": local_candidate.exists()
+        }
+    return {
+        "reference_url": clean_ref,
+        "local_path": None,
+        "exists": clean_ref.startswith("http")
+    }
 
 _REMBG_SESSION = None
 
@@ -134,6 +164,7 @@ def generate_image(
     web_url = f"/static/media/{filename}"
 
     clean_prompt = sanitize_image_prompt(prompt, max_chars=2000)
+    ref_info = resolve_reference_image_info(reference_image)
     openai_key = os.getenv("OPENAI_API_KEY")
     pollinations_key = os.getenv("POLLINATIONS_API_KEY")
 
@@ -158,7 +189,7 @@ def generate_image(
                     crop_and_resize_to_vertical(temp_download_path, final_path, fit_mode=fit_mode)
                     if temp_download_path.exists():
                         temp_download_path.unlink()
-                    return {"url": web_url, "provider": f"openai_{o_model}", "file_path": str(final_path)}
+                    return {"url": web_url, "provider": f"openai_{o_model}", "file_path": str(final_path), "reference_used": ref_info}
                 elif getattr(img_data, "url", None):
                     resp = requests.get(img_data.url, timeout=40)
                     if resp.status_code == 200:
@@ -167,7 +198,7 @@ def generate_image(
                         crop_and_resize_to_vertical(temp_download_path, final_path, fit_mode=fit_mode)
                         if temp_download_path.exists():
                             temp_download_path.unlink()
-                        return {"url": web_url, "provider": f"openai_{o_model}", "file_path": str(final_path)}
+                        return {"url": web_url, "provider": f"openai_{o_model}", "file_path": str(final_path), "reference_used": ref_info}
             except Exception as e:
                 print(f"[IMAGE] OpenAI {o_model} no disponible: {e}. Probando siguiente opción...")
 
@@ -222,7 +253,7 @@ def generate_image(
                 crop_and_resize_to_vertical(temp_download_path, final_path, fit_mode=fit_mode)
                 if temp_download_path.exists():
                     temp_download_path.unlink()
-                return {"url": web_url, "provider": model_name, "file_path": str(final_path)}
+                return {"url": web_url, "provider": model_name, "file_path": str(final_path), "reference_used": ref_info}
             else:
                 errors.append(f"{model_name}: HTTP {resp.status_code}")
         except Exception as e:
@@ -245,12 +276,13 @@ def generate_image(
             "url": web_url,
             "provider": "fallback_placeholder",
             "file_path": str(final_path),
+            "reference_used": ref_info,
             "warning": f"Servicio de imagen temporalmente no disponible ({'; '.join(errors)}). Configura una API key en Ajustes."
         }
     except Exception:
         blank = Image.new("RGB", (TARGET_WIDTH, TARGET_HEIGHT), color=(25, 30, 45))
         blank.save(final_path, "JPEG")
-        return {"url": web_url, "provider": "placeholder", "file_path": str(final_path)}
+        return {"url": web_url, "provider": "placeholder", "file_path": str(final_path), "reference_used": ref_info}
 
 def save_uploaded_image(file_bytes: bytes) -> Dict[str, Any]:
     """Guarda una imagen subida manualmente por el usuario y la adapta a 9:16."""

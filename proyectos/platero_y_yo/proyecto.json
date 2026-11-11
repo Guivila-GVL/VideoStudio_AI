@@ -25,10 +25,20 @@
       "rol": "Protagonista",
       "tipo": "animal",
       "descripcion_visual": "Platero es pequeño, peludo, suave; tan blando por fuera que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro. Anda con trotecillo alegre haciendo tintinear sus alforjas, acariciando con su belfo tibio las florecillas del camino. Es tierno y mimoso como un niño, pero recio y resistente por dentro como de piedra.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1793118642686",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1792667712",
       "prompt_retrato": "Character turnaround model sheet of Platero is a small, fluffy, and soft creature, resembling a cotton ball with no bones, while his jet-black, glassy eyes shine like two beetles. He has a cheerful trot that jingles his saddlebags, and his warm muzzle gently brushes against the flowers along his path, embodying both tenderness and inner strength., standing naturally on all four legs, authentic quadruped animal anatomy, no humans, no bipedal figures, no clothing, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/platero.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
+      "lora_model": "platero_y_yo_platero_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_platero",
+      "lora_directive": "<lora:platero_y_yo_platero_v1:0.85> chr_platero",
+      "ancla_visual": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, no humans)",
+      "seed_consistencia": 363728
     },
     {
       "id": "el_poeta",
@@ -36,10 +46,20 @@
       "rol": "Compañero y Narrador Lírico",
       "tipo": "humano",
       "descripcion_visual": "Joven escritor de 13 años de edad y paseante solitario de Moguer, de mirada serena, profunda y melancólica. Viste camisa de lino crudo con cuello abierto, chaleco oscuro de paño fino y sombrero de ala ancha que le sombrea los ojos. Camina con paso tranquilo, observando con asombro reverente los detalles del campo andaluz.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1793118642686",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1792934963",
       "prompt_retrato": "Character turnaround model sheet of A 13-year-old solitary writer with a serene, deep, and melancholic gaze, he wears a light linen shirt with an open collar, a dark fine wool vest, and a wide-brimmed hat that shades his eyes. His tranquil demeanor reflects a sense of wonder as he observes the intricate details of his surroundings., authentic human child/adolescent anatomy, single individual, full body standing head to toe, entire body completely visible from shoes/feet to head, no cropped feet, no cropped head, complete standing posture, no other characters, no animals, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, complete figures standing head to toe with boots resting on the floor in all four views, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, blank white void, no paper texture, no parchment texture, no yellow tint, no shadows, no background elements, zero scenery, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/el_poeta.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/el_poeta.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/el_poeta.jpg --cw 100",
+      "lora_model": "platero_y_yo_el_poeta_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_el_poeta",
+      "lora_directive": "<lora:platero_y_yo_el_poeta_v1:0.85> chr_el_poeta",
+      "ancla_visual": "El Poeta (Narrador) (young contemplative 13-year-old Spanish writer from Moguer, sensitive noble face, dark wavy hair, wearing a rustic raw linen shirt, dark wool waistcoat, and wide-brim Andalusian hat)",
+      "seed_consistencia": 155523
     },
     {
       "id": "diana",
@@ -47,10 +67,20 @@
       "rol": "Perrita Blanca Alegre",
       "tipo": "animal",
       "descripcion_visual": "La bella perra blanca que se parece a la luna creciente, ágil, estilizada y graciosa. De pelaje níveo inmaculado y orejas despiertas y móviles, corretea alocada entre las patas de Platero simulando mordisquearle con infinita ternura. Sus ojos castaños brillan con lealtad y viveza contagiosa ante cualquier paseo matinal.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/diana.jpg?t=1793118642687",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/diana.jpg?t=1792874195",
       "prompt_retrato": "Character turnaround model sheet of Diana is a graceful, agile white dog with a sleek, immaculate coat resembling the crescent moon, her lively, mobile ears perked up in excitement. Her bright brown eyes sparkle with loyalty and infectious energy, embodying a playful spirit as she bounds around with boundless affection., standing naturally on all four legs, authentic quadruped animal anatomy, no humans, no bipedal figures, no clothing, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/diana.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/diana.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/diana.jpg --cw 100",
+      "lora_model": "platero_y_yo_diana_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_diana",
+      "lora_directive": "<lora:platero_y_yo_diana_v1:0.85> chr_diana",
+      "ancla_visual": "Diana (agile slender graceful pure white Andalusian dog resembling a crescent moon, pure white silky coat, lively alert ears, amber eyes, quadruped on all four legs)",
+      "seed_consistencia": 199456
     },
     {
       "id": "darbon",
@@ -58,10 +88,20 @@
       "rol": "Médico Veterinario",
       "tipo": "humano",
       "descripcion_visual": "Darbón, el médico de Platero, es grande como el buey pío y rojo como una sandía madura. Pesa siete arrobas y cuando habla con su vozarrón cascado parece que se le van a caer las muelas. Viste jubón de pana parda, delantal manchado de ungüentos y botas de cuero de montar; bajo su corpulencia desmedida guarda un corazón tan tierno como una hogaza de pan recién horneada.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1793118642687",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1791658458",
       "prompt_retrato": "Character turnaround model sheet of Darbón is a large, robust man with a deep, raspy voice that suggests his weighty presence; his skin is a ripe watermelon red. He wears a brown corduroy jacket, a stained apron filled with ointments, and sturdy leather riding boots, embodying both strength and a gentle heart beneath his imposing exterior., authentic adult human anatomy, single individual, standing head to toe, no other characters, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/darbon.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/darbon.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/darbon.jpg --cw 100",
+      "lora_model": "platero_y_yo_darbon_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_darbon",
+      "lora_directive": "<lora:platero_y_yo_darbon_v1:0.85> chr_darbon",
+      "ancla_visual": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots)",
+      "seed_consistencia": 154023
     },
     {
       "id": "lord",
@@ -69,10 +109,20 @@
       "rol": "Viejo Galgo Noble",
       "tipo": "animal",
       "descripcion_visual": "Viejo galgo inglés de porte aristocrático y mirada triste y sabia. De costillas marcadas bajo un pelaje atigrado y canoso alrededor del hocico, camina con lentitud solemne rememorando antiguas jornadas de caza. Acepta con dignidad paciente las caricias de Platero y busca los rincones más soleados del corral para sestear.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/lord.jpg?t=1793118642687",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/lord.jpg?t=1792874327",
       "prompt_retrato": "Character turnaround model sheet of An elderly English greyhound with an aristocratic bearing, he has a wise, melancholic gaze and prominent ribs beneath his brindled, graying fur, especially around his muzzle. He walks slowly and solemnly, exuding dignity as he seeks out sunny corners to rest., standing naturally on all four legs, authentic quadruped animal anatomy, no humans, no bipedal figures, no clothing, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/lord.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/lord.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/lord.jpg --cw 100",
+      "lora_model": "platero_y_yo_lord_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_lord",
+      "lora_directive": "<lora:platero_y_yo_lord_v1:0.85> chr_lord",
+      "ancla_visual": "Lord (old noble English greyhound dog, melancholic wise eyes, lean ribs visible beneath an aged brindle grey coat, grey fur around muzzle, quadruped canine on all four legs)",
+      "seed_consistencia": 844406
     },
     {
       "id": "canario_verde",
@@ -80,10 +130,20 @@
       "rol": "Pájaro Cantor Libre",
       "tipo": "animal",
       "descripcion_visual": "Pajarillo menudo y vivaz de plumaje verde esmeralda con reflejos amarillos como limón fresco. Posee una mirada diminuta y vivaz como una semilla brillante y un pico fino siempre listo para desplegar un trino cristalino. Su presencia evoca la pureza del aire libre y el canto inocente ante los amaneceres primaverales.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1793118642687",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1792921205",
       "prompt_retrato": "Character turnaround model sheet of El Canario Verde is a small, lively bird with emerald green plumage accented by fresh lemon-yellow highlights. Its bright, seed-like eyes and slender beak are perfectly suited for producing crystal-clear trills, embodying the purity of the outdoors., winged avian bird anatomy with fine beak, plumage and claws, no humans, no quadrupeds, four distinct views arranged in a balanced 2x2 grid layout: top-left front view perched facing forward, top-right left side profile view perched, bottom-left three-quarters angle view perched, bottom-right rear back view showing folded wings and tail feathers, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/canario_verde.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/canario_verde.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/canario_verde.jpg --cw 100",
+      "lora_model": "platero_y_yo_canario_verde_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_canario_verde",
+      "lora_directive": "<lora:platero_y_yo_canario_verde_v1:0.85> chr_canario_verde",
+      "ancla_visual": "El Canario Verde (tiny singing canary bird, radiant emerald green plumage with fresh lemon-yellow highlights, small shiny seed-like eyes, delicate beak, winged avian bird anatomy)",
+      "seed_consistencia": 470347
     },
     {
       "id": "la_nina_chica",
@@ -91,10 +151,20 @@
       "rol": "Amiga Angelical del Pueblo",
       "tipo": "humano",
       "descripcion_visual": "Niña menuda y angelical de Moguer, de mejillas sonrosadas, cabello rubio trenzado con cintas y ojos claros llenos de asombro infantil. Viste un sencillo vestidito de percal con delantal blanco de volantes y zapatitos gastados. Adora a Platero con devoción cándida, coronándole las orejas con guirnaldas de margaritas y dándole uvas frescas en la palma de su mano.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1793118642688",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1792870526",
       "prompt_retrato": "Character turnaround model sheet of A petite, angelic girl from Moguer with rosy cheeks, braided blonde hair adorned with ribbons, and wide, wonder-filled light eyes. She wears a simple percale dress with a frilly white apron and worn-out shoes, often seen lovingly crowning her companion's ears with daisy garlands while offering fresh grapes in her palm., authentic adult human anatomy, single individual, standing head to toe, no other characters, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/la_nina_chica.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg --cw 100",
+      "lora_model": "platero_y_yo_la_nina_chica_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_la_nina_chica",
+      "lora_directive": "<lora:platero_y_yo_la_nina_chica_v1:0.85> chr_la_nina_chica",
+      "ancla_visual": "La Niña Chica (petite angelic young Andalusian girl from Moguer, rosy cheeks, braided blonde hair with ribbons, wearing rustic percale dress and white ruffled apron)",
+      "seed_consistencia": 722904
     },
     {
       "id": "anilla_la_hungara",
@@ -102,10 +172,20 @@
       "rol": "Bailarina y Gitana Alegre",
       "tipo": "humano",
       "descripcion_visual": "Mujer de tez morena y ojos de brasa chispeante, llena de salero y vitalidad callejera. Luce faldas amplias de múltiples volantes de colores vivos, mantón de manila sobre los hombros y peineta de carey en el pelo negro ondulado. Al pasar por las esquinas hace sonar sus panderetas y castañuelas, provocando el trote curioso de Platero.",
-      "imagen_url": "/proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1793118642688",
+      "imagen_url": "/proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1792870563",
       "prompt_retrato": "Character turnaround model sheet of Anilla la Húngara is a lively woman with a warm complexion and sparkling ember-like eyes, exuding street vitality. She wears a vibrant, multi-layered skirt, a Manila shawl draped over her shoulders, and a tortoiseshell comb in her wavy black hair, while her hands skillfully play castanets and tambourines., authentic adult human anatomy, single individual, standing head to toe, no other characters, four distinct full-body turnaround views arranged neatly in a balanced 2x2 grid layout: top row showing front view and side profile view; bottom row showing three-quarters angle view and rear back view, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, rich textured paper grain, subtle sepia pencil and ink outlines, warm Mediterranean sunlight, Delicate ink and wash watercolor illustration with fine sepia pen outlines, vibrant translucent watercolor washes, visible cold-press paper texture, warm Mediterranean sunlight, vintage European picture book aesthetic, no photorealism, no 3D CGI., centered composition with wide safety margins so no figures touch the borders, isolated on solid plain pure white background, no text, no words, no labels, no title, no arrows, vertical composition, masterpiece, no 3D CGI, no photorealism",
       "sin_fondo": true,
-      "formato_vista": "giro_360"
+      "formato_vista": "giro_360",
+      "hoja_referencia_path": "proyectos/platero_y_yo/personajes/anilla_la_hungara.jpg",
+      "cref_url": "/proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg --cw 100",
+      "lora_model": "platero_y_yo_anilla_la_hungara_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_anilla_la_hungara",
+      "lora_directive": "<lora:platero_y_yo_anilla_la_hungara_v1:0.85> chr_anilla_la_hungara",
+      "ancla_visual": "Anilla la Húngara (Andalusian flamenco dancer woman, warm tanned skin, sparkling dark ember eyes, wavy black hair with comb, colorful ruffled layered flamenco dress and Manila shawl)",
+      "seed_consistencia": 273994
     }
   ],
   "escenarios": [
@@ -151,5 +231,5 @@
     }
   ],
   "creado_en": "2026-10-10 13:32:50",
-  "actualizado_en": "2026-10-27 17:31:39"
+  "actualizado_en": "2026-11-11 13:08:53"
 }
