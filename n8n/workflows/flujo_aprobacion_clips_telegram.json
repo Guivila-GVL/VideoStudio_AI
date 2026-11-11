@@ -1,0 +1,181 @@
+{
+  "id": "videostudio-clip-approval-wf",
+  "name": "VideoStudio AI - Aprobación de Clips por Telegram (Pre-Ensamblado)",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "videostudio-scene-approval",
+        "responseMode": "onReceived",
+        "options": {}
+      },
+      "id": "node-webhook-in",
+      "name": "Webhook (Recibir Clip Pre-Ensamblado)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1.1,
+      "position": [120, 260],
+      "webhookId": "videostudio-scene-approval"
+    },
+    {
+      "parameters": {
+        "operation": "sendVideo",
+        "chatId": "={{ $json.body.chat_id || '7156474626' }}",
+        "file": "={{ $json.body.clip_url }}",
+        "replyMarkup": "inlineKeyboard",
+        "inlineKeyboard": {
+          "rows": [
+            {
+              "row": {
+                "buttons": [
+                  {
+                    "text": "✅ Aprobar",
+                    "additionalFields": {
+                      "callback_data": "={{ 'appr:s:' + $json.body.project_id + ':' + $json.body.chapter_id + ':' + $json.body.scene_id }}"
+                    }
+                  },
+                  {
+                    "text": "🔄 Regenerar escena",
+                    "additionalFields": {
+                      "callback_data": "={{ 'redo:s:' + $json.body.project_id + ':' + $json.body.chapter_id + ':' + $json.body.scene_id }}"
+                    }
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "additionalFields": {
+          "caption": "={{ '🎬 APROBACIÓN DE CLIP DE ESCENA #' + $json.body.scene_id + '\\n📖 Proyecto: ' + $json.body.project_title + '\\n📑 Capítulo: ' + $json.body.chapter_title + '\\n\\n🎙 Locución: «' + $json.body.narrador + '»\\n\\n👉 Pulsa Aprobar o Regenerar escena antes del ensamblado final.' }}",
+          "parse_mode": "HTML"
+        }
+      },
+      "id": "node-telegram-send-clip",
+      "name": "Telegram: Enviar Clip con Botones (Aprobar / Regenerar escena)",
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.1,
+      "position": [420, 260],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "updates": [
+          "callback_query",
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "id": "node-telegram-trigger",
+      "name": "Telegram Trigger (Callback Aprobar / Regenerar escena)",
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.1,
+      "position": [120, 560],
+      "credentials": {
+        "telegramApi": {
+          "id": "telegram-cred-123",
+          "name": "Bot2_Video_bot"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8001/api/n8n/webhook/scene-decision",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"callback_data\": \"{{ $json.callback_query ? $json.callback_query.data : '' }}\",\n  \"feedback\": \"{{ $json.message ? $json.message.text : '' }}\",\n  \"notify_telegram\": true,\n  \"auto_regenerate_media\": true\n}",
+        "options": {}
+      },
+      "id": "node-http-decision",
+      "name": "VideoStudio API: Procesar Decisión (Aprobar / Regenerar escena)",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [420, 560]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "boolean": [
+            {
+              "value1": "={{ $json.all_scenes_approved }}",
+              "value2": true
+            }
+          ]
+        }
+      },
+      "id": "node-if-all-approved",
+      "name": "If (¿Todas las Escenas Aprobadas?)",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [720, 560]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "http://127.0.0.1:8001/api/video/render",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"project_id\": \"{{ $json.project_id }}\",\n  \"chapter_id\": \"{{ $json.chapter_id }}\",\n  \"enable_subtitles\": true,\n  \"enable_ken_burns\": true\n}",
+        "options": {}
+      },
+      "id": "node-render-final",
+      "name": "VideoStudio API: Ensamblado Final MP4",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1000, 480]
+    }
+  ],
+  "connections": {
+    "Webhook (Recibir Clip Pre-Ensamblado)": {
+      "main": [
+        [
+          {
+            "node": "Telegram: Enviar Clip con Botones (Aprobar / Regenerar escena)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger (Callback Aprobar / Regenerar escena)": {
+      "main": [
+        [
+          {
+            "node": "VideoStudio API: Procesar Decisión (Aprobar / Regenerar escena)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "VideoStudio API: Procesar Decisión (Aprobar / Regenerar escena)": {
+      "main": [
+        [
+          {
+            "node": "If (¿Todas las Escenas Aprobadas?)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If (¿Todas las Escenas Aprobadas?)": {
+      "main": [
+        [
+          {
+            "node": "VideoStudio API: Ensamblado Final MP4",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -17,7 +17,13 @@
       "duracion_estimada": 7,
       "audio_url": "/static/media/audio_b19e2fb7c5.mp3",
       "image_url": "/static/media/img_48e73e29b6.jpg",
-      "duracion_real": 6.13
+      "duracion_real": 6.13,
+      "estado_aprobacion": "aprobado",
+      "telegram_message_id": 92,
+      "propuesta_enviada_en": "2026-11-11T13:34:59.091842",
+      "motivo_rechazo": "",
+      "regeneraciones_count": 1,
+      "aprobado_en": "2026-11-11T13:34:59.581998"
     },
     {
       "id": 2,
@@ -31,7 +37,10 @@
       "duracion_estimada": 7,
       "audio_url": "/static/media/audio_a2472dff35.mp3",
       "image_url": "/static/media/img_b4897ab70b.jpg",
-      "duracion_real": 4.6
+      "duracion_real": 4.6,
+      "estado_aprobacion": "aprobado",
+      "aprobado_en": "2026-11-11T13:34:59.780523",
+      "motivo_rechazo": ""
     },
     {
       "id": 3,
@@ -45,10 +54,15 @@
       "duracion_estimada": 6,
       "audio_url": "/static/media/audio_48dfecabbc.mp3",
       "image_url": "/static/media/img_347df082e7.jpg",
-      "duracion_real": 6.78
+      "duracion_real": 6.78,
+      "estado_aprobacion": "aprobado",
+      "aprobado_en": "2026-11-11T13:34:59.941479",
+      "motivo_rechazo": ""
     }
   ],
   "video_url": "/static/media/video_short_a24d8bb8.mp4",
   "duracion": 17.51,
-  "actualizado_en": "2026-10-18 17:21:11"
+  "actualizado_en": "2026-11-11 13:34:59",
+  "aprobacion_clips_status": "aprobado_listo_ensamblar",
+  "creado_en": "2026-11-11 13:34:59"
 }

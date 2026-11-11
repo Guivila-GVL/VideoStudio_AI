@@ -195,12 +195,12 @@
               "row": {
                 "buttons": [
                   {
-                    "text": "✅ Todo Correcto",
-                    "url": "URL_DEL_WEBHOOK_WAIT_2?status=approved"
+                    "text": "✅ Aprobar",
+                    "url": "http://127.0.0.1:8001/api/n8n/webhook/scene-decision?action=approve"
                   },
                   {
-                    "text": "🔄 Repetir Imagen",
-                    "url": "URL_DEL_WEBHOOK_WAIT_2?status=rejected"
+                    "text": "🔄 Regenerar escena",
+                    "url": "http://127.0.0.1:8001/api/n8n/webhook/scene-decision?action=redo"
                   }
                 ]
               }

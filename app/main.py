@@ -18,7 +18,7 @@ from app.core.script_generator import (
 )
 from app.core.tts_engine import synthesize_speech, list_voices
 from app.core.image_engine import generate_image, save_uploaded_image
-from app.core.video_renderer import render_final_video
+from app.core.video_renderer import render_final_video, render_single_scene_preview_clip
 from app.core.project_manager import (
     list_all_projects,
     get_project,
@@ -61,10 +61,16 @@ from app.core.telegram_approvals import (
     send_character_approval,
     send_environment_approval,
     send_project_initial_proposals,
+    send_scene_clip_approval,
+    send_chapter_clips_for_approval,
     apply_approval_decision,
+    apply_scene_approval_decision,
     poll_telegram_updates,
     process_telegram_update,
-    get_telegram_config
+    get_telegram_config,
+    get_n8n_webhook_config,
+    find_latest_pending_item,
+    parse_natural_language_decision
 )
 
 load_dotenv()
@@ -173,6 +179,34 @@ class SendTelegramProposalRequest(BaseModel):
     prompt_override: Optional[str] = None
     auto_generate: Optional[bool] = True
 
+class SendSceneClipApprovalRequest(BaseModel):
+    render_clip_if_missing: Optional[bool] = True
+    enable_ken_burns: Optional[bool] = False
+    trigger_n8n: Optional[bool] = True
+
+class SceneApprovalDecisionRequest(BaseModel):
+    action: str  # "approve", "redo", "reject"
+    feedback: Optional[str] = ""
+    notify_telegram: Optional[bool] = True
+    auto_regenerate_media: Optional[bool] = False
+
+class N8nSendClipsWebhookRequest(BaseModel):
+    project_id: str
+    chapter_id: str
+    scene_id: Optional[int] = None
+    render_clips_if_missing: Optional[bool] = True
+    enable_ken_burns: Optional[bool] = False
+
+class N8nSceneDecisionWebhookRequest(BaseModel):
+    project_id: Optional[str] = None
+    chapter_id: Optional[str] = None
+    scene_id: Optional[int] = None
+    action: Optional[str] = None
+    callback_data: Optional[str] = None
+    feedback: Optional[str] = ""
+    notify_telegram: Optional[bool] = True
+    auto_regenerate_media: Optional[bool] = False
+
 class ProjectModel(BaseModel):
     id: Optional[str] = None
     titulo: str
@@ -269,10 +303,10 @@ class InjectAnchorsRequest(BaseModel):
     include_technical_flags: Optional[bool] = False
 
 class RenderVideoRequest(BaseModel):
-    title: str = "Mi Video Short"
+    title: Optional[str] = "Mi Video Short"
     project_id: Optional[str] = None
     chapter_id: Optional[str] = None
-    scenes: List[Dict[str, Any]]
+    scenes: Optional[List[Dict[str, Any]]] = None
     enable_subtitles: bool = True
     enable_ken_burns: bool = True
 
@@ -732,6 +766,207 @@ async def api_send_initial_proposals(project_id: str):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/projects/{project_id}/chapters/{chapter_id}/scenes/{scene_id}/render-clip")
+async def api_render_single_scene_clip(
+    project_id: str,
+    chapter_id: str,
+    scene_id: int,
+    enable_subtitles: bool = Query(True),
+    enable_ken_burns: bool = Query(False)
+):
+    """Renderiza el clip MP4 individual de una escena antes del ensamblado final."""
+    try:
+        chapter = get_project_chapter(project_id, chapter_id)
+        scenes = chapter.get("scenes", [])
+        target_scene = None
+        scene_index = 0
+        for idx, sc in enumerate(scenes):
+            sc_id = int(sc.get("id") or (idx + 1))
+            if sc_id == int(scene_id):
+                target_scene = sc
+                scene_index = idx
+                break
+        if target_scene is None and 1 <= int(scene_id) <= len(scenes):
+            scene_index = int(scene_id) - 1
+            target_scene = scenes[scene_index]
+        if target_scene is None:
+            raise HTTPException(status_code=404, detail=f"Escena {scene_id} no encontrada")
+
+        res = render_single_scene_preview_clip(
+            scene=target_scene,
+            scene_index=scene_index,
+            project_id=project_id,
+            chapter_id=chapter_id,
+            enable_subtitles=enable_subtitles,
+            enable_ken_burns=enable_ken_burns
+        )
+        target_scene["clip_url"] = res["clip_url"]
+        target_scene["duracion_real"] = res.get("duration") or target_scene.get("duracion_real")
+        save_project_chapter(project_id, chapter)
+        return {"success": True, **res}
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/chapters/{chapter_id}/scenes/{scene_id}/send-telegram-approval")
+async def api_send_scene_clip_telegram_approval(
+    project_id: str,
+    chapter_id: str,
+    scene_id: int,
+    req: Optional[SendSceneClipApprovalRequest] = None
+):
+    """Envía el clip generado de una escena por Telegram y al Webhook n8n con botones 'Aprobar' y 'Regenerar escena'."""
+    try:
+        render_if_missing = req.render_clip_if_missing if req and req.render_clip_if_missing is not None else True
+        enable_kb = req.enable_ken_burns if req and req.enable_ken_burns is not None else False
+        trig_n8n = req.trigger_n8n if req and req.trigger_n8n is not None else True
+        res = send_scene_clip_approval(
+            project_id=project_id,
+            chapter_id=chapter_id,
+            scene_id=scene_id,
+            render_clip_if_missing=render_if_missing,
+            enable_ken_burns=enable_kb,
+            trigger_n8n=trig_n8n
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/chapters/{chapter_id}/send-clips-approval")
+async def api_send_chapter_clips_telegram_approval(
+    project_id: str,
+    chapter_id: str,
+    req: Optional[SendSceneClipApprovalRequest] = None
+):
+    """Envía todos los clips generados de un capítulo por Telegram y n8n antes del ensamblado final."""
+    try:
+        render_if_missing = req.render_clip_if_missing if req and req.render_clip_if_missing is not None else True
+        enable_kb = req.enable_ken_burns if req and req.enable_ken_burns is not None else False
+        trig_n8n = req.trigger_n8n if req and req.trigger_n8n is not None else True
+        res = send_chapter_clips_for_approval(
+            project_id=project_id,
+            chapter_id=chapter_id,
+            render_clips_if_missing=render_if_missing,
+            enable_ken_burns=enable_kb,
+            trigger_n8n=trig_n8n
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/chapters/{chapter_id}/scenes/{scene_id}/decision")
+async def api_scene_clip_approval_decision(
+    project_id: str,
+    chapter_id: str,
+    scene_id: int,
+    req: SceneApprovalDecisionRequest
+):
+    """Aplica la decisión humana ('Aprobar', 'Regenerar escena' o 'Rechazar') sobre el clip de una escena."""
+    try:
+        res = apply_scene_approval_decision(
+            project_id=project_id,
+            chapter_id=chapter_id,
+            scene_id=scene_id,
+            action=req.action,
+            feedback=req.feedback or "",
+            notify_telegram=req.notify_telegram if req.notify_telegram is not None else True,
+            auto_regenerate_media=bool(req.auto_regenerate_media)
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/n8n/webhook/send-clips")
+async def api_n8n_webhook_send_clips(req: N8nSendClipsWebhookRequest):
+    """Webhook de integración con n8n para enviar clips generados por Telegram antes del ensamblado final."""
+    try:
+        if req.scene_id is not None:
+            res = send_scene_clip_approval(
+                project_id=req.project_id,
+                chapter_id=req.chapter_id,
+                scene_id=req.scene_id,
+                render_clip_if_missing=bool(req.render_clips_if_missing),
+                enable_ken_burns=bool(req.enable_ken_burns),
+                trigger_n8n=False
+            )
+        else:
+            res = send_chapter_clips_for_approval(
+                project_id=req.project_id,
+                chapter_id=req.chapter_id,
+                render_clips_if_missing=bool(req.render_clips_if_missing),
+                enable_ken_burns=bool(req.enable_ken_burns),
+                trigger_n8n=False
+            )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/n8n/webhook/scene-decision")
+async def api_n8n_webhook_scene_decision(req: N8nSceneDecisionWebhookRequest):
+    """Webhook receptor desde n8n cuando el usuario pulsa 'Aprobar' o 'Regenerar escena' en Telegram."""
+    try:
+        project_id = req.project_id
+        chapter_id = req.chapter_id
+        scene_id = req.scene_id
+        action = req.action
+
+        if req.callback_data and ":" in req.callback_data:
+            parts = req.callback_data.split(":")
+            if len(parts) >= 5 and parts[1] == "s":
+                action = action or parts[0]
+                project_id = project_id or parts[2]
+                chapter_id = chapter_id or parts[3]
+                scene_id = scene_id if scene_id is not None else int(parts[4])
+            elif len(parts) >= 4 and parts[0] == "appr_all" and parts[1] == "ch":
+                project_id = project_id or parts[2]
+                chapter_id = chapter_id or parts[3]
+                chapter = get_project_chapter(project_id, chapter_id)
+                for idx, sc in enumerate(chapter.get("scenes", [])):
+                    sc_id = int(sc.get("id") or (idx + 1))
+                    apply_scene_approval_decision(project_id, chapter_id, sc_id, "approve", notify_telegram=False)
+                return {
+                    "ok": True,
+                    "status": "aprobado",
+                    "action": "approve_all",
+                    "project_id": project_id,
+                    "chapter_id": chapter_id,
+                    "all_scenes_approved": True,
+                    "chapter_approval_status": "aprobado_listo_ensamblar"
+                }
+
+        if not action and req.feedback:
+            nl_act, _ = parse_natural_language_decision(req.feedback)
+            if nl_act:
+                action = nl_act
+
+        if not project_id or not chapter_id or scene_id is None:
+            target = find_latest_pending_item()
+            if target:
+                p_id, i_type, i_id, _ = target
+                if i_type.startswith("s:"):
+                    project_id = project_id or p_id
+                    chapter_id = chapter_id or i_type.split(":", 1)[1]
+                    scene_id = scene_id if scene_id is not None else int(i_id)
+
+        if not project_id or not chapter_id or scene_id is None or not action:
+            raise HTTPException(status_code=400, detail="Faltan parámetros (project_id, chapter_id, scene_id, action o callback_data).")
+
+        res = apply_scene_approval_decision(
+            project_id=project_id,
+            chapter_id=chapter_id,
+            scene_id=int(scene_id),
+            action=action,
+            feedback=req.feedback or "",
+            notify_telegram=req.notify_telegram if req.notify_telegram is not None else True,
+            auto_regenerate_media=bool(req.auto_regenerate_media)
+        )
+        return res
+    except HTTPException:
+        raise
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/telegram/poll-now")
 async def api_telegram_poll_now():
     """Ejecuta una consulta inmediata de actualizaciones en Telegram y procesa respuestas."""
@@ -752,14 +987,17 @@ async def api_telegram_webhook(req: Dict[str, Any]):
 
 @app.get("/api/telegram/status")
 async def api_telegram_status():
-    """Consulta estado del bot de Telegram y configuración de aprobaciones."""
+    """Consulta estado del bot de Telegram y configuración de aprobaciones y webhook n8n."""
     token, chat_id, enabled = get_telegram_config()
+    n8n_url, n8n_enabled = get_n8n_webhook_config()
     masked_token = f"{token[:8]}...{token[-4:]}" if token and len(token) > 12 else "No configurado"
     return {
         "enabled": enabled,
         "token_masked": masked_token,
         "chat_id": chat_id,
-        "bot_configured": bool(token and chat_id)
+        "bot_configured": bool(token and chat_id),
+        "n8n_webhook_url": n8n_url,
+        "n8n_webhook_enabled": n8n_enabled
     }
 
 # Auditoría y Autocorrección de Coherencia Visual (Personajes y Escenarios)
@@ -928,26 +1166,38 @@ async def api_upload_image(file: UploadFile = File(...)):
 @app.post("/api/video/render")
 async def api_render_video(req: RenderVideoRequest):
     try:
+        scenes = req.scenes
+        title = req.title or "Mi Video Short"
+        if (not scenes or len(scenes) == 0) and req.project_id and req.chapter_id:
+            ch = get_project_chapter(req.project_id, req.chapter_id)
+            scenes = ch.get("scenes", [])
+            if not req.title or req.title == "Mi Video Short":
+                title = ch.get("titulo", title)
+
+        if not scenes:
+            raise HTTPException(status_code=400, detail="No se proporcionaron escenas para renderizar el vídeo.")
+
         result = render_final_video(
-            scenes=req.scenes,
-            project_title=req.title,
+            scenes=scenes,
+            project_title=title,
             enable_subtitles=req.enable_subtitles,
             enable_ken_burns=req.enable_ken_burns,
             project_id=req.project_id,
             chapter_id=req.chapter_id
         )
-        # Si pertenece a un proyecto y capítulo, actualizarlo
+        # Si pertenece a un proyecto y capítulo, actualizarlo preservando campos existentes
         if req.project_id and req.chapter_id:
-            save_project_chapter(req.project_id, {
-                "id": req.chapter_id,
-                "titulo": req.title,
-                "scenes": req.scenes,
-                "video_url": result["video_url"],
-                "duracion": result["duration"],
-                "peso_mb": result.get("size_mb")
-            })
+            ch_data = get_project_chapter(req.project_id, req.chapter_id)
+            ch_data["video_url"] = result["video_url"]
+            ch_data["duracion"] = result["duration"]
+            ch_data["peso_mb"] = result.get("size_mb")
+            ch_data["scenes"] = scenes
+            ch_data["actualizado_en"] = datetime.now().isoformat()
+            save_project_chapter(req.project_id, ch_data)
 
         return {"success": True, **result}
+    except HTTPException:
+        raise
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

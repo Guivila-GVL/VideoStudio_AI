@@ -2721,11 +2721,21 @@ document.addEventListener("DOMContentLoaded", () => {
       ? `<span class="env-reference-pill" title="Escenario recurrente: ${sc.escenario_clave}">🏛️ ${sc.escenario_clave}</span>`
       : "";
 
+    let sceneApprBadge = "";
+    if (sc.estado_aprobacion === "aprobado") {
+      sceneApprBadge = `<span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">✅ Aprobada</span>`;
+    } else if (sc.estado_aprobacion === "regenerar_solicitado" || sc.estado_aprobacion === "regenerando" || sc.estado_aprobacion === "rechazado") {
+      sceneApprBadge = `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;" title="${sc.motivo_rechazo || ''}">🔄 Regenerar escena</span>`;
+    } else if (sc.estado_aprobacion === "pendiente" && sc.telegram_message_id) {
+      sceneApprBadge = `<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; font-size: 0.7rem; padding: 2px 6px; border-radius: 4px;">⏳ En Telegram</span>`;
+    }
+
     return `
       Escena #${index + 1}
       <span class="scene-badge-pill" id="dur-badge-${index}">
         ${sc.duracion_real ? sc.duracion_real + 's' : '~' + sc.duracion_estimada + 's'}
       </span>
+      ${sceneApprBadge}
       ${charsInScene}
       ${envInScene}
     `;
@@ -2817,6 +2827,17 @@ document.addEventListener("DOMContentLoaded", () => {
               📁 Subir Foto
               <input type="file" class="input-upload-img" data-idx="${index}" accept="image/*" style="display:none;">
             </label>
+          </div>
+          <div class="scene-telegram-clip-bar" style="display:flex; gap:4px; margin-top:6px; justify-content:center; flex-wrap:wrap;">
+            <button type="button" class="btn btn-outline btn-xxs btn-send-scene-telegram" data-idx="${index}" title="Renderizar clip previo y enviarlo a Telegram / n8n para aprobación humana">
+              📱 Enviar Clip
+            </button>
+            <button type="button" class="btn btn-ghost btn-xxs btn-approve-scene-clip" data-idx="${index}" style="color:#4ade80;" title="Aprobar escena">
+              ✅ Aprobar
+            </button>
+            <button type="button" class="btn btn-ghost btn-xxs btn-redo-scene-clip" data-idx="${index}" style="color:#60a5fa;" title="Regenerar escena">
+              🔄 Regenerar
+            </button>
           </div>
         </div>
 
@@ -3009,6 +3030,80 @@ document.addEventListener("DOMContentLoaded", () => {
         renderStoryboard();
       });
     });
+
+    document.querySelectorAll(".btn-send-scene-telegram").forEach(el => {
+      el.addEventListener("click", async e => {
+        const idx = parseInt(e.target.dataset.idx);
+        await sendSingleSceneClipToTelegram(idx);
+      });
+    });
+
+    document.querySelectorAll(".btn-approve-scene-clip").forEach(el => {
+      el.addEventListener("click", async e => {
+        const idx = parseInt(e.target.dataset.idx);
+        await applySceneClipDecisionUI(idx, "approve");
+      });
+    });
+
+    document.querySelectorAll(".btn-redo-scene-clip").forEach(el => {
+      el.addEventListener("click", async e => {
+        const idx = parseInt(e.target.dataset.idx);
+        await applySceneClipDecisionUI(idx, "redo", "Regenerar escena solicitado");
+      });
+    });
+  }
+
+  async function sendSingleSceneClipToTelegram(idx) {
+    if (!state.currentProject) return;
+    if (!state.currentChapterId) {
+      await saveCurrentChapter(true);
+    }
+    const sc = state.scenes[idx];
+    const sceneId = sc.id || (idx + 1);
+    showToast(`Enviando clip de Escena #${idx + 1} a Telegram / n8n...`, "info");
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/chapters/${state.currentChapterId}/scenes/${sceneId}/send-telegram-approval`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ render_clip_if_missing: true, enable_ken_burns: false, trigger_n8n: true })
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        sc.estado_aprobacion = "pendiente";
+        sc.telegram_message_id = data.message_id;
+        if (data.clip_url) sc.clip_url = data.clip_url;
+        updateSceneHeaderBadges(idx);
+        showToast(`✅ Clip de Escena #${idx + 1} enviado a Telegram con botones 'Aprobar' y 'Regenerar escena'`, "success");
+      } else {
+        showToast(data.detail || data.error || "Error enviando clip a Telegram", "error");
+      }
+    } catch (e) {
+      showToast(`Error: ${e.message}`, "error");
+    }
+  }
+
+  async function applySceneClipDecisionUI(idx, action, feedback = "") {
+    if (!state.currentProject) return;
+    if (!state.currentChapterId) {
+      await saveCurrentChapter(true);
+    }
+    const sc = state.scenes[idx];
+    const sceneId = sc.id || (idx + 1);
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/chapters/${state.currentChapterId}/scenes/${sceneId}/decision`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, feedback, notify_telegram: true, auto_regenerate_media: false })
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        sc.estado_aprobacion = data.status === "aprobado" ? "aprobado" : "regenerar_solicitado";
+        updateSceneHeaderBadges(idx);
+        showToast(`✅ Escena #${idx + 1}: ${data.status === "aprobado" ? "Aprobada" : "Marcada para regenerar"}`, "success");
+      }
+    } catch (e) {
+      showToast(`Error: ${e.message}`, "error");
+    }
   }
 
   // Reforzar e Inyectar Rasgos Canónicos en Escena
@@ -3263,6 +3358,51 @@ document.addEventListener("DOMContentLoaded", () => {
   if (btnSaveChapterDraft) {
     btnSaveChapterDraft.addEventListener("click", () => saveCurrentChapter(false));
   }
+
+  document.getElementById("btn-send-clips-telegram")?.addEventListener("click", async () => {
+    if (!state.currentProject) {
+      showToast("Selecciona un proyecto primero", "warning");
+      return;
+    }
+    if (!state.currentChapterId) {
+      await saveCurrentChapter(true);
+    }
+    const btn = document.getElementById("btn-send-clips-telegram");
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳ Enviando Clips a Telegram...";
+    }
+    setSystemStatus("busy", "Enviando clips a Telegram / n8n...", "Generando clips previos y enviando a Telegram con botones 'Aprobar' y 'Regenerar escena'...");
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/chapters/${state.currentChapterId}/send-clips-approval`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ render_clip_if_missing: true, enable_ken_burns: false, trigger_n8n: true })
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        await loadSavedChapter(state.currentChapterId);
+        showToast(`✅ ${data.sent_scenes_count} clips enviados a Telegram para aprobación pre-ensamblado`, "success");
+        setSystemStatus("success", "Clips enviados a Telegram", `${data.sent_scenes_count} escenas listas con botones 'Aprobar' y 'Regenerar escena'.`);
+      } else {
+        showToast(data.detail || "Error enviando clips a Telegram", "error");
+      }
+    } catch (e) {
+      showToast(`Error: ${e.message}`, "error");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "📱 Enviar Clips a Telegram (Pre-Ensamblado)";
+      }
+    }
+  });
+
+  document.getElementById("btn-poll-clips-telegram")?.addEventListener("click", async () => {
+    await syncTelegramUpdates();
+    if (state.currentChapterId) {
+      await loadSavedChapter(state.currentChapterId);
+    }
+  });
 
   // Renderizar Vídeo Final con FFmpeg
   btnRenderVideo.addEventListener("click", async () => {

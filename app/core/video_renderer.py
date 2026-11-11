@@ -216,6 +216,91 @@ def render_scene_clip(
 
     return duration
 
+def render_single_scene_preview_clip(
+    scene: Dict[str, Any],
+    scene_index: int = 0,
+    project_id: Optional[str] = None,
+    chapter_id: Optional[str] = None,
+    enable_subtitles: bool = True,
+    enable_ken_burns: bool = True
+) -> Dict[str, Any]:
+    """
+    Renderiza el clip MP4 individual de una escena antes del ensamblado final
+    para su revisión y aprobación Human-in-the-Loop en Telegram / n8n.
+    """
+    scene_id = scene.get("id") or (scene_index + 1)
+    img_url = scene.get("image_url")
+    audio_url = scene.get("audio_url")
+
+    if not img_url:
+        raise ValueError(f"La escena {scene_id} no tiene imagen generada para crear el clip.")
+
+    img_path = resolve_media_path(img_url)
+    if not img_path.exists():
+        raise FileNotFoundError(f"Imagen no encontrada en disco para la escena {scene_id}: {img_path}")
+
+    # Determinar carpeta de destino del clip
+    if project_id and chapter_id:
+        clips_dir = PROYECTOS_DIR / project_id / "capitulos" / chapter_id / "clips"
+        clips_dir.mkdir(parents=True, exist_ok=True)
+        clip_filename = f"clip_escena_{scene_id}.mp4"
+        output_clip_path = clips_dir / clip_filename
+        clip_url = f"/proyectos_data/{project_id}/capitulos/{chapter_id}/clips/{clip_filename}"
+    else:
+        clip_filename = f"clip_preview_sc{scene_id}_{uuid.uuid4().hex[:6]}.mp4"
+        output_clip_path = MEDIA_DIR / clip_filename
+        clip_url = f"/static/media/{clip_filename}"
+
+    temp_silent_audio: Optional[Path] = None
+    try:
+        if audio_url:
+            audio_path = resolve_media_path(audio_url)
+        else:
+            audio_path = Path("__missing__")
+
+        if not audio_path.exists():
+            # Crear pista de audio silenciosa temporal si aún no se ha locutado la escena
+            est_dur = float(scene.get("duracion_estimada") or 4.0)
+            temp_silent_audio = output_clip_path.parent / f"temp_silent_{scene_id}.mp3"
+            silent_cmd = [
+                "ffmpeg", "-y",
+                "-f", "lavfi",
+                "-i", "anullsrc=r=44100:cl=stereo",
+                "-t", str(est_dur),
+                "-q:a", "9",
+                "-acodec", "libmp3lame",
+                str(temp_silent_audio)
+            ]
+            subprocess.run(silent_cmd, capture_output=True, text=True, check=True)
+            audio_path = temp_silent_audio
+
+        duration = render_scene_clip(
+            image_path=img_path,
+            audio_path=audio_path,
+            output_clip_path=output_clip_path,
+            scene_index=scene_index,
+            narrador_text=scene.get("narrador", ""),
+            enable_subtitles=enable_subtitles,
+            enable_ken_burns=enable_ken_burns
+        )
+
+        size_mb = round(output_clip_path.stat().st_size / (1024 * 1024), 2) if output_clip_path.exists() else 0.0
+        return {
+            "ok": True,
+            "scene_id": scene_id,
+            "clip_url": clip_url,
+            "clip_path": str(output_clip_path),
+            "duration": round(duration, 2),
+            "size_mb": size_mb
+        }
+    finally:
+        if temp_silent_audio and temp_silent_audio.exists():
+            try:
+                temp_silent_audio.unlink()
+            except Exception:
+                pass
+
+
 def render_final_video(
     scenes: List[Dict[str, Any]],
     project_title: str = "Video Short",

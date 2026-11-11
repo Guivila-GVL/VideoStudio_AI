@@ -14,18 +14,67 @@ from app.core.project_manager import (
     save_or_update_project,
     get_project_folder,
     list_all_projects,
+    get_project_chapter,
+    save_project_chapter,
+    list_project_chapters,
     generate_character_portrait,
     generate_environment_image,
     slugify
 )
+from app.core.video_renderer import (
+    render_single_scene_preview_clip,
+    resolve_media_path
+)
+from app.core.image_engine import generate_image
 
 load_dotenv()
 
 # Token y Chat ID por defecto configurados en el ecosistema 2026
 DEFAULT_BOT_TOKEN = "8691202872:AAGolw9n9HOGSos7NTlYHZJg-AeW4cMNzgU"
 DEFAULT_CHAT_ID = "7156474626"
+DEFAULT_N8N_WEBHOOK_URL = "http://127.0.0.1:5678/webhook/videostudio-scene-approval"
 
 _LAST_UPDATE_OFFSET: int = 0
+
+def get_n8n_webhook_config() -> Tuple[str, bool]:
+    """Obtiene la URL del webhook de n8n para envío/orquestación de clips y su estado."""
+    webhook_url = os.getenv("N8N_WEBHOOK_CLIPS_URL") or DEFAULT_N8N_WEBHOOK_URL
+    n8n_enabled = os.getenv("N8N_WEBHOOK_ENABLED", "true").lower() in ("true", "1", "yes")
+    return webhook_url, n8n_enabled
+
+def trigger_n8n_clip_approval_webhook(payload: Dict[str, Any]) -> Dict[str, Any]:
+    """
+    Envía los metadatos del clip generado al webhook de n8n antes del ensamblado final.
+    Si la instancia de n8n no está accesible en tiempo real, registra el evento con fallback
+    limpio para que el envío directo por Telegram Bot API continúe sin interrupción.
+    """
+    webhook_url, n8n_enabled = get_n8n_webhook_config()
+    if not n8n_enabled or not webhook_url:
+        return {"triggered": False, "webhook_url": webhook_url, "reason": "n8n webhook deshabilitado"}
+
+    try:
+        data_bytes = json.dumps(payload).encode("utf-8")
+        req = urllib.request.Request(
+            webhook_url,
+            data=data_bytes,
+            headers={"Content-Type": "application/json"},
+            method="POST"
+        )
+        with urllib.request.urlopen(req, timeout=3) as resp:
+            resp_body = resp.read().decode("utf-8", errors="replace")
+            return {
+                "triggered": True,
+                "webhook_url": webhook_url,
+                "status_code": resp.status,
+                "response": resp_body[:500]
+            }
+    except Exception as e:
+        return {
+            "triggered": False,
+            "webhook_url": webhook_url,
+            "fallback": "direct_telegram_bot_api",
+            "note": str(e)
+        }
 
 def get_telegram_config() -> Tuple[str, str, bool]:
     """Obtiene el token, chat_id y estado de activación para Telegram Approvals."""
@@ -78,7 +127,15 @@ def send_telegram_api(method: str, payload: Dict[str, Any], files: Optional[Dict
     for field_name, file_path in files.items():
         if file_path.exists():
             fname = file_path.name
-            mime = "image/png" if fname.lower().endswith(".png") else "image/jpeg"
+            lower_fname = fname.lower()
+            if lower_fname.endswith(".mp4"):
+                mime = "video/mp4"
+            elif lower_fname.endswith(".mp3"):
+                mime = "audio/mpeg"
+            elif lower_fname.endswith(".png"):
+                mime = "image/png"
+            else:
+                mime = "image/jpeg"
             with open(file_path, "rb") as f:
                 content = f.read()
             parts.append(
@@ -472,10 +529,443 @@ def apply_approval_decision(
     else:
         raise ValueError(f"Acción '{action}' no reconocida. Usa 'approve', 'reject' o 'redo'.")
 
+def send_scene_clip_approval(
+    project_id: str,
+    chapter_id: str,
+    scene_id: int,
+    render_clip_if_missing: bool = True,
+    enable_ken_burns: bool = False,
+    trigger_n8n: bool = True
+) -> Dict[str, Any]:
+    """
+    Envía un clip de escena generado (antes del ensamblado final) por Telegram y al Webhook de n8n,
+    incluyendo botones interactivos 'Aprobar' y 'Regenerar escena'.
+    """
+    token, chat_id, enabled = get_telegram_config()
+    if not enabled:
+        return {"ok": False, "error": "Integración Telegram de aprobaciones desactivada"}
+
+    proj = get_project(project_id)
+    chapter = get_project_chapter(project_id, chapter_id)
+    scenes = chapter.get("scenes", [])
+
+    scene_index = -1
+    target_scene: Optional[Dict[str, Any]] = None
+    for idx, sc in enumerate(scenes):
+        sc_id = sc.get("id") or (idx + 1)
+        if int(sc_id) == int(scene_id):
+            scene_index = idx
+            target_scene = sc
+            break
+
+    if target_scene is None and 1 <= int(scene_id) <= len(scenes):
+        scene_index = int(scene_id) - 1
+        target_scene = scenes[scene_index]
+
+    if target_scene is None:
+        raise ValueError(f"Escena {scene_id} no encontrada en capítulo '{chapter_id}' del proyecto '{project_id}'.")
+
+    actual_scene_id = int(target_scene.get("id") or (scene_index + 1))
+
+    # Localizar clip MP4 existente o renderizarlo antes del ensamblado final
+    clip_path: Optional[Path] = None
+    if target_scene.get("clip_url"):
+        cand = resolve_media_path(target_scene["clip_url"])
+        if cand.exists() and cand.stat().st_size > 1000:
+            clip_path = cand
+
+    if not clip_path and render_clip_if_missing and target_scene.get("image_url"):
+        try:
+            clip_res = render_single_scene_preview_clip(
+                scene=target_scene,
+                scene_index=scene_index,
+                project_id=project_id,
+                chapter_id=chapter_id,
+                enable_subtitles=True,
+                enable_ken_burns=enable_ken_burns
+            )
+            if clip_res.get("ok") and clip_res.get("clip_path"):
+                clip_path = Path(clip_res["clip_path"])
+                target_scene["clip_url"] = clip_res["clip_url"]
+                target_scene["duracion_real"] = clip_res.get("duration") or target_scene.get("duracion_real")
+        except Exception as e:
+            print(f"[Telegram Clip Render Fallback] {e}")
+
+    img_path: Optional[Path] = None
+    if target_scene.get("image_url"):
+        cand_img = resolve_media_path(target_scene["image_url"])
+        if cand_img.exists():
+            img_path = cand_img
+
+    proj_title = proj.get("titulo", project_id)
+    chap_title = chapter.get("titulo", chapter_id)
+    narrador = target_scene.get("narrador", "Sin texto de narración.")
+    chars_list = ", ".join(target_scene.get("personajes_en_escena", [])) or "Sin personajes específicos"
+    esc_clave = target_scene.get("escenario_clave") or "General"
+    dur_val = target_scene.get("duracion_real") or target_scene.get("duracion_estimada") or 5
+
+    caption = (
+        f"🎬 <b>APROBACIÓN DE CLIP DE ESCENA (PRE-ENSAMBLADO)</b>\n\n"
+        f"📖 <b>Proyecto:</b> {proj_title}\n"
+        f"📑 <b>Capítulo:</b> {chap_title}\n"
+        f"🎞 <b>Escena:</b> #{actual_scene_id} de {len(scenes)} ({dur_val}s)\n"
+        f"👥 <b>Personajes:</b> {chars_list}\n"
+        f"🏛 <b>Escenario:</b> {esc_clave}\n\n"
+        f"🎙 <b>Locución:</b>\n<i>«{narrador}»</i>\n\n"
+        f"👉 <b>¿Apruebas este clip antes del ensamblado final?</b>\n"
+        f"• Pulsa <b>✅ Aprobar</b> o <b>🔄 Regenerar escena</b>."
+    )
+
+    inline_keyboard = {
+        "inline_keyboard": [
+            [
+                {"text": "✅ Aprobar", "callback_data": f"appr:s:{project_id}:{chapter_id}:{actual_scene_id}"},
+                {"text": "🔄 Regenerar escena", "callback_data": f"redo:s:{project_id}:{chapter_id}:{actual_scene_id}"}
+            ],
+            [
+                {"text": "❌ Rechazar escena", "callback_data": f"rejc:s:{project_id}:{chapter_id}:{actual_scene_id}"}
+            ]
+        ]
+    }
+
+    # Notificar también al Webhook de n8n (Orquestación Human-in-the-Loop)
+    n8n_res = {"triggered": False}
+    if trigger_n8n:
+        n8n_payload = {
+            "event": "scene_clip_ready_for_approval",
+            "project_id": project_id,
+            "project_title": proj_title,
+            "chapter_id": chapter_id,
+            "chapter_title": chap_title,
+            "scene_id": actual_scene_id,
+            "total_scenes": len(scenes),
+            "narrador": narrador,
+            "prompt_imagen": target_scene.get("prompt_imagen", ""),
+            "clip_url": target_scene.get("clip_url"),
+            "clip_path": str(clip_path) if clip_path else None,
+            "image_url": target_scene.get("image_url"),
+            "audio_url": target_scene.get("audio_url"),
+            "duration": dur_val,
+            "chat_id": chat_id,
+            "inline_keyboard": inline_keyboard,
+            "buttons": ["✅ Aprobar", "🔄 Regenerar escena"],
+            "decision_webhook_url": f"http://127.0.0.1:8001/api/projects/{project_id}/chapters/{chapter_id}/scenes/{actual_scene_id}/decision"
+        }
+        n8n_res = trigger_n8n_clip_approval_webhook(n8n_payload)
+
+    # Enviar el clip de vídeo MP4 por Telegram (o imagen/mensaje como fallback)
+    if clip_path and clip_path.exists():
+        api_res = send_telegram_api(
+            "sendVideo",
+            payload={
+                "chat_id": chat_id,
+                "caption": caption[:1024],
+                "parse_mode": "HTML",
+                "supports_streaming": "true",
+                "reply_markup": json.dumps(inline_keyboard)
+            },
+            files={"video": clip_path}
+        )
+    elif img_path and img_path.exists():
+        api_res = send_telegram_api(
+            "sendPhoto",
+            payload={
+                "chat_id": chat_id,
+                "caption": caption[:1024],
+                "parse_mode": "HTML",
+                "reply_markup": json.dumps(inline_keyboard)
+            },
+            files={"photo": img_path}
+        )
+    else:
+        api_res = send_telegram_api(
+            "sendMessage",
+            payload={
+                "chat_id": chat_id,
+                "text": caption,
+                "parse_mode": "HTML",
+                "reply_markup": json.dumps(inline_keyboard)
+            }
+        )
+
+    if api_res.get("ok"):
+        msg_id = api_res.get("result", {}).get("message_id")
+        target_scene["estado_aprobacion"] = "pendiente"
+        target_scene["telegram_message_id"] = msg_id
+        target_scene["propuesta_enviada_en"] = datetime.now().isoformat()
+        target_scene["motivo_rechazo"] = ""
+        chapter["aprobacion_clips_status"] = "en_revision"
+        save_project_chapter(project_id, chapter)
+        return {
+            "ok": True,
+            "message_id": msg_id,
+            "project_id": project_id,
+            "chapter_id": chapter_id,
+            "scene_id": actual_scene_id,
+            "clip_url": target_scene.get("clip_url"),
+            "status": "pendiente",
+            "buttons_sent": ["✅ Aprobar", "🔄 Regenerar escena"],
+            "inline_keyboard": inline_keyboard,
+            "n8n_webhook": n8n_res,
+            "telegram_response": api_res
+        }
+    else:
+        return {
+            "ok": False,
+            "error": api_res.get("error", "Error enviando clip a Telegram"),
+            "n8n_webhook": n8n_res
+        }
+
+def send_chapter_clips_for_approval(
+    project_id: str,
+    chapter_id: str,
+    render_clips_if_missing: bool = True,
+    enable_ken_burns: bool = False,
+    trigger_n8n: bool = True
+) -> Dict[str, Any]:
+    """
+    Envía todos los clips de las escenas de un capítulo por Telegram y n8n
+    para su aprobación humana antes del ensamblado final del vídeo MP4.
+    """
+    chapter = get_project_chapter(project_id, chapter_id)
+    proj = get_project(project_id)
+    scenes = chapter.get("scenes", [])
+    if not scenes:
+        raise ValueError(f"El capítulo '{chapter_id}' no tiene escenas generadas.")
+
+    sent_scenes = []
+    errors = []
+
+    for idx, sc in enumerate(scenes):
+        sc_id = int(sc.get("id") or (idx + 1))
+        try:
+            res = send_scene_clip_approval(
+                project_id=project_id,
+                chapter_id=chapter_id,
+                scene_id=sc_id,
+                render_clip_if_missing=render_clips_if_missing,
+                enable_ken_burns=enable_ken_burns,
+                trigger_n8n=trigger_n8n
+            )
+            if res.get("ok"):
+                sent_scenes.append({
+                    "scene_id": sc_id,
+                    "message_id": res.get("message_id"),
+                    "clip_url": res.get("clip_url"),
+                    "status": res.get("status")
+                })
+            else:
+                errors.append(f"Escena {sc_id}: {res.get('error')}")
+        except Exception as e:
+            errors.append(f"Escena {sc_id}: {str(e)}")
+
+    _, chat_id, enabled = get_telegram_config()
+    if enabled and sent_scenes:
+        summary_keyboard = {
+            "inline_keyboard": [
+                [
+                    {
+                        "text": "✅ Aprobar Todas las Escenas (Listo para Ensamblar)",
+                        "callback_data": f"appr_all:ch:{project_id}:{chapter_id}"
+                    }
+                ]
+            ]
+        }
+        summary_text = (
+            f"🎞 <b>CLIPS ENVIADOS PARA APROBACIÓN PRE-ENSAMBLADO</b>\n\n"
+            f"📖 <b>Proyecto:</b> {proj.get('titulo', project_id)}\n"
+            f"📑 <b>Capítulo:</b> {chapter.get('titulo', chapter_id)}\n"
+            f"🎬 <b>Clips enviados:</b> {len(sent_scenes)} de {len(scenes)}\n\n"
+            f"<i>Revisa cada clip arriba y pulsa «✅ Aprobar» o «🔄 Regenerar escena» antes de ensamblar el MP4 definitivo.</i>"
+        )
+        send_telegram_api(
+            "sendMessage",
+            {
+                "chat_id": chat_id,
+                "text": summary_text,
+                "parse_mode": "HTML",
+                "reply_markup": json.dumps(summary_keyboard)
+            }
+        )
+
+    return {
+        "ok": len(sent_scenes) > 0,
+        "project_id": project_id,
+        "chapter_id": chapter_id,
+        "sent_scenes_count": len(sent_scenes),
+        "total_scenes": len(scenes),
+        "sent_scenes": sent_scenes,
+        "errors": errors
+    }
+
+def apply_scene_approval_decision(
+    project_id: str,
+    chapter_id: str,
+    scene_id: int,
+    action: str,
+    feedback: str = "",
+    notify_telegram: bool = True,
+    auto_regenerate_media: bool = False
+) -> Dict[str, Any]:
+    """
+    Aplica la decisión humana ('Aprobar', 'Regenerar escena' o 'Rechazar') sobre el clip de una escena.
+    Actualiza capitulo.json y notifica por Telegram.
+    """
+    proj = get_project(project_id)
+    chapter = get_project_chapter(project_id, chapter_id)
+    scenes = chapter.get("scenes", [])
+
+    scene_index = -1
+    target_scene: Optional[Dict[str, Any]] = None
+    for idx, sc in enumerate(scenes):
+        sc_id = sc.get("id") or (idx + 1)
+        if int(sc_id) == int(scene_id):
+            scene_index = idx
+            target_scene = sc
+            break
+
+    if target_scene is None and 1 <= int(scene_id) <= len(scenes):
+        scene_index = int(scene_id) - 1
+        target_scene = scenes[scene_index]
+
+    if target_scene is None:
+        raise ValueError(f"Escena {scene_id} no encontrada en capítulo '{chapter_id}' del proyecto '{project_id}'.")
+
+    actual_scene_id = int(target_scene.get("id") or (scene_index + 1))
+    now_iso = datetime.now().isoformat()
+    _, chat_id, enabled = get_telegram_config()
+    action_norm = action.strip().lower()
+
+    if action_norm in ("appr", "approve", "aprobado", "aprobar", "si", "sí", "ok"):
+        target_scene["estado_aprobacion"] = "aprobado"
+        target_scene["aprobado_en"] = now_iso
+        target_scene["motivo_rechazo"] = ""
+
+        all_approved = all(s.get("estado_aprobacion") == "aprobado" for s in scenes)
+        chapter["aprobacion_clips_status"] = "aprobado_listo_ensamblar" if all_approved else "en_revision"
+        save_project_chapter(project_id, chapter)
+
+        if notify_telegram and enabled:
+            ready_note = (
+                "\n\n🎉 <b>¡Todas las escenas del capítulo están aprobadas!</b> Ya puedes ejecutar el ensamblado final del vídeo."
+                if all_approved else ""
+            )
+            msg = (
+                f"✅ <b>¡CLIP DE ESCENA #{actual_scene_id} APROBADO!</b>\n\n"
+                f"📑 <b>Capítulo:</b> {chapter.get('titulo', chapter_id)}\n"
+                f"📖 <b>Proyecto:</b> {proj.get('titulo', project_id)}"
+                f"{ready_note}"
+            )
+            send_telegram_api("sendMessage", {"chat_id": chat_id, "text": msg, "parse_mode": "HTML"})
+
+        return {
+            "ok": True,
+            "status": "aprobado",
+            "project_id": project_id,
+            "chapter_id": chapter_id,
+            "scene_id": actual_scene_id,
+            "all_scenes_approved": all_approved,
+            "chapter_approval_status": chapter["aprobacion_clips_status"]
+        }
+
+    elif action_norm in ("redo", "rehacer", "regenerar", "regenerar_escena", "regenerar escena"):
+        clean_feedback = feedback.strip() if feedback else "Solicitada regeneración de escena desde Telegram."
+        target_scene["estado_aprobacion"] = "regenerando"
+        target_scene["motivo_rechazo"] = clean_feedback
+        target_scene["regeneraciones_count"] = int(target_scene.get("regeneraciones_count") or 0) + 1
+        chapter["aprobacion_clips_status"] = "en_revision"
+        save_project_chapter(project_id, chapter)
+
+        if notify_telegram and enabled:
+            prep_msg = (
+                f"🔄 <b>REGENERANDO ESCENA #{actual_scene_id}</b>\n\n"
+                f"📑 <b>Capítulo:</b> {chapter.get('titulo', chapter_id)}\n"
+                f"💬 <b>Motivo:</b> {clean_feedback}\n"
+                f"<i>Generando nueva versión del clip antes del ensamblado final...</i>"
+            )
+            send_telegram_api("sendMessage", {"chat_id": chat_id, "text": prep_msg, "parse_mode": "HTML"})
+
+        new_proposal = None
+        if auto_regenerate_media:
+            try:
+                prompt_img = target_scene.get("prompt_imagen") or f"Scene {actual_scene_id}, vertical 9:16"
+                new_seed = int(time.time()) % 999999
+                img_res = generate_image(
+                    prompt=prompt_img,
+                    provider="flux",
+                    seed=new_seed,
+                    reference_image=target_scene.get("reference_image")
+                )
+                if img_res.get("url"):
+                    target_scene["image_url"] = img_res["url"]
+                clip_res = render_single_scene_preview_clip(
+                    scene=target_scene,
+                    scene_index=scene_index,
+                    project_id=project_id,
+                    chapter_id=chapter_id,
+                    enable_subtitles=True,
+                    enable_ken_burns=False
+                )
+                if clip_res.get("clip_url"):
+                    target_scene["clip_url"] = clip_res["clip_url"]
+                save_project_chapter(project_id, chapter)
+            except Exception as e:
+                print(f"[Auto Regenerate Scene Error] {e}")
+
+            new_proposal = send_scene_clip_approval(
+                project_id=project_id,
+                chapter_id=chapter_id,
+                scene_id=actual_scene_id,
+                render_clip_if_missing=False,
+                trigger_n8n=True
+            )
+        else:
+            # Marcar como pendiente de revisión / regeneración solicitada
+            target_scene["estado_aprobacion"] = "regenerar_solicitado"
+            save_project_chapter(project_id, chapter)
+
+        return {
+            "ok": True,
+            "status": "regenerar_escena",
+            "project_id": project_id,
+            "chapter_id": chapter_id,
+            "scene_id": actual_scene_id,
+            "motivo": clean_feedback,
+            "regeneraciones_count": target_scene["regeneraciones_count"],
+            "new_proposal": new_proposal
+        }
+
+    elif action_norm in ("rejc", "reject", "rechazado", "rechazar", "no"):
+        clean_feedback = feedback.strip() if feedback else "Escena descartada para revisión."
+        target_scene["estado_aprobacion"] = "rechazado"
+        target_scene["motivo_rechazo"] = clean_feedback
+        chapter["aprobacion_clips_status"] = "en_revision"
+        save_project_chapter(project_id, chapter)
+
+        if notify_telegram and enabled:
+            msg = (
+                f"❌ <b>ESCENA #{actual_scene_id} RECHAZADA</b>\n\n"
+                f"📑 <b>Capítulo:</b> {chapter.get('titulo', chapter_id)}\n"
+                f"💬 <b>Motivo:</b> {clean_feedback}"
+            )
+            send_telegram_api("sendMessage", {"chat_id": chat_id, "text": msg, "parse_mode": "HTML"})
+
+        return {
+            "ok": True,
+            "status": "rechazado",
+            "project_id": project_id,
+            "chapter_id": chapter_id,
+            "scene_id": actual_scene_id,
+            "motivo_rechazo": clean_feedback
+        }
+
+    else:
+        raise ValueError(f"Acción '{action}' no reconocida para escena. Usa 'approve', 'redo' o 'reject'.")
+
 def find_item_by_message_id(message_id: int) -> Optional[Tuple[str, str, str, Dict[str, Any]]]:
     """
-    Busca qué personaje o escenario coincide con un message_id de Telegram.
-    Devuelve (project_id, item_type ['c' o 'e'], item_id, item_data) o None.
+    Busca qué personaje, escenario o clip de escena coincide con un message_id de Telegram.
+    Devuelve (project_id, item_type ['c', 'e' o 's:{chapter_id}'], item_id, item_data) o None.
     """
     all_projs = list_all_projects()
     for p_summary in all_projs:
@@ -488,14 +978,23 @@ def find_item_by_message_id(message_id: int) -> Optional[Tuple[str, str, str, Di
             for e in full_proj.get("escenarios", []):
                 if e.get("telegram_message_id") == message_id:
                     return pid, "e", e.get("id"), e
+            for ch_summary in list_project_chapters(pid):
+                chid = ch_summary.get("id")
+                if not chid:
+                    continue
+                ch_data = get_project_chapter(pid, chid)
+                for idx, sc in enumerate(ch_data.get("scenes", [])):
+                    if sc.get("telegram_message_id") == message_id:
+                        sc_id = str(sc.get("id") or (idx + 1))
+                        return pid, f"s:{chid}", sc_id, sc
         except Exception:
             continue
     return None
 
 def find_latest_pending_item() -> Optional[Tuple[str, str, str, Dict[str, Any]]]:
     """
-    Localiza la propuesta pendiente más reciente enviada a Telegram across all projects.
-    Permite aprobar o rechazar diciendo 'sí' o 'no' directamente sin citar mensaje.
+    Localiza la propuesta pendiente más reciente enviada a Telegram across all projects
+    (incluyendo personajes, escenarios y clips de escenas).
     """
     candidates = []
     all_projs = list_all_projects()
@@ -509,6 +1008,15 @@ def find_latest_pending_item() -> Optional[Tuple[str, str, str, Dict[str, Any]]]
             for e in full_proj.get("escenarios", []):
                 if e.get("estado_aprobacion") == "pendiente" and e.get("propuesta_enviada_en"):
                     candidates.append((e["propuesta_enviada_en"], pid, "e", e.get("id"), e))
+            for ch_summary in list_project_chapters(pid):
+                chid = ch_summary.get("id")
+                if not chid:
+                    continue
+                ch_data = get_project_chapter(pid, chid)
+                for idx, sc in enumerate(ch_data.get("scenes", [])):
+                    if sc.get("estado_aprobacion") in ("pendiente", "regenerar_solicitado") and sc.get("propuesta_enviada_en"):
+                        sc_id = str(sc.get("id") or (idx + 1))
+                        candidates.append((sc["propuesta_enviada_en"], pid, f"s:{chid}", sc_id, sc))
         except Exception:
             continue
 
@@ -523,16 +1031,16 @@ def find_latest_pending_item() -> Optional[Tuple[str, str, str, Dict[str, Any]]]
 def parse_natural_language_decision(text: str) -> Tuple[Optional[str], str]:
     """
     Analiza una respuesta en texto natural del usuario en Telegram.
-    Soporta: «aprobar», «rechazar», «sí», «no», «ok», «no cuadra», «rehacer», etc.
+    Soporta: «aprobar», «regenerar escena», «rechazar», «sí», «no», «ok», «no cuadra», «rehacer», etc.
     Devuelve (accion ['approve'|'reject'|'redo'|None], feedback).
     """
     clean = text.strip()
     lower = clean.lower()
 
-    # 1. Patrones de rehacer / revisión urgente
+    # 1. Patrones de rehacer / regenerar escena
     redo_patterns = [
-        r"^(rehacer|repite|repetir|hazlo de nuevo|vuelve a generar|generar otro|cambiar|otra vez)\b",
-        r"\b(rehacer|otra propuesta)\b"
+        r"^(regenerar|regenerar escena|rehacer|repite|repetir|hazlo de nuevo|vuelve a generar|generar otro|cambiar|otra vez)\b",
+        r"\b(regenerar escena|rehacer escena|rehacer|otra propuesta)\b"
     ]
     for pat in redo_patterns:
         if re.search(pat, lower):
@@ -550,7 +1058,7 @@ def parse_natural_language_decision(text: str) -> Tuple[Optional[str], str]:
     # 3. Patrones de aprobación positiva
     approve_patterns = [
         r"^(s[ií]|ok|vale|apruebo|aprobado|aprobar|acepto|aceptar|dale|perfecto|adelante|dispara)\b",
-        r"(?<!no\s)\b(lo apruebo|me gusta|está genial|queda aprobado)\b"
+        r"(?<!no\s)\b(lo apruebo|me gusta|está genial|queda aprobado|aprobar escena)\b"
     ]
     for pat in approve_patterns:
         if re.search(pat, lower):
@@ -567,12 +1075,68 @@ def process_telegram_update(update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         cb = update["callback_query"]
         cb_id = cb.get("id")
         data = cb.get("data", "")
-        # Formato data: {action}:{item_type}:{project_id}:{item_id}
         parts = data.split(":")
+
+        # Caso 1A: Botón de clip de escena -> {action}:s:{project_id}:{chapter_id}:{scene_id}
+        if len(parts) >= 5 and parts[1] == "s":
+            action, _, project_id, chapter_id, scene_id_str = parts[0], parts[1], parts[2], parts[3], parts[4]
+            try:
+                label = "Aprobar" if action == "appr" else ("Regenerar escena" if action == "redo" else "Rechazar")
+                send_telegram_api("answerCallbackQuery", {"callback_query_id": cb_id, "text": f"Escena #{scene_id_str}: {label}"})
+                res = apply_scene_approval_decision(
+                    project_id=project_id,
+                    chapter_id=chapter_id,
+                    scene_id=int(scene_id_str),
+                    action=action,
+                    notify_telegram=True
+                )
+                return {
+                    "type": "callback_query",
+                    "item_type": "scene",
+                    "action": action,
+                    "project_id": project_id,
+                    "chapter_id": chapter_id,
+                    "scene_id": int(scene_id_str),
+                    "result": res
+                }
+            except Exception as e:
+                send_telegram_api("answerCallbackQuery", {"callback_query_id": cb_id, "text": f"Error: {e}"})
+                return {"type": "callback_query", "error": str(e)}
+
+        # Caso 1B: Aprobar todas las escenas de un capítulo -> appr_all:ch:{project_id}:{chapter_id}
+        if len(parts) >= 4 and parts[0] == "appr_all" and parts[1] == "ch":
+            project_id, chapter_id = parts[2], parts[3]
+            try:
+                chapter = get_project_chapter(project_id, chapter_id)
+                for idx, sc in enumerate(chapter.get("scenes", [])):
+                    sc_id = int(sc.get("id") or (idx + 1))
+                    apply_scene_approval_decision(project_id, chapter_id, sc_id, "approve", notify_telegram=False)
+                send_telegram_api("answerCallbackQuery", {"callback_query_id": cb_id, "text": "¡Todas las escenas aprobadas!"})
+                _, chat_id, enabled = get_telegram_config()
+                if enabled:
+                    send_telegram_api(
+                        "sendMessage",
+                        {
+                            "chat_id": chat_id,
+                            "text": f"✅ <b>¡TODAS LAS ESCENAS APROBADAS!</b>\nEl capítulo <b>{chapter.get('titulo', chapter_id)}</b> está listo para el ensamblado final.",
+                            "parse_mode": "HTML"
+                        }
+                    )
+                return {
+                    "type": "callback_query",
+                    "item_type": "chapter",
+                    "action": "approve_all",
+                    "project_id": project_id,
+                    "chapter_id": chapter_id
+                }
+            except Exception as e:
+                send_telegram_api("answerCallbackQuery", {"callback_query_id": cb_id, "text": f"Error: {e}"})
+                return {"type": "callback_query", "error": str(e)}
+
+        # Caso 1C: Personaje o escenario -> {action}:{item_type}:{project_id}:{item_id}
         if len(parts) >= 4:
             action, item_type, project_id, item_id = parts[0], parts[1], parts[2], parts[3]
             try:
-                # Responder al callback inmediatamente para quitar el reloj en el cliente
                 send_telegram_api("answerCallbackQuery", {"callback_query_id": cb_id, "text": f"Acción '{action}' recibida"})
                 res = apply_approval_decision(project_id, item_type, item_id, action, notify_telegram=True)
                 return {"type": "callback_query", "action": action, "item_id": item_id, "result": res}
@@ -604,8 +1168,27 @@ def process_telegram_update(update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         if target:
             project_id, item_type, item_id, _ = target
             try:
-                res = apply_approval_decision(project_id, item_type, item_id, action, feedback=feedback, notify_telegram=True)
-                return {"type": "message_text", "action": action, "item_id": item_id, "result": res}
+                if item_type.startswith("s:"):
+                    chapter_id = item_type.split(":", 1)[1]
+                    res = apply_scene_approval_decision(
+                        project_id=project_id,
+                        chapter_id=chapter_id,
+                        scene_id=int(item_id),
+                        action=action,
+                        feedback=feedback,
+                        notify_telegram=True
+                    )
+                    return {
+                        "type": "message_text",
+                        "item_type": "scene",
+                        "action": action,
+                        "chapter_id": chapter_id,
+                        "scene_id": int(item_id),
+                        "result": res
+                    }
+                else:
+                    res = apply_approval_decision(project_id, item_type, item_id, action, feedback=feedback, notify_telegram=True)
+                    return {"type": "message_text", "action": action, "item_id": item_id, "result": res}
             except Exception as e:
                 return {"type": "message_text", "error": str(e)}
 

@@ -7,14 +7,23 @@ PROJECT_ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(PROJECT_ROOT))
 
 from app.main import app
-from app.core.project_manager import get_project, save_or_update_project
+from app.core.project_manager import (
+    get_project,
+    save_or_update_project,
+    get_project_chapter,
+    save_project_chapter
+)
 from app.core.telegram_approvals import (
     get_telegram_config,
     parse_natural_language_decision,
     apply_approval_decision,
+    apply_scene_approval_decision,
     process_telegram_update,
     send_character_approval,
-    send_environment_approval
+    send_environment_approval,
+    send_scene_clip_approval,
+    send_chapter_clips_for_approval,
+    trigger_n8n_clip_approval_webhook
 )
 
 def test_telegram_approvals():
@@ -190,8 +199,91 @@ def test_telegram_approvals():
     assert res_poll.status_code == 200
     print(f"   -> Polling ejecutado correctamente: {res_poll.json()}")
 
+    # 11. Envío de clip de escena pre-ensamblado por Telegram y trigger de webhook n8n
+    print("\n[11] Probando envío de clip de escena pre-ensamblado por Telegram y Webhook n8n...")
+    res_clip = client.post(
+        "/api/projects/el_principito/chapters/cap_1/scenes/1/send-telegram-approval",
+        json={"render_clip_if_missing": False, "trigger_n8n": True}
+    )
+    assert res_clip.status_code == 200, f"Error enviando clip: {res_clip.text}"
+    clip_data = res_clip.json()
+    assert clip_data["ok"] is True
+    assert "✅ Aprobar" in clip_data["buttons_sent"]
+    assert "🔄 Regenerar escena" in clip_data["buttons_sent"]
+    assert clip_data["n8n_webhook"]["triggered"] is True
+    print(f"   -> Clip escena #1 enviado. Botones: {clip_data['buttons_sent']} | Webhook n8n status: {clip_data['n8n_webhook'].get('status_code')}")
+
+    # 12. Simulación de clic en botón inline 'Regenerar escena' de Telegram
+    print("\n[12] Simulando clic en botón inline 'Regenerar escena' (CallbackQuery 'redo:s:el_principito:cap_1:1')...")
+    mock_cb_redo = {
+        "update_id": 999993,
+        "callback_query": {
+            "id": "cb_clip_redo_123",
+            "data": "redo:s:el_principito:cap_1:1",
+            "from": {"id": int(chat_id), "first_name": "TestUser"}
+        }
+    }
+    res_redo = client.post("/api/telegram/webhook", json=mock_cb_redo)
+    assert res_redo.status_code == 200
+    ch_data = get_project_chapter("el_principito", "cap_1")
+    sc_1 = next(s for s in ch_data["scenes"] if s["id"] == 1)
+    assert sc_1.get("estado_aprobacion") in ("regenerando", "regenerar_solicitado")
+    assert sc_1.get("regeneraciones_count", 0) >= 1
+    print(f"   -> Botón 'Regenerar escena' procesado. Estado: {sc_1.get('estado_aprobacion')} | Regeneraciones: {sc_1.get('regeneraciones_count')}")
+
+    # 13. Simulación de clic en botón inline 'Aprobar' de Telegram
+    print("\n[13] Simulando clic en botón inline 'Aprobar' (CallbackQuery 'appr:s:el_principito:cap_1:1')...")
+    mock_cb_appr = {
+        "update_id": 999994,
+        "callback_query": {
+            "id": "cb_clip_appr_123",
+            "data": "appr:s:el_principito:cap_1:1",
+            "from": {"id": int(chat_id), "first_name": "TestUser"}
+        }
+    }
+    res_appr = client.post("/api/telegram/webhook", json=mock_cb_appr)
+    assert res_appr.status_code == 200
+    ch_data = get_project_chapter("el_principito", "cap_1")
+    sc_1 = next(s for s in ch_data["scenes"] if s["id"] == 1)
+    assert sc_1.get("estado_aprobacion") == "aprobado"
+    assert sc_1.get("aprobado_en") is not None
+    print(f"   -> Botón 'Aprobar' procesado con éxito. Escena #1 marcada como 'aprobado'.")
+
+    # 14. Integración n8n Webhook: /api/n8n/webhook/scene-decision y /api/n8n/webhook/send-clips
+    print("\n[14] Probando endpoints de integración n8n (/api/n8n/webhook/scene-decision y send-clips)...")
+    res_n8n_dec = client.post(
+        "/api/n8n/webhook/scene-decision",
+        json={
+            "callback_data": "appr:s:el_principito:cap_1:2",
+            "notify_telegram": True,
+            "auto_regenerate_media": False
+        }
+    )
+    assert res_n8n_dec.status_code == 200
+    assert res_n8n_dec.json()["status"] == "aprobado"
+
+    # Aprobar escena 3 mediante n8n webhook para completar el capítulo
+    res_n8n_dec3 = client.post(
+        "/api/n8n/webhook/scene-decision",
+        json={
+            "callback_data": "appr:s:el_principito:cap_1:3",
+            "notify_telegram": True,
+            "auto_regenerate_media": False
+        }
+    )
+    assert res_n8n_dec3.status_code == 200
+    assert res_n8n_dec3.json()["status"] == "aprobado"
+    assert res_n8n_dec3.json()["all_scenes_approved"] is True
+    print(f"   -> n8n Webhook procesó aprobaciones. all_scenes_approved={res_n8n_dec3.json()['all_scenes_approved']}")
+
+    # 15. Verificación de estado pre-ensamblado y ensamblado final
+    print("\n[15] Verificando estado pre-ensamblado 'aprobado_listo_ensamblar'...")
+    ch_data = get_project_chapter("el_principito", "cap_1")
+    assert ch_data.get("aprobacion_clips_status") == "aprobado_listo_ensamblar"
+    print(f"   -> Capítulo 'cap_1' listo para ensamblado final: status='{ch_data.get('aprobacion_clips_status')}'")
+
     print("\n========================================================")
-    print("¡TODAS LAS PRUEBAS DE APROBACIÓN VÍA TELEGRAM PASARON AL 100%!")
+    print("¡TODAS LAS PRUEBAS DE APROBACIÓN VÍA TELEGRAM Y N8N PASARON AL 100%!")
     print("========================================================\n")
 
 if __name__ == "__main__":

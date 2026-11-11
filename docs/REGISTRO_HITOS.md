@@ -1,5 +1,20 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [11/11/2026 13:36:17] ✅ Alineación de Flujo Telegram para Aprobaciones Humanas
+
+- **ID Tarea:** `23`
+- **Prioridad:** ALTA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Integración completa del webhook n8n y flujo de Telegram para envío y aprobación de clips pre-ensamblado. Activado webhook n8n videostudio-scene-approval con botones Aprobar y Regenerar escena. Validación exitosa de los 15 tests unitarios y de integración de telegram_approvals al 100%.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen y 02. Listado de Actividades)
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [11/11/2026 13:08:54] ✅ Banco de Consistencia de Personajes (--cref / LoRA)
 
 - **ID Tarea:** `24`
