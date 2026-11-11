@@ -45,6 +45,18 @@ from app.core.project_manager import (
 from app.core.coherence_auditor import audit_and_heal_characters, audit_and_heal_environments
 from app.core.document_parser import parse_document
 
+from contextlib import asynccontextmanager, suppress
+import asyncio
+from app.core.telegram_approvals import (
+    send_character_approval,
+    send_environment_approval,
+    send_project_initial_proposals,
+    apply_approval_decision,
+    poll_telegram_updates,
+    process_telegram_update,
+    get_telegram_config
+)
+
 load_dotenv()
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -55,10 +67,35 @@ PROYECTOS_DIR = BASE_DIR.parent / "proyectos"
 PROYECTOS_DIR.mkdir(parents=True, exist_ok=True)
 TEMPLATES_DIR = BASE_DIR / "templates"
 
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    worker_task = None
+    try:
+        _, _, enabled = get_telegram_config()
+        if enabled:
+            async def telegram_worker():
+                while True:
+                    try:
+                        poll_telegram_updates()
+                    except Exception:
+                        pass
+                    await asyncio.sleep(5)
+            worker_task = asyncio.create_task(telegram_worker())
+    except Exception as e:
+        print(f"[Telegram Worker] No iniciado: {e}")
+
+    yield
+
+    if worker_task:
+        worker_task.cancel()
+        with suppress(asyncio.CancelledError):
+            await worker_task
+
 app = FastAPI(
     title="VideoStudio AI - Creador de Vídeos Cortos",
     description="Estudio integral de producción para TikTok, Shorts y Reels con arquitectura de Proyectos/Libros y Human-in-the-Loop.",
-    version="2.0.0"
+    version="2.1.0",
+    lifespan=lifespan
 )
 
 # Servir archivos estáticos y datos de proyectos (personajes y multimedia)
@@ -74,6 +111,13 @@ class CharacterModel(BaseModel):
     descripcion_visual: str
     imagen_url: Optional[str] = None
     prompt_retrato: Optional[str] = None
+    sin_fondo: Optional[bool] = True
+    formato_vista: Optional[str] = "giro_360"
+    estado_aprobacion: Optional[str] = "pendiente"
+    motivo_rechazo: Optional[str] = ""
+    telegram_message_id: Optional[Any] = None
+    aprobado_en: Optional[str] = None
+    propuesta_enviada_en: Optional[str] = None
 
 class EscenarioModel(BaseModel):
     id: Optional[str] = None
@@ -82,6 +126,20 @@ class EscenarioModel(BaseModel):
     descripcion_visual: str = ""
     imagen_url: Optional[str] = None
     prompt_escenario: Optional[str] = None
+    estado_aprobacion: Optional[str] = "pendiente"
+    motivo_rechazo: Optional[str] = ""
+    telegram_message_id: Optional[Any] = None
+    aprobado_en: Optional[str] = None
+    propuesta_enviada_en: Optional[str] = None
+
+class TelegramApprovalDecisionRequest(BaseModel):
+    action: str  # "approve", "reject", "redo"
+    feedback: Optional[str] = ""
+    notify_telegram: Optional[bool] = True
+
+class SendTelegramProposalRequest(BaseModel):
+    prompt_override: Optional[str] = None
+    auto_generate: Optional[bool] = True
 
 class ProjectModel(BaseModel):
     id: Optional[str] = None
@@ -115,6 +173,7 @@ class GeneratePortraitRequest(BaseModel):
     sin_fondo: Optional[bool] = True
     formato_vista: Optional[str] = "giro_360"
     descripcion_visual: Optional[str] = None
+    notify_telegram: Optional[bool] = False
 
 class OptimizeCharPromptRequest(BaseModel):
     descripcion_visual: Optional[str] = None
@@ -132,6 +191,7 @@ class SyncStyleRequest(BaseModel):
 class GenerateEnvironmentRequest(BaseModel):
     environment_id: str
     prompt_override: Optional[str] = None
+    notify_telegram: Optional[bool] = False
 
 class StoryboardRequest(BaseModel):
     project_id: Optional[str] = None
@@ -378,6 +438,11 @@ async def api_generate_char_portrait(project_id: str, req: GeneratePortraitReque
             formato_vista=req.formato_vista or "giro_360",
             descripcion_visual=req.descripcion_visual
         )
+        if req.notify_telegram:
+            try:
+                send_character_approval(project_id, req.character_id, auto_generate_if_missing=False)
+            except Exception as e:
+                print(f"[Telegram Notify Error] {e}")
         return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -455,6 +520,11 @@ async def api_delete_character(project_id: str, character_id: str):
 async def api_generate_environment(project_id: str, req: GenerateEnvironmentRequest):
     try:
         res = generate_environment_image(project_id, req.environment_id, req.prompt_override)
+        if req.notify_telegram:
+            try:
+                send_environment_approval(project_id, req.environment_id, auto_generate_if_missing=False)
+            except Exception as e:
+                print(f"[Telegram Notify Error] {e}")
         return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -492,6 +562,124 @@ async def api_delete_environment(project_id: str, environment_id: str):
         return res
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+# -------------------------------------------------------------
+# Endpoints de Aprobación Human-in-the-Loop vía Telegram
+# -------------------------------------------------------------
+@app.post("/api/projects/{project_id}/characters/{character_id}/send-telegram-approval")
+async def api_send_char_telegram_approval(
+    project_id: str,
+    character_id: str,
+    req: Optional[SendTelegramProposalRequest] = None
+):
+    try:
+        p_over = req.prompt_override if req else None
+        auto_gen = req.auto_generate if req and req.auto_generate is not None else True
+        res = send_character_approval(
+            project_id=project_id,
+            character_id=character_id,
+            prompt_override=p_over,
+            auto_generate_if_missing=auto_gen
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/environments/{environment_id}/send-telegram-approval")
+async def api_send_env_telegram_approval(
+    project_id: str,
+    environment_id: str,
+    req: Optional[SendTelegramProposalRequest] = None
+):
+    try:
+        p_over = req.prompt_override if req else None
+        auto_gen = req.auto_generate if req and req.auto_generate is not None else True
+        res = send_environment_approval(
+            project_id=project_id,
+            environment_id=environment_id,
+            prompt_override=p_over,
+            auto_generate_if_missing=auto_gen
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/characters/{character_id}/decision")
+async def api_char_approval_decision(
+    project_id: str,
+    character_id: str,
+    req: TelegramApprovalDecisionRequest
+):
+    try:
+        res = apply_approval_decision(
+            project_id=project_id,
+            item_type="character",
+            item_id=character_id,
+            action=req.action,
+            feedback=req.feedback or "",
+            notify_telegram=req.notify_telegram if req.notify_telegram is not None else True
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/environments/{environment_id}/decision")
+async def api_env_approval_decision(
+    project_id: str,
+    environment_id: str,
+    req: TelegramApprovalDecisionRequest
+):
+    try:
+        res = apply_approval_decision(
+            project_id=project_id,
+            item_type="environment",
+            item_id=environment_id,
+            action=req.action,
+            feedback=req.feedback or "",
+            notify_telegram=req.notify_telegram if req.notify_telegram is not None else True
+        )
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/send-initial-proposals")
+async def api_send_initial_proposals(project_id: str):
+    """Envía todas las propuestas iniciales de personajes y escenarios de un proyecto a Telegram."""
+    try:
+        res = send_project_initial_proposals(project_id)
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/telegram/poll-now")
+async def api_telegram_poll_now():
+    """Ejecuta una consulta inmediata de actualizaciones en Telegram y procesa respuestas."""
+    try:
+        res = poll_telegram_updates()
+        return res
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/telegram/webhook")
+async def api_telegram_webhook(req: Dict[str, Any]):
+    """Webhook para procesar updates directamente si se activa en Telegram."""
+    try:
+        res = process_telegram_update(req)
+        return {"ok": True, "result": res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/telegram/status")
+async def api_telegram_status():
+    """Consulta estado del bot de Telegram y configuración de aprobaciones."""
+    token, chat_id, enabled = get_telegram_config()
+    masked_token = f"{token[:8]}...{token[-4:]}" if token and len(token) > 12 else "No configurado"
+    return {
+        "enabled": enabled,
+        "token_masked": masked_token,
+        "chat_id": chat_id,
+        "bot_configured": bool(token and chat_id)
+    }
 
 # Auditoría y Autocorrección de Coherencia Visual (Personajes y Escenarios)
 @app.post("/api/projects/{project_id}/audit-characters")

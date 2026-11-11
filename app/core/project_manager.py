@@ -160,6 +160,11 @@ def get_project(project_id: str) -> Dict[str, Any]:
         p["id"] = p_id
         p.setdefault("tipo", "humano")
         p.setdefault("prompt_retrato", "")
+        p.setdefault("estado_aprobacion", "aprobado" if p.get("imagen_url") else "pendiente")
+        p.setdefault("motivo_rechazo", "")
+        p.setdefault("telegram_message_id", None)
+        p.setdefault("aprobado_en", None)
+        p.setdefault("propuesta_enviada_en", None)
         # Si ya tiene una imagen_url válida registrada y el archivo físico existe, respetarla
         if p.get("imagen_url"):
             clean_url = p["imagen_url"].split("?")[0]
@@ -186,6 +191,11 @@ def get_project(project_id: str) -> Dict[str, Any]:
         esc["id"] = e_id
         esc.setdefault("tipo", "exterior_urbano")
         esc.setdefault("prompt_escenario", "")
+        esc.setdefault("estado_aprobacion", "aprobado" if esc.get("imagen_url") else "pendiente")
+        esc.setdefault("motivo_rechazo", "")
+        esc.setdefault("telegram_message_id", None)
+        esc.setdefault("aprobado_en", None)
+        esc.setdefault("propuesta_enviada_en", None)
         img_png = escenarios_dir / f"{e_id}.png"
         img_jpg = escenarios_dir / f"{e_id}.jpg"
         if img_png.exists():
@@ -301,7 +311,12 @@ def save_or_update_project(project_data: Dict[str, Any]) -> Dict[str, Any]:
             "imagen_url": c.get("imagen_url"),
             "prompt_retrato": c.get("prompt_retrato", "").strip(),
             "sin_fondo": c.get("sin_fondo", True) if c.get("sin_fondo") is not None else True,
-            "formato_vista": c.get("formato_vista", "giro_360")
+            "formato_vista": c.get("formato_vista", "giro_360"),
+            "estado_aprobacion": c.get("estado_aprobacion", "pendiente" if c.get("imagen_url") else "pendiente"),
+            "motivo_rechazo": c.get("motivo_rechazo", ""),
+            "telegram_message_id": c.get("telegram_message_id"),
+            "aprobado_en": c.get("aprobado_en"),
+            "propuesta_enviada_en": c.get("propuesta_enviada_en")
         })
 
     # Normalizar escenarios recurrentes
@@ -314,7 +329,12 @@ def save_or_update_project(project_data: Dict[str, Any]) -> Dict[str, Any]:
             "tipo": e.get("tipo", "exterior_urbano").strip(),
             "descripcion_visual": e.get("descripcion_visual", "").strip(),
             "imagen_url": e.get("imagen_url"),
-            "prompt_escenario": e.get("prompt_escenario", "").strip()
+            "prompt_escenario": e.get("prompt_escenario", "").strip(),
+            "estado_aprobacion": e.get("estado_aprobacion", "pendiente" if e.get("imagen_url") else "pendiente"),
+            "motivo_rechazo": e.get("motivo_rechazo", ""),
+            "telegram_message_id": e.get("telegram_message_id"),
+            "aprobado_en": e.get("aprobado_en"),
+            "propuesta_enviada_en": e.get("propuesta_enviada_en")
         })
 
     # Perfil del narrador
@@ -1067,6 +1087,8 @@ def generate_character_portrait(
     relative_url = f"/proyectos_data/{folder.name}/personajes/{dest_filename}?t={int(time.time())}"
     char_match["imagen_url"] = relative_url
     char_match["prompt_retrato"] = final_prompt
+    char_match["estado_aprobacion"] = "pendiente"
+    char_match["motivo_rechazo"] = ""
 
     # Actualizar metadata del proyecto
     with open(meta_file, "w", encoding="utf-8") as f:
@@ -1258,6 +1280,8 @@ def generate_environment_image(
     relative_url = f"/proyectos_data/{folder.name}/escenarios/{dest_filename}?t={int(time.time())}"
     esc_match["imagen_url"] = relative_url
     esc_match["prompt_escenario"] = final_prompt
+    esc_match["estado_aprobacion"] = "pendiente"
+    esc_match["motivo_rechazo"] = ""
 
     with open(meta_file, "w", encoding="utf-8") as f:
         json.dump(project_data, f, ensure_ascii=False, indent=2)

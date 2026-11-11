@@ -10,11 +10,12 @@ Este proyecto nació para reemplazar los flujos complejos y frágiles basados en
 
 Permite convertir cualquier texto, capítulo de libro, microrrelato o idea en un vídeo vertical de alto impacto (1080×1920) con:
 1. **Consistencia de Personajes:** Inyección de rasgos físicos fijos del protagonista en cada escena.
-2. **Desglose Storyboard:** Guion adaptado al ritmo de retención de redes sociales (gancho, nudo y desenlace).
-3. **Locución Neuronal:** Integración con **ElevenLabs** (voces de estudio como George, Charlie, Sarah) y **gTTS** (gratuito sin API Key).
-4. **Imágenes Verticales (9:16):** Generación con **FLUX** (alta definición, ultrarrápido y sin coste) o **DALL-E 3**, con soporte para subir imágenes propias.
-5. **Renderizado FFmpeg:** Animación con movimiento dinámico **Ken Burns** (zoom y paneo suaves) y subtítulos quemados de alto contraste.
-6. **Previsualizador de Smartphone:** Simulador interactivo de TikTok / Reels para comprobar el vídeo antes de descargarlo.
+2. **Aprobación Human-in-the-Loop vía Telegram:** Envío automático de propuestas visuales de personajes y escenarios por Telegram con botones (`Aprobar`, `Rechazar`, `Rehacer`) y reconocimiento de respuestas en lenguaje natural («sí», «no», «no cuadra»).
+3. **Desglose Storyboard:** Guion adaptado al ritmo de retención de redes sociales (gancho, nudo y desenlace).
+4. **Locución Neuronal:** Integración con **ElevenLabs** (voces de estudio como George, Charlie, Sarah) y **gTTS** (gratuito sin API Key).
+5. **Imágenes Verticales (9:16):** Generación con **FLUX** (alta definición, ultrarrápido y sin coste) o **DALL-E 3**, con soporte para subir imágenes propias.
+6. **Renderizado FFmpeg:** Animación con movimiento dinámico **Ken Burns** (zoom y paneo suaves) y subtítulos quemados de alto contraste.
+7. **Previsualizador de Smartphone:** Simulador interactivo de TikTok / Reels para comprobar el vídeo antes de descargarlo.
 
 ---
 
@@ -46,6 +47,7 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
 │   │   ├── image_engine.py      # Generación de imágenes (FLUX + DALL-E 3)
 │   │   ├── video_renderer.py    # Renderizado y montaje FFmpeg con Ken Burns
 │   │   ├── project_manager.py   # Guardado de proyectos, personajes y escenarios
+│   │   ├── telegram_approvals.py# Aprobaciones Human-in-the-Loop por Telegram
 │   │   └── document_parser.py   # Extracción de texto de libros (PDF, DOCX, TXT)
 │   ├── static/
 │   │   ├── css/style.css        # Diseño oscuro de estudio (Glassmorphism)
@@ -58,6 +60,7 @@ python -m uvicorn app.main:app --host 127.0.0.1 --port 8001 --reload
 │   └── {proyecto_id}/           # Carpetas: personajes/, escenarios/, documentos/, capitulos/
 ├── tests/                       # Suite de pruebas automatizadas
 │   ├── test_api.py              # Comprobación de API y lectura de proyectos
+│   ├── test_telegram_approvals.py # Verificación de aprobaciones por Telegram
 │   └── test_app.py              # Test integral del pipeline (guion, voz, imagen, vídeo)
 ├── scripts/                     # Scripts auxiliares y herramientas CLI
 │   └── ensamblar_video.py       # Ensamblador standalone MoviePy

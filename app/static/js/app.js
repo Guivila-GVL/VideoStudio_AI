@@ -1181,6 +1181,9 @@ document.addEventListener("DOMContentLoaded", () => {
     card.className = "char-card";
     card.dataset.index = index;
     card.dataset.id = char.id || `char_${index+1}`;
+    card.dataset.estadoAprobacion = char.estado_aprobacion || (char.imagen_url ? "aprobado" : "pendiente");
+    card.dataset.motivoRechazo = char.motivo_rechazo || "";
+    card.dataset.telegramMessageId = char.telegram_message_id || "";
 
     let charImgUrl = char.imagen_url;
     if (charImgUrl) {
@@ -1199,6 +1202,16 @@ document.addEventListener("DOMContentLoaded", () => {
     const isPng = char.imagen_url && (char.imagen_url.includes(".png") || char.imagen_url.includes("nobg"));
     const isSinFondo = char.sin_fondo !== false;
     const formatoVista = char.formato_vista || "giro_360";
+
+    const approvalStatus = card.dataset.estadoAprobacion;
+    let statusBadge = "";
+    if (approvalStatus === "aprobado") {
+      statusBadge = `<span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Propuesta aprobada oficialmente">✅ Aprobado</span>`;
+    } else if (approvalStatus === "rechazado") {
+      statusBadge = `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Rechazado: ${char.motivo_rechazo || 'No cuadra'}">❌ Rechazado</span>`;
+    } else {
+      statusBadge = `<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Pendiente de aprobación en Telegram">⏳ Pendiente</span>`;
+    }
 
     card.innerHTML = `
       <!-- Columna Retrato -->
@@ -1220,12 +1233,19 @@ document.addEventListener("DOMContentLoaded", () => {
             <input type="file" class="input-upload-portrait" data-index="${index}" accept="image/*" style="display:none;">
           </label>
         </div>
+        <div class="char-approval-bar" style="display: flex; gap: 4px; margin-top: 6px; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="btn btn-outline btn-xxs btn-send-telegram-char" data-index="${index}" title="Enviar propuesta a Telegram para Human-in-the-Loop">📱 Telegram</button>
+          <button type="button" class="btn btn-ghost btn-xxs btn-approve-char" data-index="${index}" style="color: #4ade80;" title="Aprobar personaje">✅</button>
+          <button type="button" class="btn btn-ghost btn-xxs btn-reject-char" data-index="${index}" style="color: #f87171;" title="Rechazar personaje porque no cuadra">❌</button>
+          <button type="button" class="btn btn-ghost btn-xxs btn-redo-char" data-index="${index}" style="color: #60a5fa;" title="Rehacer propuesta">🔄</button>
+        </div>
       </div>
 
       <!-- Columna Detalles -->
       <div class="char-details-box">
-        <div class="char-details-header">
+        <div class="char-details-header" style="display: flex; gap: 0.5rem; align-items: center;">
           <input type="text" class="char-input-name" placeholder="Nombre (ej: Mateo)" value="${char.nombre || ''}">
+          ${statusBadge}
           <select class="char-select-type form-select-xs" title="Tipo de entidad">
             <option value="humano" ${charTipo === 'humano' ? 'selected' : ''}>👤 Humano</option>
             <option value="animal" ${charTipo === 'animal' ? 'selected' : ''}>🐴 Animal</option>
@@ -1301,6 +1321,27 @@ document.addEventListener("DOMContentLoaded", () => {
       await optimizeCharacterPrompt(card, char.id);
     });
 
+    card.querySelector(".btn-send-telegram-char")?.addEventListener("click", async () => {
+      await sendCharacterToTelegram(char.id, index);
+    });
+
+    card.querySelector(".btn-approve-char")?.addEventListener("click", async () => {
+      await applyApprovalDecision("character", char.id, "approve");
+    });
+
+    card.querySelector(".btn-reject-char")?.addEventListener("click", async () => {
+      const feedback = prompt("Indica el motivo del rechazo o qué revisar porque no cuadra:", "No cuadra con la visión del personaje.");
+      if (feedback !== null) {
+        await applyApprovalDecision("character", char.id, "reject", feedback);
+      }
+    });
+
+    card.querySelector(".btn-redo-char")?.addEventListener("click", async () => {
+      if (confirm(`¿Rehacer y regenerar la propuesta para '${char.nombre || char.id}'?`)) {
+        await applyApprovalDecision("character", char.id, "redo", "Rehacer porque no cuadra");
+      }
+    });
+
     card.querySelector(".input-upload-portrait").addEventListener("change", async e => {
       if (e.target.files.length > 0) {
         await uploadCharacterPortrait(index, e.target.files[0]);
@@ -1367,7 +1408,10 @@ document.addEventListener("DOMContentLoaded", () => {
         imagen_url: imgUrl,
         prompt_retrato: prompt,
         sin_fondo: sinFondo,
-        formato_vista: formatoVista
+        formato_vista: formatoVista,
+        estado_aprobacion: card.dataset.estadoAprobacion || "pendiente",
+        motivo_rechazo: card.dataset.motivoRechazo || "",
+        telegram_message_id: card.dataset.telegramMessageId || null
       });
     });
     return characters;
@@ -1621,6 +1665,9 @@ document.addEventListener("DOMContentLoaded", () => {
     card.className = "env-card";
     card.dataset.index = index;
     card.dataset.id = env.id || `esc_${index+1}`;
+    card.dataset.estadoAprobacion = env.estado_aprobacion || (env.imagen_url ? "aprobado" : "pendiente");
+    card.dataset.motivoRechazo = env.motivo_rechazo || "";
+    card.dataset.telegramMessageId = env.telegram_message_id || "";
 
     let envImgUrl = env.imagen_url;
     if (envImgUrl) {
@@ -1636,6 +1683,15 @@ document.addEventListener("DOMContentLoaded", () => {
          </div>`;
 
     const envTipo = env.tipo || "exterior_urbano";
+    const approvalStatus = card.dataset.estadoAprobacion;
+    let statusBadge = "";
+    if (approvalStatus === "aprobado") {
+      statusBadge = `<span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Escenario aprobado oficialmente">✅ Aprobado</span>`;
+    } else if (approvalStatus === "rechazado") {
+      statusBadge = `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Rechazado: ${env.motivo_rechazo || 'No cuadra'}">❌ Rechazado</span>`;
+    } else {
+      statusBadge = `<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Pendiente de aprobación en Telegram">⏳ Pendiente</span>`;
+    }
 
     card.innerHTML = `
       <!-- Columna Visual del Escenario -->
@@ -1652,12 +1708,19 @@ document.addEventListener("DOMContentLoaded", () => {
             <input type="file" class="input-upload-env" data-index="${index}" accept="image/*" style="display:none;">
           </label>
         </div>
+        <div class="env-approval-bar" style="display: flex; gap: 4px; margin-top: 6px; justify-content: center; flex-wrap: wrap;">
+          <button type="button" class="btn btn-outline btn-xxs btn-send-telegram-env" data-index="${index}" title="Enviar propuesta a Telegram">📱 Telegram</button>
+          <button type="button" class="btn btn-ghost btn-xxs btn-approve-env" data-index="${index}" style="color: #4ade80;" title="Aprobar escenario">✅</button>
+          <button type="button" class="btn btn-ghost btn-xxs btn-reject-env" data-index="${index}" style="color: #f87171;" title="Rechazar escenario porque no cuadra">❌</button>
+          <button type="button" class="btn btn-ghost btn-xxs btn-redo-env" data-index="${index}" style="color: #60a5fa;" title="Rehacer escenario">🔄</button>
+        </div>
       </div>
 
       <!-- Columna Detalles del Escenario -->
       <div class="env-details-box">
-        <div class="env-details-header">
+        <div class="env-details-header" style="display: flex; gap: 0.5rem; align-items: center;">
           <input type="text" class="env-input-name" placeholder="Nombre del Escenario (ej: Calles de Moguer)" value="${env.nombre || ''}">
+          ${statusBadge}
           <select class="env-select-type form-select-xs" title="Tipo de entorno">
             <option value="exterior_urbano" ${envTipo === 'exterior_urbano' ? 'selected' : ''}>🏛️ Urbano / Calles</option>
             <option value="naturaleza" ${envTipo === 'naturaleza' ? 'selected' : ''}>🌿 Naturaleza / Paisaje</option>
@@ -1690,6 +1753,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
     card.querySelector(".btn-optimize-env-prompt").addEventListener("click", async () => {
       await optimizeEnvironmentPrompt(index);
+    });
+
+    card.querySelector(".btn-send-telegram-env")?.addEventListener("click", async () => {
+      await sendEnvironmentToTelegram(env.id, index);
+    });
+
+    card.querySelector(".btn-approve-env")?.addEventListener("click", async () => {
+      await applyApprovalDecision("environment", env.id, "approve");
+    });
+
+    card.querySelector(".btn-reject-env")?.addEventListener("click", async () => {
+      const feedback = prompt("Indica el motivo del rechazo o qué revisar porque no cuadra:", "No cuadra con la visión del escenario.");
+      if (feedback !== null) {
+        await applyApprovalDecision("environment", env.id, "reject", feedback);
+      }
+    });
+
+    card.querySelector(".btn-redo-env")?.addEventListener("click", async () => {
+      if (confirm(`¿Rehacer y regenerar la propuesta para '${env.nombre || env.id}'?`)) {
+        await applyApprovalDecision("environment", env.id, "redo", "Rehacer porque no cuadra");
+      }
     });
 
     card.querySelector(".input-upload-env").addEventListener("change", async e => {
@@ -1742,7 +1826,10 @@ document.addEventListener("DOMContentLoaded", () => {
         tipo: card.querySelector(".env-select-type")?.value || "exterior_urbano",
         descripcion_visual: card.querySelector(".env-input-desc")?.value.trim() || "",
         imagen_url: imgEl ? imgEl.getAttribute("src") : null,
-        prompt_escenario: card.querySelector(".env-input-prompt")?.value.trim() || ""
+        prompt_escenario: card.querySelector(".env-input-prompt")?.value.trim() || "",
+        estado_aprobacion: card.dataset.estadoAprobacion || "pendiente",
+        motivo_rechazo: card.dataset.motivoRechazo || "",
+        telegram_message_id: card.dataset.telegramMessageId || null
       });
     });
     return environments;
@@ -1850,6 +1937,124 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   btnAddEnvironmentCard?.addEventListener("click", () => addEnvironmentCard());
+
+  // ========================================================
+  // FUNCIONES DE APROBACIÓN HUMAN-IN-THE-LOOP (TELEGRAM)
+  // ========================================================
+  async function sendCharacterToTelegram(charId, index) {
+    if (!state.currentProject) return;
+    showToast(`Enviando propuesta de personaje a Telegram...`, "info");
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/characters/${charId}/send-telegram-approval`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auto_generate: true })
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        showToast("✅ Propuesta de personaje enviada a Telegram con éxito", "success");
+        await loadProjectDetails(state.currentProject.id);
+      } else {
+        showToast(`Error al enviar a Telegram: ${data.detail || data.error || "Fallo"}`, "error");
+      }
+    } catch (e) {
+      showToast(`Error de red: ${e.message}`, "error");
+    }
+  }
+
+  async function sendEnvironmentToTelegram(envId, index) {
+    if (!state.currentProject) return;
+    showToast(`Enviando propuesta de escenario a Telegram...`, "info");
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/environments/${envId}/send-telegram-approval`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ auto_generate: true })
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        showToast("✅ Propuesta de escenario enviada a Telegram con éxito", "success");
+        await loadProjectDetails(state.currentProject.id);
+      } else {
+        showToast(`Error al enviar a Telegram: ${data.detail || data.error || "Fallo"}`, "error");
+      }
+    } catch (e) {
+      showToast(`Error de red: ${e.message}`, "error");
+    }
+  }
+
+  async function applyApprovalDecision(itemType, itemId, action, feedback = "") {
+    if (!state.currentProject) return;
+    const endpoint = itemType === "character"
+      ? `/api/projects/${state.currentProject.id}/characters/${itemId}/decision`
+      : `/api/projects/${state.currentProject.id}/environments/${itemId}/decision`;
+
+    showToast(`Procesando decisión (${action})...`, "info");
+    try {
+      const res = await fetch(endpoint, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ action, feedback, notify_telegram: true })
+      });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        showToast(`✅ Decisión aplicada: ${action.toUpperCase()}`, "success");
+        await loadProjectDetails(state.currentProject.id);
+      } else {
+        showToast(`Error: ${data.detail || data.error || "Error al aplicar"}`, "error");
+      }
+    } catch (e) {
+      showToast(`Error: ${e.message}`, "error");
+    }
+  }
+
+  async function sendAllInitialProposalsToTelegram() {
+    if (!state.currentProject) {
+      showToast("Selecciona primero un proyecto", "warning");
+      return;
+    }
+    if (!confirm(`¿Enviar todas las propuestas iniciales de personajes y escenarios de '${state.currentProject.titulo}' a Telegram?`)) {
+      return;
+    }
+    showToast("Enviando propuestas iniciales a Telegram...", "info");
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/send-initial-proposals`, { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        showToast(`✅ Enviadas ${data.sent_characters.length} personajes y ${data.sent_environments.length} escenarios a Telegram`, "success");
+        await loadProjectDetails(state.currentProject.id);
+      } else {
+        showToast(`Error: ${data.detail || "Fallo al enviar"}`, "error");
+      }
+    } catch (e) {
+      showToast(`Error de red: ${e.message}`, "error");
+    }
+  }
+
+  async function syncTelegramUpdates() {
+    showToast("Consultando respuestas en Telegram...", "info");
+    try {
+      const res = await fetch("/api/telegram/poll-now", { method: "POST" });
+      const data = await res.json();
+      if (res.ok && data.ok) {
+        if (data.processed_count > 0) {
+          showToast(`✅ Se procesaron ${data.processed_count} respuesta(s) de Telegram`, "success");
+          if (state.currentProject) {
+            await loadProjectDetails(state.currentProject.id);
+          }
+        } else {
+          showToast("No hay respuestas nuevas pendientes en Telegram", "info");
+        }
+      } else {
+        showToast(`Error: ${data.detail || data.error || "Fallo"}`, "error");
+      }
+    } catch (e) {
+      showToast(`Error: ${e.message}`, "error");
+    }
+  }
+
+  document.getElementById("btn-telegram-proposals-all")?.addEventListener("click", sendAllInitialProposalsToTelegram);
+  document.getElementById("btn-telegram-poll")?.addEventListener("click", syncTelegramUpdates);
 
   // Guardar Universo del Proyecto
   async function saveUniverse(showFeedback = true) {

@@ -146,8 +146,11 @@ def test_api():
     assert cap1_res.status_code == 200, "El capitulo 1 debe existir"
     cap1 = cap1_res.json()
     assert cap1.get("video_url"), "El capitulo 1 debe tener video_url asignada"
-    video_rel_path = cap1["video_url"].lstrip("/")
-    video_abs_path = PROJECT_ROOT / "app" / video_rel_path
+    video_clean_path = cap1["video_url"].split("?")[0].lstrip("/")
+    if video_clean_path.startswith("proyectos_data/"):
+        video_abs_path = PROJECT_ROOT / "proyectos" / video_clean_path[len("proyectos_data/"):]
+    else:
+        video_abs_path = PROJECT_ROOT / "app" / video_clean_path
     assert video_abs_path.exists(), f"El archivo de video {video_abs_path} debe existir en disco"
     assert video_abs_path.stat().st_size > 500000, "El archivo de video debe tener un tamaño válido (>500KB)"
     print(f"[OK] Video validado: {cap1['video_url']} ({video_abs_path.stat().st_size / (1024*1024):.2f} MB, duracion {cap1.get('duracion')}s)")

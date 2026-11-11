@@ -1,6 +1,35 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
-*Orden cronológico inverso: de última completada (#6) a primera histórica (#1)*
+### [11/11/2026 12:53:40] ✅ Aprobación también de los personajes. Creo que una de las cosas que...
+
+- **ID Tarea:** `64`
+- **Prioridad:** MEDIA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Implementada de principio a fin la aprobación de personajes y escenarios mediante Telegram con fotos de propuesta, botones interactivos ([Aprobar], [Rechazar], [Rehacer]) y reconocimiento de respuestas de lenguaje natural («aprobar», «rechazar», «sí», «no», «no cuadra», «rehacer»). Se añadieron endpoints en FastAPI, integración en el gestor de proyectos y controles visuales con badges sincronizados en la interfaz web. Todo validado al 100% con test_telegram_approvals.py, test_api.py y test_app.py.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen y 02. Listado de Actividades)
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
+*Orden cronológico inverso: de última completada (#7) a primera histórica (#1)*
+
+---
+
+### Hito #7 [2026-11-11 12:50:00] ✅ Aprobación Human-in-the-Loop de Personajes y Escenarios vía Telegram
+
+- **ID Tarea:** 64
+- **Prioridad:** ALTA
+- **Criterio de Éxito:** Verificar que a medida que se generan propuestas de personajes iniciales o escenarios, se envía la imagen por Telegram con botones y comandos para aceptar («aprobar» / «sí») o rechazar («rechazar» / «no»), permitiendo rehacer o revisar si no cuadra.
+- **Resultado Técnico:** 
+  1. Implementado módulo `app/core/telegram_approvals.py` con integración completa de Telegram Bot API (envío de fotos de propuesta, teclados inline con botones `[✅ Aprobar]`, `[❌ Rechazar]` y `[🔄 Rehacer]`).
+  2. Implementado parser de lenguaje natural y respuestas interactivas («aprobar», «rechazar», «sí», «no», «no cuadra», «rehacer»).
+  3. Creados endpoints en FastAPI (`/api/projects/{id}/characters/{cid}/send-telegram-approval`, `/api/projects/{id}/environments/{eid}/send-telegram-approval`, `/api/projects/{id}/characters/{cid}/decision`, `/api/projects/{id}/environments/{eid}/decision`, `/api/projects/{id}/send-initial-proposals`, `/api/telegram/poll-now`, `/api/telegram/webhook`).
+  4. Actualizada la interfaz web (`index.html` y `app.js`) con badges de estado (Aprobado, Pendiente Telegram, Rechazado) y botones directos por personaje/escenario y en lote.
+  5. Verificación automatizada con `tests/test_telegram_approvals.py`, `tests/test_api.py` y `tests/test_app.py` superados al 100%.
 
 ---
 
