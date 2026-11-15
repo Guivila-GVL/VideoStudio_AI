@@ -131,6 +131,216 @@ def create_subtitle_overlay(
 
     overlay.save(output_path, "PNG")
 
+
+DEFAULT_SUBTITLE_CONFIG: Dict[str, Any] = {
+    "mode": "word_by_word",
+    "bg_mode": "transparent",
+    "font_family": "sans",
+    "font_size": 52,
+    "text_color": "#FFFFFF",
+    "highlight_color": "#FBBF24",
+    "position": "bottom",
+    "fade": "fade",
+}
+
+_FONT_MAP = {
+    "sans": "Arial",
+    "serif": "Georgia",
+    "mono": "Consolas",
+}
+
+
+def _hex_to_ass_color(hex_color: str, alpha_hex: str = "00") -> str:
+    """Convierte #RRGGBB a formato ASS &HAABBGGRR."""
+    c = (hex_color or "#FFFFFF").strip().lstrip("#")
+    if len(c) != 6:
+        c = "FFFFFF"
+    r, g, b = c[0:2], c[2:4], c[4:6]
+    return f"&H{alpha_hex}{b}{g}{r}".upper()
+
+
+def _format_ass_time(seconds: float) -> str:
+    """Formatea segundos a H:MM:SS.cc para archivos ASS."""
+    s = max(0.0, seconds)
+    hrs = int(s // 3600)
+    mins = int((s % 3600) // 60)
+    secs = s % 60
+    return f"{hrs}:{mins:02d}:{secs:05.2f}"
+
+
+def _escape_ass_text(text: str) -> str:
+    return text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
+
+
+def _load_or_estimate_word_timings(audio_path: Path, text: str, duration: float) -> List[Dict[str, Any]]:
+    """Carga marcas de tiempo exactas de Edge-TTS (.words.json) o las estima proporcionalmente."""
+    import json as _json
+    words_file = audio_path.with_suffix(".words.json")
+    if words_file.exists():
+        try:
+            data = _json.loads(words_file.read_text(encoding="utf-8"))
+            if isinstance(data, list) and len(data) > 0:
+                return data
+        except Exception:
+            pass
+
+    raw_words = [w for w in text.strip().split() if w]
+    if not raw_words:
+        return []
+    usable_dur = max(0.5, duration - 0.1)
+    weights = [max(2, len(w)) for w in raw_words]
+    total_w = sum(weights)
+    t = 0.05
+    estimated = []
+    for w, wt in zip(raw_words, weights):
+        w_dur = (wt / total_w) * usable_dur
+        estimated.append({"word": w, "start": round(t, 3), "duration": round(w_dur, 3)})
+        t += w_dur
+    return estimated
+
+
+def _group_words_into_phrases(words: List[Dict[str, Any]], max_words: int = 4, max_chars: int = 24) -> List[List[Dict[str, Any]]]:
+    phrases: List[List[Dict[str, Any]]] = []
+    current: List[Dict[str, Any]] = []
+    cur_chars = 0
+    for w in words:
+        txt = w.get("word", "")
+        if current and (len(current) >= max_words or cur_chars + len(txt) + 1 > max_chars):
+            phrases.append(current)
+            current = [w]
+            cur_chars = len(txt)
+        else:
+            current.append(w)
+            cur_chars += len(txt) + (1 if current else 0)
+    if current:
+        phrases.append(current)
+    return phrases
+
+
+def create_ass_subtitles(
+    text: str,
+    audio_path: Path,
+    duration: float,
+    output_ass_path: Path,
+    subtitle_config: Optional[Dict[str, Any]] = None,
+) -> None:
+    """Genera un archivo .ass con tipografía, fondo, posición y sincronización palabra a palabra."""
+    cfg = {**DEFAULT_SUBTITLE_CONFIG, **(subtitle_config or {})}
+    bg_mode = cfg.get("bg_mode", "transparent")
+    mode = cfg.get("mode", "word_by_word")
+    font_name = _FONT_MAP.get(cfg.get("font_family", "sans"), "Arial")
+    font_size = int(cfg.get("font_size") or 52)
+    text_hex = cfg.get("text_color") or "#FFFFFF"
+    hi_hex = cfg.get("highlight_color") or "#FBBF24"
+    position = cfg.get("position", "bottom")
+    use_fade = cfg.get("fade", "fade") == "fade"
+
+    # Evitar texto blanco invisible sobre fondo blanco
+    if bg_mode == "white" and text_hex.strip().upper() == "#FFFFFF":
+        text_hex = "#111827"
+
+    primary_col = _hex_to_ass_color(text_hex, "00")
+    hi_ass_col = _hex_to_ass_color(hi_hex, "00")
+    primary_ass_tag = _hex_to_ass_color(text_hex, "00")
+
+    if bg_mode == "white":
+        border_style = 3
+        outline_px = 18
+        shadow_px = 0
+        outline_col = _hex_to_ass_color("#FFFFFF", "12")
+        back_col = _hex_to_ass_color("#FFFFFF", "12")
+    elif bg_mode == "dark":
+        border_style = 3
+        outline_px = 18
+        shadow_px = 0
+        outline_col = _hex_to_ass_color("#0C1018", "38")
+        back_col = _hex_to_ass_color("#0C1018", "38")
+    else:  # transparent
+        border_style = 1
+        outline_px = 4
+        shadow_px = 2
+        outline_col = _hex_to_ass_color("#000000", "25")
+        back_col = _hex_to_ass_color("#000000", "80")
+
+    if position == "top":
+        alignment = 8
+        margin_v = 220
+    elif position == "center":
+        alignment = 5
+        margin_v = 0
+    else:
+        alignment = 2
+        margin_v = 380
+
+    header = (
+        "[Script Info]\n"
+        "ScriptType: v4.00+\n"
+        f"PlayResX: {TARGET_W}\n"
+        f"PlayResY: {TARGET_H}\n"
+        "WrapStyle: 2\n"
+        "ScaledBorderAndShadow: yes\n\n"
+        "[V4+ Styles]\n"
+        "Format: Name, Fontname, Fontsize, PrimaryColour, SecondaryColour, OutlineColour, BackColour, "
+        "Bold, Italic, Underline, StrikeOut, ScaleX, ScaleY, Spacing, Angle, BorderStyle, Outline, Shadow, "
+        "Alignment, MarginL, MarginR, MarginV, Encoding\n"
+        f"Style: Default,{font_name},{font_size},{primary_col},{hi_ass_col},{outline_col},{back_col},"
+        f"-1,0,0,0,100,100,0,0,{border_style},{outline_px},{shadow_px},{alignment},60,60,{margin_v},1\n\n"
+        "[Events]\n"
+        "Format: Layer, Start, End, Style, Name, MarginL, MarginR, MarginV, Effect, Text\n"
+    )
+
+    events: List[str] = []
+    clean_text = text.strip()
+    if not clean_text:
+        output_ass_path.write_text(header, encoding="utf-8")
+        return
+
+    words = _load_or_estimate_word_timings(audio_path, clean_text, duration)
+
+    if mode == "block" or not words:
+        wrapped = "\\N".join(textwrap.wrap(clean_text, width=30))
+        fad = "{\\fad(120,180)}" if use_fade else ""
+        events.append(f"Dialogue: 0,{_format_ass_time(0)},{_format_ass_time(duration)},Default,,0,0,0,,{fad}{_escape_ass_text(wrapped)}")
+    elif mode == "karaoke_chunk":
+        phrases = _group_words_into_phrases(words, max_words=4, max_chars=24)
+        for p_idx, phrase in enumerate(phrases):
+            p_start = phrase[0]["start"]
+            p_end = phrases[p_idx + 1][0]["start"] if p_idx + 1 < len(phrases) else duration
+            for w_idx, w in enumerate(phrase):
+                w_start = w["start"]
+                w_end = phrase[w_idx + 1]["start"] if w_idx + 1 < len(phrase) else p_end
+                if w_end <= w_start:
+                    w_end = w_start + max(0.15, w.get("duration", 0.25))
+                parts = []
+                for j, pw in enumerate(phrase):
+                    txt = _escape_ass_text(pw["word"])
+                    if j == w_idx:
+                        parts.append(f"{{\\c{hi_ass_col}}}{txt}{{\\c{primary_ass_tag}}}")
+                    else:
+                        parts.append(txt)
+                fad = "{\\fad(0,120)}" if (use_fade and w_idx == len(phrase) - 1) else ""
+                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{' '.join(parts)}")
+    else:  # word_by_word: aparece palabra a palabra acumulando la frase corta
+        phrases = _group_words_into_phrases(words, max_words=4, max_chars=24)
+        for p_idx, phrase in enumerate(phrases):
+            p_end = phrases[p_idx + 1][0]["start"] if p_idx + 1 < len(phrases) else duration
+            for w_idx, w in enumerate(phrase):
+                w_start = w["start"]
+                w_end = phrase[w_idx + 1]["start"] if w_idx + 1 < len(phrase) else p_end
+                if w_end <= w_start:
+                    w_end = w_start + max(0.15, w.get("duration", 0.25))
+                parts = []
+                for j in range(w_idx + 1):
+                    txt = _escape_ass_text(phrase[j]["word"])
+                    if j == w_idx:
+                        parts.append(f"{{\\c{hi_ass_col}}}{txt}{{\\c{primary_ass_tag}}}")
+                    else:
+                        parts.append(txt)
+                fad = "{\\fad(0,140)}" if (use_fade and w_idx == len(phrase) - 1) else ""
+                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{' '.join(parts)}")
+
+    output_ass_path.write_text(header + "\n".join(events) + "\n", encoding="utf-8")
+
 def render_scene_clip(
     image_path: Path,
     audio_path: Path,
@@ -138,7 +348,8 @@ def render_scene_clip(
     scene_index: int,
     narrador_text: str,
     enable_subtitles: bool = True,
-    enable_ken_burns: bool = True
+    enable_ken_burns: bool = True,
+    subtitle_config: Optional[Dict[str, Any]] = None,
 ) -> float:
     """
     Renderiza un clip individual sincronizado con su locución,
@@ -147,7 +358,7 @@ def render_scene_clip(
     duration = get_audio_duration_seconds(str(audio_path))
     total_frames = int(duration * FPS) + 1
 
-    temp_overlay_path = output_clip_path.parent / f"temp_sub_{output_clip_path.stem}.png"
+    temp_ass_path = output_clip_path.parent / f"temp_sub_{output_clip_path.stem}.ass"
 
     # Seleccionar variación de movimiento (Ken Burns)
     if enable_ken_burns:
@@ -173,21 +384,25 @@ def render_scene_clip(
 
     cmd = [
         "ffmpeg", "-y",
-        "-loop", "1", "-i", str(image_path),
+        "-loop", "1", "-i", str(image_path.resolve()),
+        "-i", str(audio_path.resolve()),
     ]
 
     if enable_subtitles and narrador_text.strip():
-        create_subtitle_overlay(narrador_text, temp_overlay_path)
+        create_ass_subtitles(
+            text=narrador_text,
+            audio_path=audio_path,
+            duration=duration,
+            output_ass_path=temp_ass_path,
+            subtitle_config=subtitle_config,
+        )
         cmd.extend([
-            "-loop", "1", "-i", str(temp_overlay_path),
-            "-i", str(audio_path),
-            "-filter_complex", f"[0:v]{vf_zoom}[vz];[vz][1:v]overlay=0:0:shortest=1[vfinal]",
+            "-filter_complex", f"[0:v]{vf_zoom},ass={temp_ass_path.name}[vfinal]",
             "-map", "[vfinal]",
-            "-map", "2:a"
+            "-map", "1:a"
         ])
     else:
         cmd.extend([
-            "-i", str(audio_path),
             "-filter_complex", f"[0:v]{vf_zoom}[vfinal]",
             "-map", "[vfinal]",
             "-map", "1:a"
@@ -205,14 +420,14 @@ def render_scene_clip(
         "-af", "volume=1.5",
         "-t", str(duration),
         "-shortest",
-        str(output_clip_path)
+        str(output_clip_path.resolve())
     ])
 
     try:
-        res = subprocess.run(cmd, capture_output=True, text=True, check=True)
+        res = subprocess.run(cmd, cwd=str(output_clip_path.parent.resolve()), capture_output=True, text=True, check=True)
     finally:
-        if temp_overlay_path.exists():
-            temp_overlay_path.unlink()
+        if temp_ass_path.exists():
+            temp_ass_path.unlink()
 
     return duration
 
@@ -222,7 +437,8 @@ def render_single_scene_preview_clip(
     project_id: Optional[str] = None,
     chapter_id: Optional[str] = None,
     enable_subtitles: bool = True,
-    enable_ken_burns: bool = True
+    enable_ken_burns: bool = True,
+    subtitle_config: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Renderiza el clip MP4 individual de una escena antes del ensamblado final
@@ -281,7 +497,8 @@ def render_single_scene_preview_clip(
             scene_index=scene_index,
             narrador_text=scene.get("narrador", ""),
             enable_subtitles=enable_subtitles,
-            enable_ken_burns=enable_ken_burns
+            enable_ken_burns=enable_ken_burns,
+            subtitle_config=subtitle_config,
         )
 
         size_mb = round(output_clip_path.stat().st_size / (1024 * 1024), 2) if output_clip_path.exists() else 0.0
@@ -307,7 +524,8 @@ def render_final_video(
     enable_subtitles: bool = True,
     enable_ken_burns: bool = True,
     project_id: Optional[str] = None,
-    chapter_id: Optional[str] = None
+    chapter_id: Optional[str] = None,
+    subtitle_config: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
     Renderiza todos los clips de las escenas y los concatena en el archivo
@@ -347,7 +565,8 @@ def render_final_video(
                 scene_index=i,
                 narrador_text=sc.get("narrador", ""),
                 enable_subtitles=enable_subtitles,
-                enable_ken_burns=enable_ken_burns
+                enable_ken_burns=enable_ken_burns,
+                subtitle_config=subtitle_config,
             )
             total_duration += dur
             clip_paths.append(clip_path)

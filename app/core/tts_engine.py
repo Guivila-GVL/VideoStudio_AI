@@ -244,16 +244,38 @@ def synthesize_speech(
 
             def _run_edge():
                 async def _save():
-                    comm = edge_tts.Communicate(clean_text, voice_id, pitch=pitch, rate=rate)
-                    await comm.save(str(out_path))
-                asyncio.run(_save())
+                    comm = edge_tts.Communicate(
+                        clean_text,
+                        voice_id,
+                        pitch=pitch,
+                        rate=rate,
+                        boundary="WordBoundary",
+                    )
+                    word_timings = []
+                    with open(out_path, "wb") as audio_file:
+                        async for chunk in comm.stream():
+                            ctype = chunk.get("type")
+                            if ctype == "audio":
+                                audio_file.write(chunk["data"])
+                            elif ctype == "WordBoundary":
+                                word_timings.append({
+                                    "word": chunk.get("text", ""),
+                                    "start": round(chunk.get("offset", 0) / 10_000_000, 3),
+                                    "duration": round(chunk.get("duration", 0) / 10_000_000, 3),
+                                })
+                    return word_timings
+                return asyncio.run(_save())
 
             with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
-                pool.submit(_run_edge).result()
+                word_timings = pool.submit(_run_edge).result()
 
             if out_path.exists() and out_path.stat().st_size > 0:
+                if word_timings:
+                    import json as _json
+                    words_path = out_path.with_suffix(".words.json")
+                    words_path.write_text(_json.dumps(word_timings, ensure_ascii=False), encoding="utf-8")
                 duration = get_audio_duration(str(out_path))
-                return {"url": web_url, "duration": duration, "provider": "edge", "file_path": str(out_path)}
+                return {"url": web_url, "duration": duration, "provider": "edge", "file_path": str(out_path), "words": word_timings}
             else:
                 print(f"[TTS] Edge-TTS no generó el archivo de audio.")
         except Exception as e:

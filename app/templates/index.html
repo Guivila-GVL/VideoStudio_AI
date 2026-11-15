@@ -65,6 +65,14 @@
           <small>Capítulos, Storyboard & Vídeos Verticales</small>
         </div>
       </button>
+      <div class="nav-arrow">➔</div>
+      <button class="nav-tab-btn" id="tab-nav-subtitles">
+        <span class="tab-badge-num">3</span>
+        <div class="tab-label-group">
+          <strong>💬 Subtítulos</strong>
+          <small>Palabra a Palabra, Tipografía & Fondo</small>
+        </div>
+      </button>
     </div>
   </div>
 
@@ -1009,6 +1017,117 @@
 
       </div>
 
+    </section>
+
+    <!-- ========================================================
+         VISTA 3: CONFIGURACIÓN AVANZADA DE SUBTÍTULOS
+         ======================================================== -->
+    <section class="layer-view" id="view-subtitles" style="display: none;">
+      <div class="card">
+        <div class="card-header border-bottom">
+          <div class="card-title-group">
+            <span class="card-icon">💬</span>
+            <div>
+              <h2 class="card-title">Estudio de Subtítulos y Sincronización</h2>
+              <p class="card-subtitle">Personaliza cómo aparecen las palabras al ritmo del narrador, la tipografía y el fondo (por defecto transparente para lucir la imagen).</p>
+            </div>
+          </div>
+          <div style="display:flex; gap:0.5rem;">
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-subtitles-reset">↺ Por defecto</button>
+            <button type="button" class="btn btn-primary btn-sm" id="btn-subtitles-goto-render">🎬 Volver al Render</button>
+          </div>
+        </div>
+
+        <div class="card-body" style="display:grid; grid-template-columns: minmax(320px, 1.3fr) minmax(260px, 0.9fr); gap:1.5rem; align-items:start;">
+          <div style="display:flex; flex-direction:column; gap:1rem;">
+            <label class="toggle-control">
+              <input type="checkbox" id="sub-enabled" checked>
+              <span class="toggle-slider"></span>
+              <span class="toggle-label">Incluir subtítulos quemados en el vídeo final</span>
+            </label>
+
+            <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:1rem;">
+              <div class="form-group">
+                <label class="form-label" for="sub-mode">Modo de aparición</label>
+                <select class="form-control" id="sub-mode">
+                  <option value="word_by_word" selected>Palabra a palabra (sincronizado con voz)</option>
+                  <option value="karaoke_chunk">Frase corta con palabra resaltada</option>
+                  <option value="block">Bloque completo por escena</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-fade">Desaparición / Transición</label>
+                <select class="form-control" id="sub-fade">
+                  <option value="fade" selected>Desvanecimiento suave (Fade)</option>
+                  <option value="none">Corte directo</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-bg-mode">Fondo del subtítulo</label>
+                <select class="form-control" id="sub-bg-mode">
+                  <option value="transparent" selected>Transparente (solo contorno y sombra)</option>
+                  <option value="dark">Tarjeta oscura translúcida</option>
+                  <option value="white">Fondo blanco (texto oscuro)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-font-family">Tipografía</label>
+                <select class="form-control" id="sub-font-family">
+                  <option value="sans" selected>Moderna (Arial / Segoe UI)</option>
+                  <option value="serif">Literaria (Georgia Serif)</option>
+                  <option value="mono">Máquina de escribir (Consolas)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-font-size">Tamaño de texto</label>
+                <select class="form-control" id="sub-font-size">
+                  <option value="38">Pequeño (38 px)</option>
+                  <option value="52" selected>Mediano (52 px)</option>
+                  <option value="64">Grande (64 px)</option>
+                  <option value="76">Extra Grande (76 px)</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-position">Posición en pantalla</label>
+                <select class="form-control" id="sub-position">
+                  <option value="bottom" selected>Tercio inferior (Shorts / Reels)</option>
+                  <option value="center">Centro</option>
+                  <option value="top">Parte superior</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-text-color">Color del texto</label>
+                <input type="color" class="form-control" id="sub-text-color" value="#FFFFFF" style="height:40px; padding:4px;">
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="sub-highlight-color">Color de palabra activa</label>
+                <input type="color" class="form-control" id="sub-highlight-color" value="#FBBF24" style="height:40px; padding:4px;">
+              </div>
+            </div>
+
+            <div class="info-callout" style="margin-top:0.25rem;">
+              💡 <strong>Sincronización automática:</strong> Edge-TTS guarda las marcas de tiempo exactas de cada palabra (<code>.words.json</code>) al generar la voz. Si una locución se generó antes, puedes pulsar <em>Generar voz</em> de nuevo para obtener precisión al milisegundo (o se estimará automáticamente).
+            </div>
+          </div>
+
+          <div style="display:flex; flex-direction:column; align-items:center; gap:0.75rem;">
+            <span class="form-label" style="margin:0;">Vista Previa en Vivo (9:16)</span>
+            <div id="sub-preview-frame" style="width:270px; height:480px; border-radius:20px; position:relative; overflow:hidden; background:linear-gradient(160deg, #1e293b 0%, #334155 45%, #0f172a 100%); border:2px solid rgba(255,255,255,0.12); box-shadow:0 12px 30px rgba(0,0,0,0.4); display:flex; align-items:flex-end; justify-content:center; padding:18px;">
+              <div id="sub-preview-box" style="text-align:center; font-weight:700; line-height:1.25; transition: all 0.2s ease; max-width:94%; margin-bottom:70px;">
+                Platero es <span id="sub-preview-hi">pequeño,</span> peludo, suave...
+              </div>
+            </div>
+            <button type="button" class="btn btn-secondary btn-sm" id="btn-sub-preview-animate">▶ Simular palabra a palabra</button>
+          </div>
+        </div>
+      </div>
     </section>
   </main>
 

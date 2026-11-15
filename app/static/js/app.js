@@ -131,8 +131,10 @@ document.addEventListener("DOMContentLoaded", () => {
   // Navegación de Capas
   const tabNavGeneric = document.getElementById("tab-nav-generic");
   const tabNavSpecific = document.getElementById("tab-nav-specific");
+  const tabNavSubtitles = document.getElementById("tab-nav-subtitles");
   const viewGeneric = document.getElementById("view-generic");
   const viewSpecific = document.getElementById("view-specific");
+  const viewSubtitles = document.getElementById("view-subtitles");
   const btnGoToChapters = document.getElementById("btn-go-to-chapters");
   const btnSwitchToGeneric = document.getElementById("btn-switch-to-generic");
 
@@ -581,24 +583,27 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. NAVEGACIÓN ENTRE CAPAS
   // ========================================================
   function switchLayer(layer) {
+    [tabNavGeneric, tabNavSpecific, tabNavSubtitles].forEach((b) => b && b.classList.remove("active"));
+    [viewGeneric, viewSpecific, viewSubtitles].forEach((v) => { if (v) v.style.display = "none"; });
+
     if (layer === "generic") {
       tabNavGeneric.classList.add("active");
-      tabNavSpecific.classList.remove("active");
       viewGeneric.style.display = "block";
-      viewSpecific.style.display = "none";
-      window.scrollTo({ top: 0, behavior: "smooth" });
+    } else if (layer === "subtitles") {
+      if (tabNavSubtitles) tabNavSubtitles.classList.add("active");
+      if (viewSubtitles) viewSubtitles.style.display = "block";
+      if (typeof updateSubtitlePreview === "function") updateSubtitlePreview();
     } else {
       tabNavSpecific.classList.add("active");
-      tabNavGeneric.classList.remove("active");
       viewSpecific.style.display = "block";
-      viewGeneric.style.display = "none";
-      window.scrollTo({ top: 0, behavior: "smooth" });
       updateMiniBanner();
     }
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   tabNavGeneric.addEventListener("click", () => switchLayer("generic"));
   tabNavSpecific.addEventListener("click", () => switchLayer("specific"));
+  if (tabNavSubtitles) tabNavSubtitles.addEventListener("click", () => switchLayer("subtitles"));
   btnGoToChapters.addEventListener("click", async () => {
     await saveUniverse(false);
     switchLayer("specific");
@@ -5004,7 +5009,8 @@ document.addEventListener("DOMContentLoaded", () => {
           chapter_id: state.currentChapterId,
           scenes: state.scenes,
           enable_subtitles: chkSubtitles.checked,
-          enable_ken_burns: chkKenBurns.checked
+          enable_ken_burns: chkKenBurns.checked,
+          subtitle_config: typeof getSubtitleConfig === "function" ? getSubtitleConfig() : undefined
         })
       });
 
@@ -6099,6 +6105,189 @@ document.addEventListener("DOMContentLoaded", () => {
       showToast("Error guardando ajustes", "error");
     }
   });
+
+  // ========================================================
+  // ESTUDIO DE SUBTÍTULOS Y VISTA PREVIA EN VIVO
+  // ========================================================
+  const SUB_STORAGE_KEY = "videostudio_subtitle_config";
+  const DEFAULT_SUB_CFG = {
+    mode: "word_by_word",
+    bg_mode: "transparent",
+    font_family: "sans",
+    font_size: 52,
+    text_color: "#FFFFFF",
+    highlight_color: "#FBBF24",
+    position: "bottom",
+    fade: "fade",
+  };
+
+  const subEnabledEl = document.getElementById("sub-enabled");
+  const subModeEl = document.getElementById("sub-mode");
+  const subFadeEl = document.getElementById("sub-fade");
+  const subBgModeEl = document.getElementById("sub-bg-mode");
+  const subFontFamilyEl = document.getElementById("sub-font-family");
+  const subFontSizeEl = document.getElementById("sub-font-size");
+  const subPositionEl = document.getElementById("sub-position");
+  const subTextColorEl = document.getElementById("sub-text-color");
+  const subHighlightColorEl = document.getElementById("sub-highlight-color");
+  const subPreviewFrame = document.getElementById("sub-preview-frame");
+  const subPreviewBox = document.getElementById("sub-preview-box");
+  const btnSubReset = document.getElementById("btn-subtitles-reset");
+  const btnSubGotoRender = document.getElementById("btn-subtitles-goto-render");
+  const btnSubPreviewAnim = document.getElementById("btn-sub-preview-animate");
+  let subAnimTimer = null;
+
+  function getSubtitleConfig() {
+    return {
+      mode: subModeEl ? subModeEl.value : DEFAULT_SUB_CFG.mode,
+      bg_mode: subBgModeEl ? subBgModeEl.value : DEFAULT_SUB_CFG.bg_mode,
+      font_family: subFontFamilyEl ? subFontFamilyEl.value : DEFAULT_SUB_CFG.font_family,
+      font_size: subFontSizeEl ? parseInt(subFontSizeEl.value, 10) : DEFAULT_SUB_CFG.font_size,
+      text_color: subTextColorEl ? subTextColorEl.value : DEFAULT_SUB_CFG.text_color,
+      highlight_color: subHighlightColorEl ? subHighlightColorEl.value : DEFAULT_SUB_CFG.highlight_color,
+      position: subPositionEl ? subPositionEl.value : DEFAULT_SUB_CFG.position,
+      fade: subFadeEl ? subFadeEl.value : DEFAULT_SUB_CFG.fade,
+    };
+  }
+
+  function applySubtitleConfig(cfg) {
+    const c = { ...DEFAULT_SUB_CFG, ...(cfg || {}) };
+    if (subModeEl) subModeEl.value = c.mode;
+    if (subFadeEl) subFadeEl.value = c.fade;
+    if (subBgModeEl) subBgModeEl.value = c.bg_mode;
+    if (subFontFamilyEl) subFontFamilyEl.value = c.font_family;
+    if (subFontSizeEl) subFontSizeEl.value = String(c.font_size);
+    if (subPositionEl) subPositionEl.value = c.position;
+    if (subTextColorEl) subTextColorEl.value = c.text_color;
+    if (subHighlightColorEl) subHighlightColorEl.value = c.highlight_color;
+    updateSubtitlePreview();
+  }
+
+  function saveSubtitleConfigLocal() {
+    try {
+      localStorage.setItem(SUB_STORAGE_KEY, JSON.stringify(getSubtitleConfig()));
+    } catch (_) {}
+  }
+
+  function updateSubtitlePreview(wordLimit = null) {
+    if (!subPreviewBox || !subPreviewFrame) return;
+    const cfg = getSubtitleConfig();
+    const enabled = subEnabledEl ? subEnabledEl.checked : true;
+    subPreviewBox.style.opacity = enabled ? "1" : "0.25";
+
+    const fontCss = cfg.font_family === "serif" ? "Georgia, serif" : cfg.font_family === "mono" ? "Consolas, monospace" : "Arial, 'Segoe UI', sans-serif";
+    subPreviewBox.style.fontFamily = fontCss;
+    subPreviewBox.style.fontSize = `${Math.round(cfg.font_size * 0.34)}px`;
+
+    let textCol = cfg.text_color;
+    if (cfg.bg_mode === "white" && textCol.toUpperCase() === "#FFFFFF") {
+      textCol = "#111827";
+    }
+    subPreviewBox.style.color = textCol;
+
+    if (cfg.bg_mode === "white") {
+      subPreviewBox.style.background = "rgba(255, 255, 255, 0.94)";
+      subPreviewBox.style.padding = "8px 14px";
+      subPreviewBox.style.borderRadius = "10px";
+      subPreviewBox.style.textShadow = "none";
+    } else if (cfg.bg_mode === "dark") {
+      subPreviewBox.style.background = "rgba(12, 16, 24, 0.82)";
+      subPreviewBox.style.padding = "8px 14px";
+      subPreviewBox.style.borderRadius = "10px";
+      subPreviewBox.style.textShadow = "0 1px 3px rgba(0,0,0,0.8)";
+    } else {
+      subPreviewBox.style.background = "transparent";
+      subPreviewBox.style.padding = "4px 6px";
+      subPreviewBox.style.borderRadius = "0";
+      subPreviewBox.style.textShadow = "0 2px 4px rgba(0,0,0,0.95), 0 0 2px #000";
+    }
+
+    if (cfg.position === "top") {
+      subPreviewFrame.style.alignItems = "flex-start";
+      subPreviewBox.style.marginTop = "48px";
+      subPreviewBox.style.marginBottom = "0";
+    } else if (cfg.position === "center") {
+      subPreviewFrame.style.alignItems = "center";
+      subPreviewBox.style.marginTop = "0";
+      subPreviewBox.style.marginBottom = "0";
+    } else {
+      subPreviewFrame.style.alignItems = "flex-end";
+      subPreviewBox.style.marginTop = "0";
+      subPreviewBox.style.marginBottom = "70px";
+    }
+
+    const sampleWords = ["Platero", "es", "pequeño,", "peludo,", "suave..."];
+    const activeIdx = wordLimit !== null ? Math.min(wordLimit, sampleWords.length - 1) : 2;
+    const shown = cfg.mode === "word_by_word" && wordLimit !== null
+      ? sampleWords.slice(0, activeIdx + 1)
+      : sampleWords;
+
+    subPreviewBox.innerHTML = shown.map((w, idx) => {
+      if (cfg.mode !== "block" && idx === activeIdx) {
+        return `<span style="color:${cfg.highlight_color}">${w}</span>`;
+      }
+      return w;
+    }).join(" ");
+  }
+
+  function animateSubtitlePreview() {
+    if (subAnimTimer) clearInterval(subAnimTimer);
+    let step = 0;
+    const total = 5;
+    updateSubtitlePreview(step);
+    subAnimTimer = setInterval(() => {
+      step++;
+      if (step >= total) {
+        clearInterval(subAnimTimer);
+        subAnimTimer = null;
+        return;
+      }
+      updateSubtitlePreview(step);
+    }, 450);
+  }
+
+  if (subEnabledEl && chkSubtitles) {
+    subEnabledEl.checked = chkSubtitles.checked;
+    subEnabledEl.addEventListener("change", () => {
+      chkSubtitles.checked = subEnabledEl.checked;
+      updateSubtitlePreview();
+    });
+    chkSubtitles.addEventListener("change", () => {
+      subEnabledEl.checked = chkSubtitles.checked;
+      updateSubtitlePreview();
+    });
+  }
+
+  [subModeEl, subFadeEl, subBgModeEl, subFontFamilyEl, subFontSizeEl, subPositionEl, subTextColorEl, subHighlightColorEl].forEach((el) => {
+    if (el) {
+      el.addEventListener("change", () => {
+        saveSubtitleConfigLocal();
+        updateSubtitlePreview();
+      });
+    }
+  });
+
+  if (btnSubReset) {
+    btnSubReset.addEventListener("click", () => {
+      applySubtitleConfig(DEFAULT_SUB_CFG);
+      saveSubtitleConfigLocal();
+      showToast("Subtítulos restaurados a valores por defecto", "info");
+    });
+  }
+  if (btnSubGotoRender) {
+    btnSubGotoRender.addEventListener("click", () => switchLayer("specific"));
+  }
+  if (btnSubPreviewAnim) {
+    btnSubPreviewAnim.addEventListener("click", animateSubtitlePreview);
+  }
+
+  try {
+    const savedSubCfg = localStorage.getItem(SUB_STORAGE_KEY);
+    if (savedSubCfg) applySubtitleConfig(JSON.parse(savedSubCfg));
+    else updateSubtitlePreview();
+  } catch (_) {
+    updateSubtitlePreview();
+  }
 
   // Arrancar la app
   init();

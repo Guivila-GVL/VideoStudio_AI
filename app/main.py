@@ -385,6 +385,7 @@ class RenderVideoRequest(BaseModel):
     scenes: Optional[List[Dict[str, Any]]] = None
     enable_subtitles: bool = True
     enable_ken_burns: bool = True
+    subtitle_config: Optional[Dict[str, Any]] = None
 
 class SaveChapterRequest(BaseModel):
     project_id: str
@@ -1488,11 +1489,15 @@ async def api_render_video(req: RenderVideoRequest):
     try:
         scenes = req.scenes
         title = req.title or "Mi Video Short"
-        if (not scenes or len(scenes) == 0) and req.project_id and req.chapter_id:
+        sub_cfg = req.subtitle_config
+        if req.project_id and req.chapter_id:
             ch = get_project_chapter(req.project_id, req.chapter_id)
-            scenes = ch.get("scenes", [])
+            if not scenes or len(scenes) == 0:
+                scenes = ch.get("scenes", [])
             if not req.title or req.title == "Mi Video Short":
                 title = ch.get("titulo", title)
+            if sub_cfg is None:
+                sub_cfg = ch.get("subtitle_config")
 
         if not scenes:
             raise HTTPException(status_code=400, detail="No se proporcionaron escenas para renderizar el vídeo.")
@@ -1503,7 +1508,8 @@ async def api_render_video(req: RenderVideoRequest):
             enable_subtitles=req.enable_subtitles,
             enable_ken_burns=req.enable_ken_burns,
             project_id=req.project_id,
-            chapter_id=req.chapter_id
+            chapter_id=req.chapter_id,
+            subtitle_config=sub_cfg
         )
         # Si pertenece a un proyecto y capítulo, actualizarlo preservando campos existentes
         if req.project_id and req.chapter_id:
@@ -1512,6 +1518,8 @@ async def api_render_video(req: RenderVideoRequest):
             ch_data["duracion"] = result["duration"]
             ch_data["peso_mb"] = result.get("size_mb")
             ch_data["scenes"] = scenes
+            if sub_cfg is not None:
+                ch_data["subtitle_config"] = sub_cfg
             ch_data["actualizado_en"] = datetime.now().isoformat()
             save_project_chapter(req.project_id, ch_data)
 
