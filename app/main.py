@@ -386,6 +386,7 @@ class RenderVideoRequest(BaseModel):
     enable_subtitles: bool = True
     enable_ken_burns: bool = True
     subtitle_config: Optional[Dict[str, Any]] = None
+    render_config: Optional[Dict[str, Any]] = None
 
 class SaveChapterRequest(BaseModel):
     project_id: str
@@ -1490,6 +1491,7 @@ async def api_render_video(req: RenderVideoRequest):
         scenes = req.scenes
         title = req.title or "Mi Video Short"
         sub_cfg = req.subtitle_config
+        ren_cfg = req.render_config
         if req.project_id and req.chapter_id:
             ch = get_project_chapter(req.project_id, req.chapter_id)
             if not scenes or len(scenes) == 0:
@@ -1498,6 +1500,8 @@ async def api_render_video(req: RenderVideoRequest):
                 title = ch.get("titulo", title)
             if sub_cfg is None:
                 sub_cfg = ch.get("subtitle_config")
+            if ren_cfg is None:
+                ren_cfg = ch.get("render_config")
 
         if not scenes:
             raise HTTPException(status_code=400, detail="No se proporcionaron escenas para renderizar el vídeo.")
@@ -1509,7 +1513,8 @@ async def api_render_video(req: RenderVideoRequest):
             enable_ken_burns=req.enable_ken_burns,
             project_id=req.project_id,
             chapter_id=req.chapter_id,
-            subtitle_config=sub_cfg
+            subtitle_config=sub_cfg,
+            render_config=ren_cfg
         )
         # Si pertenece a un proyecto y capítulo, actualizarlo preservando campos existentes
         if req.project_id and req.chapter_id:
@@ -1520,6 +1525,8 @@ async def api_render_video(req: RenderVideoRequest):
             ch_data["scenes"] = scenes
             if sub_cfg is not None:
                 ch_data["subtitle_config"] = sub_cfg
+            if ren_cfg is not None:
+                ch_data["render_config"] = ren_cfg
             ch_data["actualizado_en"] = datetime.now().isoformat()
             save_project_chapter(req.project_id, ch_data)
 

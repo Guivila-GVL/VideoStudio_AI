@@ -120,13 +120,13 @@
     }
   ],
   "video_url": "/proyectos_data/platero_y_yo/videos/capitulo_2.mp4",
-  "duracion": 57.65,
+  "duracion": 57.8,
   "origen_tipo": "section",
   "origen_ref": "II Mariposas blancas La noche cae, brumosa ya y morada. Vagas claridades malvas y",
   "orden": 2,
   "id": "capitulo_2",
   "creado_en": "2026-11-14 18:24:32",
-  "actualizado_en": "2026-11-15 12:09:17",
+  "actualizado_en": "2026-11-15 13:45:27",
   "propuesta": {
     "enfoque_general": "Corto narrativo sobre 'Capítulo 2: Mariposas' pensado para Todos los públicos en Calles Blancas y Azoteas de Moguer (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar.",
     "bloques": [
@@ -157,5 +157,19 @@
     ],
     "duracion_total_seg": 15
   },
-  "peso_mb": 6.65
+  "peso_mb": 7.88,
+  "subtitle_config": {
+    "mode": "word_by_word",
+    "bg_mode": "transparent",
+    "font_family": "sans",
+    "font_size": 52,
+    "fade": "fade"
+  },
+  "render_config": {
+    "aspect_ratio": "9:16",
+    "transition": "fade",
+    "ken_burns_style": "dinamico",
+    "scene_pause_sec": 0.35,
+    "voice_volume": 1.5
+  }
 }

@@ -5010,7 +5010,8 @@ document.addEventListener("DOMContentLoaded", () => {
           scenes: state.scenes,
           enable_subtitles: chkSubtitles.checked,
           enable_ken_burns: chkKenBurns.checked,
-          subtitle_config: typeof getSubtitleConfig === "function" ? getSubtitleConfig() : undefined
+          subtitle_config: typeof getSubtitleConfig === "function" ? getSubtitleConfig() : undefined,
+          render_config: typeof getRenderConfig === "function" ? getRenderConfig() : undefined
         })
       });
 
@@ -6288,6 +6289,68 @@ document.addEventListener("DOMContentLoaded", () => {
   } catch (_) {
     updateSubtitlePreview();
   }
+
+  // ========================================================
+  // OPCIONES DE MONTAJE Y RENDERIZADO FINAL
+  // ========================================================
+  const RENDER_STORAGE_KEY = "videostudio_render_config";
+  const renderAspectEl = document.getElementById("render-aspect-ratio");
+  const renderTransitionEl = document.getElementById("render-transition");
+  const renderKbStyleEl = document.getElementById("render-kenburns-style");
+  const renderPauseEl = document.getElementById("render-scene-pause");
+  const renderVolumeEl = document.getElementById("render-voice-volume");
+  const btnOpenSubtitlesTab = document.getElementById("btn-open-subtitles-tab");
+
+  function getRenderConfig() {
+    return {
+      aspect_ratio: renderAspectEl ? renderAspectEl.value : "9:16",
+      transition: renderTransitionEl ? renderTransitionEl.value : "fade",
+      ken_burns_style: renderKbStyleEl ? renderKbStyleEl.value : "suave",
+      scene_pause_sec: renderPauseEl ? parseFloat(renderPauseEl.value) : 0.35,
+      voice_volume: renderVolumeEl ? parseFloat(renderVolumeEl.value) : 1.5,
+    };
+  }
+
+  function saveRenderConfigLocal() {
+    try {
+      localStorage.setItem(RENDER_STORAGE_KEY, JSON.stringify(getRenderConfig()));
+    } catch (_) {}
+  }
+
+  [renderAspectEl, renderTransitionEl, renderKbStyleEl, renderPauseEl, renderVolumeEl].forEach((el) => {
+    if (el) {
+      el.addEventListener("change", () => {
+        if (el === renderKbStyleEl && chkKenBurns) {
+          chkKenBurns.checked = el.value !== "fijo";
+        }
+        saveRenderConfigLocal();
+      });
+    }
+  });
+
+  if (chkKenBurns && renderKbStyleEl) {
+    chkKenBurns.addEventListener("change", () => {
+      if (!chkKenBurns.checked) renderKbStyleEl.value = "fijo";
+      else if (renderKbStyleEl.value === "fijo") renderKbStyleEl.value = "suave";
+      saveRenderConfigLocal();
+    });
+  }
+
+  if (btnOpenSubtitlesTab) {
+    btnOpenSubtitlesTab.addEventListener("click", () => switchLayer("subtitles"));
+  }
+
+  try {
+    const savedRen = localStorage.getItem(RENDER_STORAGE_KEY);
+    if (savedRen) {
+      const rc = JSON.parse(savedRen);
+      if (renderAspectEl && rc.aspect_ratio) renderAspectEl.value = rc.aspect_ratio;
+      if (renderTransitionEl && rc.transition) renderTransitionEl.value = rc.transition;
+      if (renderKbStyleEl && rc.ken_burns_style) renderKbStyleEl.value = rc.ken_burns_style;
+      if (renderPauseEl && rc.scene_pause_sec !== undefined) renderPauseEl.value = String(rc.scene_pause_sec);
+      if (renderVolumeEl && rc.voice_volume !== undefined) renderVolumeEl.value = String(rc.voice_volume);
+    }
+  } catch (_) {}
 
   // Arrancar la app
   init();

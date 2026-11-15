@@ -893,6 +893,56 @@
               </button>
             </div>
 
+            <!-- Panel de Opciones de Montaje Final -->
+            <div class="render-advanced-panel mt-4" style="padding:1rem 1.25rem; border-radius:12px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08);">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
+                <strong style="font-size:0.95rem;">🎞️ Opciones de Montaje del Capítulo (FFmpeg)</strong>
+                <button type="button" class="btn btn-secondary btn-xs" id="btn-open-subtitles-tab">💬 Configurar Subtítulos</button>
+              </div>
+              <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(175px, 1fr)); gap:0.75rem;">
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" for="render-aspect-ratio" style="font-size:0.8rem;">Formato de vídeo</label>
+                  <select class="form-control" id="render-aspect-ratio">
+                    <option value="9:16" selected>Vertical 9:16 (Shorts / Reels)</option>
+                    <option value="16:9">Horizontal 16:9 (YouTube)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" for="render-transition" style="font-size:0.8rem;">Transición entre escenas</label>
+                  <select class="form-control" id="render-transition">
+                    <option value="fade" selected>Fundido cruzado suave</option>
+                    <option value="fadeblack">Fundido a negro</option>
+                    <option value="slideleft">Deslizamiento lateral</option>
+                    <option value="none">Corte directo (rápido)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" for="render-kenburns-style" style="font-size:0.8rem;">Movimiento Ken Burns</label>
+                  <select class="form-control" id="render-kenburns-style">
+                    <option value="suave" selected>Suave (Zoom / Paneo)</option>
+                    <option value="dinamico">Dinámico (Más recorrido + vertical)</option>
+                    <option value="fijo">Sin movimiento (Estático)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" for="render-scene-pause" style="font-size:0.8rem;">Respiro entre escenas</label>
+                  <select class="form-control" id="render-scene-pause">
+                    <option value="0">Sin pausa (0 s)</option>
+                    <option value="0.35" selected>Breve (0.35 s)</option>
+                    <option value="0.7">Narrativa (0.7 s)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin:0;">
+                  <label class="form-label" for="render-voice-volume" style="font-size:0.8rem;">Volumen de voz</label>
+                  <select class="form-control" id="render-voice-volume">
+                    <option value="1.0">Normal (1.0x)</option>
+                    <option value="1.3">Claro (1.3x)</option>
+                    <option value="1.5" selected>Potente (1.5x)</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
             <!-- Barra inferior de Render -->
             <div class="render-banner mt-4">
               <div class="render-options">

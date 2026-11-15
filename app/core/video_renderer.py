@@ -223,6 +223,8 @@ def create_ass_subtitles(
     duration: float,
     output_ass_path: Path,
     subtitle_config: Optional[Dict[str, Any]] = None,
+    target_w: int = TARGET_W,
+    target_h: int = TARGET_H,
 ) -> None:
     """Genera un archivo .ass con tipografía, fondo, posición y sincronización palabra a palabra."""
     cfg = {**DEFAULT_SUBTITLE_CONFIG, **(subtitle_config or {})}
@@ -262,21 +264,22 @@ def create_ass_subtitles(
         outline_col = _hex_to_ass_color("#000000", "25")
         back_col = _hex_to_ass_color("#000000", "80")
 
+    is_horizontal = target_w > target_h
     if position == "top":
         alignment = 8
-        margin_v = 220
+        margin_v = 90 if is_horizontal else 220
     elif position == "center":
         alignment = 5
         margin_v = 0
     else:
         alignment = 2
-        margin_v = 380
+        margin_v = 110 if is_horizontal else 380
 
     header = (
         "[Script Info]\n"
         "ScriptType: v4.00+\n"
-        f"PlayResX: {TARGET_W}\n"
-        f"PlayResY: {TARGET_H}\n"
+        f"PlayResX: {target_w}\n"
+        f"PlayResY: {target_h}\n"
         "WrapStyle: 2\n"
         "ScaledBorderAndShadow: yes\n\n"
         "[V4+ Styles]\n"
@@ -341,6 +344,15 @@ def create_ass_subtitles(
 
     output_ass_path.write_text(header + "\n".join(events) + "\n", encoding="utf-8")
 
+DEFAULT_RENDER_CONFIG: Dict[str, Any] = {
+    "aspect_ratio": "9:16",
+    "transition": "fade",
+    "ken_burns_style": "suave",
+    "scene_pause_sec": 0.35,
+    "voice_volume": 1.5,
+}
+
+
 def render_scene_clip(
     image_path: Path,
     audio_path: Path,
@@ -350,37 +362,52 @@ def render_scene_clip(
     enable_subtitles: bool = True,
     enable_ken_burns: bool = True,
     subtitle_config: Optional[Dict[str, Any]] = None,
+    render_config: Optional[Dict[str, Any]] = None,
 ) -> float:
     """
     Renderiza un clip individual sincronizado con su locución,
-    aplicando movimiento dinámico de cámara y subtítulos.
+    aplicando movimiento dinámico de cámara, pausa opcional y subtítulos.
     """
-    duration = get_audio_duration_seconds(str(audio_path))
+    rcfg = {**DEFAULT_RENDER_CONFIG, **(render_config or {})}
+    aspect_ratio = rcfg.get("aspect_ratio", "9:16")
+    target_w, target_h = (1920, 1080) if aspect_ratio == "16:9" else (TARGET_W, TARGET_H)
+    kb_style = rcfg.get("ken_burns_style", "suave")
+    if not enable_ken_burns:
+        kb_style = "fijo"
+    pause_sec = max(0.0, float(rcfg.get("scene_pause_sec") or 0.0))
+    voice_vol = max(0.5, min(2.5, float(rcfg.get("voice_volume") or 1.5)))
+
+    audio_dur = get_audio_duration_seconds(str(audio_path))
+    duration = round(audio_dur + pause_sec, 2)
     total_frames = int(duration * FPS) + 1
 
     temp_ass_path = output_clip_path.parent / f"temp_sub_{output_clip_path.stem}.ass"
 
     # Seleccionar variación de movimiento (Ken Burns)
-    if enable_ken_burns:
-        motion_idx = scene_index % 3
+    if kb_style != "fijo":
+        max_zoom = 1.22 if kb_style == "dinamico" else 1.15
+        step_z = 0.0018 if kb_style == "dinamico" else 0.0012
+        motion_idx = scene_index % (4 if kb_style == "dinamico" else 3)
         if motion_idx == 0:
-            # Zoom In suave hacia el centro
-            zoom_expr = f"min(zoom+0.0012,1.15)"
+            zoom_expr = f"min(zoom+{step_z},{max_zoom})"
             x_expr = "iw/2-(iw/zoom/2)"
             y_expr = "ih/2-(ih/zoom/2)"
         elif motion_idx == 1:
-            # Zoom Out suave
-            zoom_expr = f"max(1.15-0.0012*on,1.0)"
+            zoom_expr = f"max({max_zoom}-{step_z}*on,1.0)"
             x_expr = "iw/2-(iw/zoom/2)"
             y_expr = "ih/2-(ih/zoom/2)"
-        else:
-            # Paneo suave con ligero zoom constante
-            zoom_expr = "1.10"
-            x_expr = "((iw-iw/zoom)/2)+sin(on/25)*20"
+        elif motion_idx == 2:
+            zoom_expr = "1.12" if kb_style == "dinamico" else "1.10"
+            x_expr = "((iw-iw/zoom)/2)+sin(on/25)*25"
             y_expr = "ih/2-(ih/zoom/2)"
-        vf_zoom = f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d={total_frames}:s={TARGET_W}x{TARGET_H}:fps={FPS}"
+        else:
+            # Paneo vertical suave (solo en modo dinámico)
+            zoom_expr = "1.14"
+            x_expr = "iw/2-(iw/zoom/2)"
+            y_expr = "((ih-ih/zoom)/2)+sin(on/30)*22"
+        vf_zoom = f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d={total_frames}:s={target_w}x{target_h}:fps={FPS}"
     else:
-        vf_zoom = f"scale={TARGET_W}:{TARGET_H},fps={FPS}"
+        vf_zoom = f"scale={target_w}:{target_h}:force_original_aspect_ratio=increase,crop={target_w}:{target_h},fps={FPS}"
 
     cmd = [
         "ffmpeg", "-y",
@@ -392,9 +419,11 @@ def render_scene_clip(
         create_ass_subtitles(
             text=narrador_text,
             audio_path=audio_path,
-            duration=duration,
+            duration=audio_dur,
             output_ass_path=temp_ass_path,
             subtitle_config=subtitle_config,
+            target_w=target_w,
+            target_h=target_h,
         )
         cmd.extend([
             "-filter_complex", f"[0:v]{vf_zoom},ass={temp_ass_path.name}[vfinal]",
@@ -408,6 +437,10 @@ def render_scene_clip(
             "-map", "1:a"
         ])
 
+    af_chain = f"volume={voice_vol}"
+    if pause_sec > 0:
+        af_chain += f",apad=pad_dur={pause_sec}"
+
     cmd.extend([
         "-c:v", "libx264",
         "-preset", "veryfast",
@@ -417,9 +450,8 @@ def render_scene_clip(
         "-b:a", "192k",
         "-ar", "44100",
         "-ac", "2",
-        "-af", "volume=1.5",
+        "-af", af_chain,
         "-t", str(duration),
-        "-shortest",
         str(output_clip_path.resolve())
     ])
 
@@ -526,20 +558,26 @@ def render_final_video(
     project_id: Optional[str] = None,
     chapter_id: Optional[str] = None,
     subtitle_config: Optional[Dict[str, Any]] = None,
+    render_config: Optional[Dict[str, Any]] = None,
 ) -> Dict[str, Any]:
     """
-    Renderiza todos los clips de las escenas y los concatena en el archivo
-    final vertical MP4 listo para descargar o publicar, ubicándolo
-    en la carpeta dedicada del proyecto correspondiente.
+    Renderiza todos los clips de las escenas y los concatena (con corte directo
+    o transiciones xfade/acrossfade) en el archivo final MP4.
     """
     if not scenes:
         raise ValueError("No hay escenas para renderizar.")
+
+    rcfg = {**DEFAULT_RENDER_CONFIG, **(render_config or {})}
+    transition = rcfg.get("transition", "fade")
+    if transition not in ("none", "fade", "fadeblack", "slideleft"):
+        transition = "fade"
 
     render_id = uuid.uuid4().hex[:8]
     temp_dir = MEDIA_DIR / f"render_{render_id}"
     temp_dir.mkdir(parents=True, exist_ok=True)
 
     clip_paths = []
+    clip_durations = []
     total_duration = 0.0
 
     try:
@@ -567,31 +605,66 @@ def render_final_video(
                 enable_subtitles=enable_subtitles,
                 enable_ken_burns=enable_ken_burns,
                 subtitle_config=subtitle_config,
+                render_config=rcfg,
             )
-            total_duration += dur
+            clip_durations.append(dur)
             clip_paths.append(clip_path)
 
-        # 2. Archivo de lista para el demuxer concat de FFmpeg
-        concat_list_file = temp_dir / "concat_list.txt"
-        with open(concat_list_file, "w", encoding="utf-8") as f:
-            for p in clip_paths:
-                # Usar formato compatible con FFmpeg en Windows
-                normalized_path = str(p.resolve()).replace("\\", "/")
-                f.write(f"file '{normalized_path}'\n")
-
-        # 3. Concatenar clips en el MP4 definitivo en MEDIA_DIR
+        # 2. Unir clips en el MP4 definitivo en MEDIA_DIR
         temp_final_filename = f"video_short_{render_id}.mp4"
         temp_final_path = MEDIA_DIR / temp_final_filename
 
-        concat_cmd = [
-            "ffmpeg", "-y",
-            "-f", "concat",
-            "-safe", "0",
-            "-i", str(concat_list_file),
-            "-c", "copy",
-            str(temp_final_path)
-        ]
-        subprocess.run(concat_cmd, capture_output=True, text=True, check=True)
+        if transition != "none" and len(clip_paths) > 1:
+            td = round(min(0.45, min(clip_durations) / 3.0), 3)
+            cmd = ["ffmpeg", "-y"]
+            for p in clip_paths:
+                cmd.extend(["-i", str(p.resolve())])
+
+            filters = []
+            cum_dur = clip_durations[0]
+            prev_v = "[0:v]"
+            prev_a = "[0:a]"
+            for idx in range(1, len(clip_paths)):
+                offset = round(max(0.0, cum_dur - td), 3)
+                out_v = f"[v{idx}]"
+                out_a = f"[a{idx}]"
+                filters.append(f"{prev_v}[{idx}:v]xfade=transition={transition}:duration={td}:offset={offset}{out_v}")
+                filters.append(f"{prev_a}[{idx}:a]acrossfade=d={td}{out_a}")
+                prev_v = out_v
+                prev_a = out_a
+                cum_dur = cum_dur + clip_durations[idx] - td
+
+            total_duration = round(cum_dur, 2)
+            cmd.extend([
+                "-filter_complex", ";".join(filters),
+                "-map", prev_v,
+                "-map", prev_a,
+                "-c:v", "libx264",
+                "-preset", "veryfast",
+                "-crf", "22",
+                "-pix_fmt", "yuv420p",
+                "-c:a", "aac",
+                "-b:a", "192k",
+                str(temp_final_path.resolve()),
+            ])
+            subprocess.run(cmd, capture_output=True, text=True, check=True)
+        else:
+            total_duration = round(sum(clip_durations), 2)
+            concat_list_file = temp_dir / "concat_list.txt"
+            with open(concat_list_file, "w", encoding="utf-8") as f:
+                for p in clip_paths:
+                    normalized_path = str(p.resolve()).replace("\\", "/")
+                    f.write(f"file '{normalized_path}'\n")
+
+            concat_cmd = [
+                "ffmpeg", "-y",
+                "-f", "concat",
+                "-safe", "0",
+                "-i", str(concat_list_file),
+                "-c", "copy",
+                str(temp_final_path)
+            ]
+            subprocess.run(concat_cmd, capture_output=True, text=True, check=True)
 
         file_size_bytes = temp_final_path.stat().st_size
         file_size_mb = round(file_size_bytes / (1024 * 1024), 2)
