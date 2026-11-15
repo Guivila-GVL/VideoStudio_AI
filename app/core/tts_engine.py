@@ -14,60 +14,101 @@ load_dotenv()
 MEDIA_DIR = Path(__file__).resolve().parent.parent / "static" / "media"
 MEDIA_DIR.mkdir(parents=True, exist_ok=True)
 
+def _edge_es_voice(
+    id_: str,
+    name: str,
+    voice_id: str,
+    gender: str,
+    region_tag: str,
+    description: str,
+    age_group: str = "adulto",
+    pitch: str = "+0Hz",
+    rate: str = "+0%",
+    extra_tags: Optional[List[str]] = None
+) -> Dict[str, Any]:
+    tags = [region_tag, "Español Nativo", "Gratuito"]
+    if extra_tags:
+        tags.extend(extra_tags)
+    return {
+        "id": id_,
+        "name": name,
+        "provider": "edge",
+        "voice_id": voice_id,
+        "pitch": pitch,
+        "rate": rate,
+        "gender": gender,
+        "age_group": age_group,
+        "category": "espanol_nativo",
+        "tags": tags,
+        "description": description,
+    }
+
+
 DEFAULT_VOICES = [
     # --- Voces Nativas en Español (España Peninsular - 100% Sin Acento Anglosajón) ---
-    {
-        "id": "edge_alvaro_joven",
-        "name": "Álvaro Joven (Microsoft Neural - Joven 12-14a Español Nativo)",
-        "provider": "edge",
-        "voice_id": "es-ES-AlvaroNeural",
-        "pitch": "+12Hz",
-        "rate": "-3%",
-        "gender": "masculino",
-        "age_group": "joven",
-        "category": "espanol_nativo",
-        "tags": ["🇪🇸 España", "Joven 12-14a", "Lírico", "Gratuito", "Sin Acento Inglés"],
-        "description": "Voz juvenil masculina modulada a timbre de 12-14 años con pronunciación nativa castellana. Ideal para narradores sensibles, niños o adolescentes como en Platero y yo o El Principito."
-    },
-    {
-        "id": "edge_alvaro",
-        "name": "Álvaro (Microsoft Neural - Castellano Estándar & Documental)",
-        "provider": "edge",
-        "voice_id": "es-ES-AlvaroNeural",
-        "pitch": "+0Hz",
-        "rate": "+0%",
-        "gender": "masculino",
-        "age_group": "adulto",
-        "category": "espanol_nativo",
-        "tags": ["🇪🇸 España", "Adulto", "Claro", "Gratuito", "Sin Acento Inglés"],
-        "description": "Narrador adulto en español de España neutro, dicción impecable y calidez literaria para cuentos y documentales."
-    },
-    {
-        "id": "edge_elvira",
-        "name": "Elvira (Microsoft Neural - Femenina Cálida & Cuentos)",
-        "provider": "edge",
-        "voice_id": "es-ES-ElviraNeural",
-        "pitch": "+0Hz",
-        "rate": "+0%",
-        "gender": "femenino",
-        "age_group": "adulto",
-        "category": "espanol_nativo",
-        "tags": ["🇪🇸 España", "Femenina", "Cálida", "Gratuito", "Sin Acento Inglés"],
-        "description": "Voz femenina con acento de España, envolvente, dulce y expresiva para literatura infantil y relatos nostálgicos."
-    },
-    {
-        "id": "edge_ximena",
-        "name": "Ximena (Microsoft Neural - Joven Dinámica)",
-        "provider": "edge",
-        "voice_id": "es-ES-XimenaNeural",
-        "pitch": "+0Hz",
-        "rate": "+0%",
-        "gender": "femenino",
-        "age_group": "joven",
-        "category": "espanol_nativo",
-        "tags": ["🇪🇸 España", "Joven", "Dinámica", "Gratuito", "Sin Acento Inglés"],
-        "description": "Voz femenina juvenil y ágil para historias dinámicas y diálogos frescos en español."
-    },
+    _edge_es_voice(
+        "edge_alvaro_joven",
+        "Álvaro Joven (🇪🇸 España - Joven 12-14a)",
+        "es-ES-AlvaroNeural",
+        "masculino",
+        "🇪🇸 España",
+        "Voz juvenil masculina modulada a timbre de 12-14 años con pronunciación nativa castellana. Ideal para narradores sensibles, niños o adolescentes.",
+        age_group="joven",
+        pitch="+12Hz",
+        rate="-3%",
+        extra_tags=["Joven 12-14a", "Lírico"],
+    ),
+    _edge_es_voice(
+        "edge_alvaro",
+        "Álvaro (🇪🇸 España - Castellano Estándar)",
+        "es-ES-AlvaroNeural",
+        "masculino",
+        "🇪🇸 España",
+        "Narrador adulto en español de España neutro, dicción impecable y calidez literaria para cuentos y documentales.",
+        extra_tags=["Adulto", "Claro"],
+    ),
+    _edge_es_voice(
+        "edge_alvaro_grave",
+        "Álvaro Grave (🇪🇸 España - Narrador Literario)",
+        "es-ES-AlvaroNeural",
+        "masculino",
+        "🇪🇸 España",
+        "Versión más grave y pausada de Álvaro en español de España, pensada para narración literaria clásica y reflexiva.",
+        age_group="maduro",
+        pitch="-10Hz",
+        rate="-5%",
+        extra_tags=["Grave", "Literario"],
+    ),
+    _edge_es_voice(
+        "edge_elvira",
+        "Elvira (🇪🇸 España - Femenina Cálida)",
+        "es-ES-ElviraNeural",
+        "femenino",
+        "🇪🇸 España",
+        "Voz femenina con acento de España, envolvente, dulce y expresiva para literatura infantil y relatos nostálgicos.",
+        extra_tags=["Femenina", "Cálida"],
+    ),
+    _edge_es_voice(
+        "edge_elvira_suave",
+        "Elvira Suave (🇪🇸 España - Poética y Pausada)",
+        "es-ES-ElviraNeural",
+        "femenino",
+        "🇪🇸 España",
+        "Variante más suave y pausada de Elvira en español de España para cuentos íntimos y poéticos.",
+        pitch="+6Hz",
+        rate="-5%",
+        extra_tags=["Femenina", "Poética"],
+    ),
+    _edge_es_voice(
+        "edge_ximena",
+        "Ximena (🇪🇸 España - Joven Dinámica)",
+        "es-ES-XimenaNeural",
+        "femenino",
+        "🇪🇸 España",
+        "Voz femenina juvenil y ágil para historias dinámicas y diálogos frescos en español de España.",
+        age_group="joven",
+        extra_tags=["Femenina", "Joven"],
+    ),
     {
         "id": "eleven_ZtGDHPi9jPEEuRGCBOY5",
         "name": "Narración Clásica ES (ElevenLabs - Cuenta Personal)",
@@ -76,130 +117,8 @@ DEFAULT_VOICES = [
         "gender": "masculino",
         "age_group": "adulto",
         "category": "espanol_nativo",
-        "tags": ["🇪🇸 Español", "Narrador", "ElevenLabs Cloned"],
-        "description": "Voz clonada/personalizada en tu cuenta de ElevenLabs en idioma español, disponible sin plan de pago de librería."
-    },
-    # --- Voces Multilingües con Acento Anglosajón (OpenAI & ElevenLabs Standard) ---
-    {
-        "id": "openai_fable",
-        "name": "Fable (OpenAI - Joven Poeta)",
-        "provider": "openai",
-        "voice_id": "fable",
-        "gender": "masculino",
-        "age_group": "joven",
-        "category": "juvenil",
-        "tags": ["Joven 12-16a", "Lírico", "🌐 Acento Anglosajón"],
-        "description": "Voz juvenil masculina reflexiva. Nota: Al basarse en modelo anglosajón, pronuncia el español con acento extranjero."
-    },
-    {
-        "id": "eleven_TX3LPaxmHKxFdv7VOQHJ",
-        "name": "Liam (ElevenLabs - Joven Expresivo)",
-        "provider": "elevenlabs",
-        "voice_id": "TX3LPaxmHKxFdv7VOQHJ",
-        "gender": "masculino",
-        "age_group": "joven",
-        "category": "juvenil",
-        "tags": ["Joven 13-17a", "Expresivo", "🌐 Acento Anglosajón"],
-        "description": "Voz juvenil masculina de ElevenLabs con timbre anglosajón en español multilingüe."
-    },
-    {
-        "id": "eleven_bIHbv24MWmeRgasZH58o",
-        "name": "Will (ElevenLabs - Joven Optimista)",
-        "provider": "elevenlabs",
-        "voice_id": "bIHbv24MWmeRgasZH58o",
-        "gender": "masculino",
-        "age_group": "joven",
-        "category": "juvenil",
-        "tags": ["Joven 14-18a", "Amable", "🌐 Acento Anglosajón"],
-        "description": "Tono relajado de muchacho joven anglosajón."
-    },
-    {
-        "id": "openai_echo",
-        "name": "Echo (OpenAI - Joven Adulto Sereno)",
-        "provider": "openai",
-        "voice_id": "echo",
-        "gender": "masculino",
-        "age_group": "joven",
-        "category": "juvenil",
-        "tags": ["Joven 17-22a", "Sereno", "🌐 Acento Anglosajón"],
-        "description": "Voz masculina suave y serena con fonética internacional."
-    },
-    {
-        "id": "eleven_george",
-        "name": "George (ElevenLabs - Cuentacuentos Clásico)",
-        "provider": "elevenlabs",
-        "voice_id": "JBFqnCBsd6RMkjVDRZzb",
-        "gender": "masculino",
-        "age_group": "adulto",
-        "category": "cuentacuentos",
-        "tags": ["Adulto", "Clásico", "🌐 Acento Anglosajón"],
-        "description": "Narrador clásico británico/anglosajón con timbre envolvente."
-    },
-    {
-        "id": "eleven_charlie",
-        "name": "Charlie (ElevenLabs - Profundo y Cinematográfico)",
-        "provider": "elevenlabs",
-        "voice_id": "IKne3meq5aSn9XLyUdCD",
-        "gender": "masculino",
-        "age_group": "adulto",
-        "category": "dramatico",
-        "tags": ["Adulto", "Cinematográfico", "🌐 Acento Anglosajón"],
-        "description": "Timbre firme y resonante con fonética australiana/anglosajona."
-    },
-    {
-        "id": "openai_onyx",
-        "name": "Onyx (OpenAI - Grave y Solemne)",
-        "provider": "openai",
-        "voice_id": "onyx",
-        "gender": "masculino",
-        "age_group": "adulto",
-        "category": "dramatico",
-        "tags": ["Adulto", "Grave", "🌐 Acento Anglosajón"],
-        "description": "Voz profunda y autoritaria con entonación inglesa."
-    },
-    {
-        "id": "eleven_sarah",
-        "name": "Sarah (ElevenLabs - Dulce y Clara)",
-        "provider": "elevenlabs",
-        "voice_id": "EXAVITQu4vr4xnSDxMaL",
-        "gender": "femenino",
-        "age_group": "joven",
-        "category": "femenino",
-        "tags": ["Femenina", "Dulce", "🌐 Acento Anglosajón"],
-        "description": "Voz femenina luminosa con cadencia americana."
-    },
-    {
-        "id": "openai_nova",
-        "name": "Nova (OpenAI - Dinámica y Luminosa)",
-        "provider": "openai",
-        "voice_id": "nova",
-        "gender": "femenino",
-        "age_group": "joven",
-        "category": "femenino",
-        "tags": ["Femenina", "Dinámica", "🌐 Acento Anglosajón"],
-        "description": "Voz femenina dinámica con dicción anglosajona."
-    },
-    {
-        "id": "openai_shimmer",
-        "name": "Shimmer (OpenAI - Suave y Poética)",
-        "provider": "openai",
-        "voice_id": "shimmer",
-        "gender": "femenino",
-        "age_group": "joven",
-        "category": "femenino",
-        "tags": ["Femenina", "Poética", "🌐 Acento Anglosajón"],
-        "description": "Voz femenina delicada y tierna con fonética internacional."
-    },
-    {
-        "id": "openai_alloy",
-        "name": "Alloy (OpenAI - Neutral y Equilibrada)",
-        "provider": "openai",
-        "voice_id": "alloy",
-        "gender": "neutro",
-        "age_group": "adulto",
-        "category": "neutro",
-        "tags": ["Neutro", "Didáctico", "🌐 Acento Anglosajón"],
-        "description": "Voz neutra y equilibrada con pronunciación internacional."
+        "tags": ["🇪🇸 Español", "Narrador", "ElevenLabs Personal"],
+        "description": "Voz personalizada en tu cuenta de ElevenLabs en idioma español."
     },
     # --- Fallback Gratuito ---
     {
@@ -250,8 +169,13 @@ def list_voices() -> List[Dict[str, Any]]:
                     if any(existing.get("voice_id") == vid for existing in DEFAULT_VOICES):
                         continue
                     cat = v.get("category", "")
-                    # Omitir voces de comunidad que requieren pago si fallan
+                    # Omitir voces premade en inglés de ElevenLabs
+                    if cat == "premade":
+                        continue
                     labels = v.get("labels", {})
+                    lang = (labels.get("language") or "").strip().lower()
+                    if lang and lang not in ("es", "spanish", "español"):
+                        continue
                     gender = labels.get("gender", "neutro")
                     age = labels.get("age", "adulto")
                     api_voices.append({

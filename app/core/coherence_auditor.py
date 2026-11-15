@@ -52,12 +52,12 @@ def audit_character_sheet(
         b64 = encode_image_to_base64(image_path)
 
         prompt = f"""
-You are a lead art director auditing character model turnaround sheets for an illustrated book or animation series.
+You are a lead art director auditing character reference illustrations for an illustrated book or animation series.
 Target Character: {character_name}
 Target Visual Universe: {expected_style} ({style_details})
 
 Evaluate the image against 3 MANDATORY RULES:
-1. HAS_TURNAROUND_VIEWS: Does the image show the character in multiple perspective views (a turnaround model sheet with front, side/profile, 3/4 angle, and/or back views)? Typically 4 views in a grid. (FAIL if it is only a single standalone pose without multiple turnaround angles).
+1. HAS_CLEAN_CHARACTER_VIEW: Does the image clearly show the single target character in a full-body or 3/4 studio reference pose (or clean turnaround views), without cropped head/feet or extra unrelated characters?
 2. ISOLATED_BACKGROUND: Is the character isolated on a plain studio/paper background (pure white, off-white, light cream, warm beige, yellow-tinted paper, parchment, or textured watercolor paper)?
 CRITICAL: Any plain or textured paper background—regardless of whether it is white, cream, warm yellow, or beige—MUST BE APPROVED (set isolated_background to true).
 FAIL ONLY if there is an actual scenic background (outdoor fields, trees, grass, buildings, interior rooms) OR if there are unwanted secondary animals/figures (e.g., a donkey or dog standing next to a human character model).
@@ -239,11 +239,11 @@ def audit_and_heal_characters(project_id: str, auto_heal: bool = True) -> Dict[s
         # 1. Si no tiene imagen generada aún
         if not target_img or target_img.stat().st_size < 5000:
             if auto_heal:
-                print(f"[AUDIT] Personaje '{char_name}' sin imagen previa. Generando hoja de 4 vistas...")
+                print(f"[AUDIT] Personaje '{char_name}' sin imagen previa. Generando vista 3/4 cuerpo entero...")
                 gen_res = generate_character_portrait(
                     project_id=project_id,
                     character_id=char_id,
-                    formato_vista="giro_360",
+                    formato_vista=char.get("formato_vista") or "cuerpo_entero",
                     sin_fondo=True
                 )
                 healed_count += 1
@@ -251,7 +251,7 @@ def audit_and_heal_characters(project_id: str, auto_heal: bool = True) -> Dict[s
                     "id": char_id,
                     "nombre": char_name,
                     "status": "HEALED",
-                    "reason": "No tenía imagen generada; se creó la hoja maestra de 4 vistas con fondo limpio.",
+                    "reason": "No tenía imagen generada; se creó la vista 3/4 de cuerpo entero con fondo limpio.",
                     "detected_style": expected_style,
                     "imagen_url": char.get("imagen_url")
                 })
@@ -288,15 +288,15 @@ def audit_and_heal_characters(project_id: str, auto_heal: bool = True) -> Dict[s
         else:
             # Incoherencia detectada
             if auto_heal:
-                print(f"[AUDIT] Incoherencia en personaje '{char_name}' ({audit_res.get('reason')}). Regenerando con cuadrícula 2x2...")
-                # Forzar reconstrucción de prompt canónico con cuadrícula 2x2
-                prompt_canónico = craft_character_portrait_prompt(char, proj_data, formato_vista="giro_360", sin_fondo=True)
+                print(f"[AUDIT] Incoherencia en personaje '{char_name}' ({audit_res.get('reason')}). Regenerando vista 3/4 cuerpo entero...")
+                fmt = char.get("formato_vista") or "cuerpo_entero"
+                prompt_canónico = craft_character_portrait_prompt(char, proj_data, formato_vista=fmt, sin_fondo=True)
                 char["prompt_retrato"] = prompt_canónico
                 gen_res = generate_character_portrait(
                     project_id=project_id,
                     character_id=char_id,
                     prompt_override=prompt_canónico,
-                    formato_vista="giro_360",
+                    formato_vista=fmt,
                     sin_fondo=True
                 )
 

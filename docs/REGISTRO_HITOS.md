@@ -1,5 +1,20 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [15/11/2026 12:10:00] ✅ Auditoría de consistencia, documentación en OneNote y ejecución autónoma del Capítulo 2 (Platero y Yo)
+
+- **ID Tarea:** `manual-cap2-autonomo`
+- **Prioridad:** ALTA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** `Analizar la consistencia global del proyecto, documentar el estado y la estrategia de automatización total en OneNote, sincronizar Git/docs y ejecutar de principio a fin el Capítulo 2 de Platero y Yo sin intervención humana.`
+- **Resultado Técnico:** 1) Auditoría completa: `compileall` y `node --check` OK; `tests/test_telegram_approvals.py` 15/15 OK; `tests/test_api.py` 10/11 pasos OK (detectado fallo en Paso 11: falta hoja de referencia en disco para `episodios_nacionales_1ra_serie/personaje_principal`, 13/14 listas). 2) Corregido bug en `app/main.py` (`from datetime import datetime` faltante que provocaba HTTP 500 en `POST /api/video/render` al guardar capítulos). 3) Ejecución autónoma completa de `platero_y_yo / capitulo_2` ("Mariposas"): propuesta en 3 bloques, 3 escenas, 3 descripciones detalladas, 3 prompts con semillas (`seed=583823`), 3 imágenes con `fal_flux_dev`, 3 locuciones con `edge_alvaro` y render final exitoso en `proyectos/platero_y_yo/videos/capitulo_2.mp4` (`57.65 s`, `6.65 MB`). 4) Creadas en OneNote (`VideoStudio AI`) las páginas `06. Análisis de Consistencia del Proyecto y Estado Actual` y `07. Pipeline de Automatización Completa y Prueba Piloto Capítulo 2`.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (`06. Análisis de Consistencia...` y `07. Pipeline de Automatización...`)
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [11/11/2026 18:38:56] ✅ ¿Puedes abrirme igual otro análisis en OneNote para ver cómo podemos
 
 - **ID Tarea:** `102`

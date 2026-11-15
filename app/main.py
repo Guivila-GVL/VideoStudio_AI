@@ -1,5 +1,6 @@
 import os
 import shutil
+from datetime import datetime
 from pathlib import Path
 from typing import Optional, List, Dict, Any
 from fastapi import FastAPI, UploadFile, File, Form, HTTPException, Query, Path as FPath
@@ -9,8 +10,11 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 
 from app.core.script_generator import (
+    propose_chapter_treatment,
     breakdown_storyboard,
     rewrite_scene,
+    generate_scene_prompt_from_description,
+    generate_scene_description_from_proposal,
     enrich_scene_prompt_with_anchors,
     attach_consistency_metadata_to_scene,
     resolve_scene_character_references,
@@ -32,12 +36,22 @@ from app.core.project_manager import (
     get_env_settings,
     analyze_book_with_ai,
     generate_character_portrait,
+    generate_character_portrait_proposals,
+    select_character_portrait_proposal,
+    generate_character_4_views,
+    audit_character_prompts_coherence,
+    sync_incoherent_character_prompts,
+    restore_asset_version,
     craft_character_portrait_prompt,
     remove_character_background,
     save_character_portrait_upload,
     delete_character_from_project,
     craft_environment_prompt,
+    audit_environment_prompts_coherence,
+    sync_incoherent_environment_prompts,
     generate_environment_image,
+    generate_environment_proposals,
+    select_environment_proposal,
     save_environment_upload,
     delete_environment_from_project,
     get_project_document_content,
@@ -129,7 +143,7 @@ class CharacterModel(BaseModel):
     hoja_referencia_path: Optional[str] = None
     prompt_retrato: Optional[str] = None
     sin_fondo: Optional[bool] = True
-    formato_vista: Optional[str] = "giro_360"
+    formato_vista: Optional[str] = "cuerpo_entero"
     cref_url: Optional[str] = None
     cref_weight: Optional[int] = 100
     cref_directive: Optional[str] = None
@@ -237,27 +251,61 @@ class GeneratePortraitRequest(BaseModel):
     character_id: str
     prompt_override: Optional[str] = None
     sin_fondo: Optional[bool] = True
-    formato_vista: Optional[str] = "giro_360"
+    formato_vista: Optional[str] = "cuerpo_entero"
     descripcion_visual: Optional[str] = None
+    provider: Optional[str] = None
     notify_telegram: Optional[bool] = False
 
 class OptimizeCharPromptRequest(BaseModel):
     descripcion_visual: Optional[str] = None
-    formato_vista: Optional[str] = "giro_360"
+    formato_vista: Optional[str] = "cuerpo_entero"
     sin_fondo: Optional[bool] = True
     nombre: Optional[str] = None
     rol: Optional[str] = None
     tipo: Optional[str] = None
+    estilo_visual: Optional[str] = None
+    estilo_detalles: Optional[str] = None
+    estilo_prompt_en: Optional[str] = None
+    reglas_personaje: Optional[Dict[str, Any]] = None
 
 class SyncStyleRequest(BaseModel):
     estilo_visual: Optional[str] = None
     estilo_detalles: Optional[str] = None
     regenerate_all: Optional[bool] = False
 
+class OptimizeEnvPromptRequest(BaseModel):
+    descripcion_visual: Optional[str] = None
+    nombre: Optional[str] = None
+    tipo: Optional[str] = None
+    estilo_visual: Optional[str] = None
+    estilo_detalles: Optional[str] = None
+    estilo_prompt_en: Optional[str] = None
+    reglas_escenario: Optional[Dict[str, Any]] = None
+
 class GenerateEnvironmentRequest(BaseModel):
     environment_id: str
     prompt_override: Optional[str] = None
+    provider: Optional[str] = None
     notify_telegram: Optional[bool] = False
+
+class RestoreAssetVersionRequest(BaseModel):
+    version: int
+
+class SelectPortraitProposalRequest(BaseModel):
+    character_id: str
+    file_path: str
+    seed: Optional[int] = None
+    provider: Optional[str] = None
+    prompt_used: Optional[str] = None
+    sin_fondo: Optional[bool] = True
+    formato_vista: Optional[str] = "cuerpo_entero"
+
+class SelectEnvironmentProposalRequest(BaseModel):
+    environment_id: str
+    file_path: str
+    seed: Optional[int] = None
+    provider: Optional[str] = None
+    prompt_used: Optional[str] = None
 
 class StoryboardRequest(BaseModel):
     project_id: Optional[str] = None
@@ -271,6 +319,7 @@ class StoryboardRequest(BaseModel):
     audiencia: Optional[str] = ""
     ambiente: Optional[str] = ""
     target_scenes: int = 4
+    propuesta: Optional[Dict[str, Any]] = None
 
 class RewriteSceneRequest(BaseModel):
     project_id: Optional[str] = None
@@ -302,6 +351,33 @@ class InjectAnchorsRequest(BaseModel):
     style_details: Optional[str] = ""
     include_technical_flags: Optional[bool] = False
 
+class ScenePromptFromDescRequest(BaseModel):
+    project_id: Optional[str] = None
+    scene_index: int = 0
+    propuesta: Optional[Dict[str, Any]] = None
+    descripcion_escena: str = ""
+    personajes_en_escena: Optional[List[str]] = None
+    escenario_clave: Optional[str] = None
+    characters: Optional[List[Dict[str, Any]]] = None
+    escenarios: Optional[List[Dict[str, Any]]] = None
+    style_key: Optional[str] = "cinematic"
+    style_details: Optional[str] = ""
+    audiencia: Optional[str] = ""
+    ambiente: Optional[str] = ""
+
+class SceneDescriptionFromProposalRequest(BaseModel):
+    project_id: Optional[str] = None
+    scene_index: int = 0
+    propuesta: Optional[Dict[str, Any]] = None
+    personajes_en_escena: Optional[List[str]] = None
+    escenario_clave: Optional[str] = None
+    characters: Optional[List[Dict[str, Any]]] = None
+    escenarios: Optional[List[Dict[str, Any]]] = None
+    narrador: Optional[str] = ""
+    chapter_text: Optional[str] = ""
+    audiencia: Optional[str] = ""
+    ambiente: Optional[str] = ""
+
 class RenderVideoRequest(BaseModel):
     title: Optional[str] = "Mi Video Short"
     project_id: Optional[str] = None
@@ -321,6 +397,7 @@ class SaveChapterRequest(BaseModel):
     origen_tipo: Optional[str] = "manual"
     origen_ref: Optional[str] = ""
     orden: Optional[int] = None
+    propuesta: Optional[Dict[str, Any]] = None
 
 class BatchImportChaptersRequest(BaseModel):
     source: Optional[str] = "pages"  # "pages" o "chapters"
@@ -475,10 +552,10 @@ def test_narrator_voice_endpoint(project_id: str, req: TestNarratorVoiceRequest)
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/projects/{project_id}/narrator/recommend-ai")
-def recommend_narrator_ai_endpoint(project_id: str):
-    """Recomienda con IA el perfil psicológico y la voz idónea según el manuscrito."""
+def recommend_narrator_ai_endpoint(project_id: str, req: Optional[Dict[str, Any]] = None):
+    """Propone la voz idónea en función de la especificación del perfil superior (o reanaliza el manuscrito)."""
     try:
-        narrator = recommend_narrator_with_ai(project_id)
+        narrator = recommend_narrator_with_ai(project_id, profile_override=req)
         return {"success": True, "perfil_narrador": narrator}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -504,8 +581,9 @@ async def api_generate_char_portrait(project_id: str, req: GeneratePortraitReque
             character_id=req.character_id,
             prompt_override=req.prompt_override,
             sin_fondo=req.sin_fondo if req.sin_fondo is not None else True,
-            formato_vista=req.formato_vista or "giro_360",
-            descripcion_visual=req.descripcion_visual
+            formato_vista=req.formato_vista or "cuerpo_entero",
+            descripcion_visual=req.descripcion_visual,
+            provider=req.provider
         )
         if req.notify_telegram:
             try:
@@ -513,6 +591,56 @@ async def api_generate_char_portrait(project_id: str, req: GeneratePortraitReque
             except Exception as e:
                 print(f"[Telegram Notify Error] {e}")
         return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/characters/generate-portrait-proposals")
+async def api_generate_char_portrait_proposals(project_id: str, req: GeneratePortraitRequest):
+    try:
+        return generate_character_portrait_proposals(
+            project_id=project_id,
+            character_id=req.character_id,
+            prompt_override=req.prompt_override,
+            sin_fondo=req.sin_fondo if req.sin_fondo is not None else True,
+            formato_vista=req.formato_vista or "cuerpo_entero",
+            descripcion_visual=req.descripcion_visual,
+            provider=req.provider,
+            count=6
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/characters/select-portrait-proposal")
+async def api_select_char_portrait_proposal(project_id: str, req: SelectPortraitProposalRequest):
+    try:
+        return select_character_portrait_proposal(
+            project_id=project_id,
+            character_id=req.character_id,
+            file_path=req.file_path,
+            seed=req.seed,
+            provider=req.provider,
+            prompt_used=req.prompt_used,
+            sin_fondo=req.sin_fondo if req.sin_fondo is not None else True,
+            formato_vista=req.formato_vista or "cuerpo_entero"
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/characters/{character_id}/generate-4-views")
+async def api_generate_char_4_views(project_id: str, character_id: str, req: Optional[Dict[str, Any]] = None):
+    try:
+        provider = (req or {}).get("provider")
+        return generate_character_4_views(project_id, character_id, provider=provider)
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -535,8 +663,11 @@ async def api_optimize_char_prompt(project_id: str, character_id: str, req: Opti
         if not char:
             raise HTTPException(status_code=404, detail="Personaje no encontrado")
 
-        formato_vista = "giro_360"
-        sin_fondo = True
+        formato_vista = char.get("formato_vista") or "cuerpo_entero"
+        sin_fondo = char.get("sin_fondo", True)
+
+        reglas_personaje = None
+        style_prompt_override = None
 
         if req:
             if req.descripcion_visual is not None and req.descripcion_visual.strip():
@@ -553,13 +684,24 @@ async def api_optimize_char_prompt(project_id: str, character_id: str, req: Opti
             if req.sin_fondo is not None:
                 sin_fondo = req.sin_fondo
                 char["sin_fondo"] = sin_fondo
+            if req.estilo_visual is not None and req.estilo_visual.strip():
+                proj["estilo_visual"] = req.estilo_visual.strip()
+            if req.estilo_detalles is not None:
+                proj["estilo_detalles"] = req.estilo_detalles.strip()
+            if req.estilo_prompt_en is not None and req.estilo_prompt_en.strip():
+                style_prompt_override = req.estilo_prompt_en.strip()
+            if req.reglas_personaje is not None:
+                reglas_personaje = req.reglas_personaje
+                char["reglas_personaje"] = reglas_personaje
 
         crafted = craft_character_portrait_prompt(
             char,
             proj,
             formato_vista=formato_vista,
             sin_fondo=sin_fondo,
-            force_refresh=True
+            force_refresh=True,
+            reglas_override=reglas_personaje,
+            style_prompt_override=style_prompt_override
         )
         char["prompt_retrato"] = crafted
         save_or_update_project(proj)
@@ -573,6 +715,19 @@ async def api_upload_char_portrait(project_id: str, character_id: str, file: Upl
         content = await file.read()
         res = save_character_portrait_upload(project_id, character_id, content)
         return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/{category}/{item_id}/restore-version")
+async def api_restore_asset_version(project_id: str, category: str, item_id: str, req: RestoreAssetVersionRequest):
+    try:
+        return restore_asset_version(project_id, category, item_id, req.version)
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -634,18 +789,58 @@ async def api_update_character_consistency(project_id: str, character_id: str, r
 @app.post("/api/projects/{project_id}/environments/generate")
 async def api_generate_environment(project_id: str, req: GenerateEnvironmentRequest):
     try:
-        res = generate_environment_image(project_id, req.environment_id, req.prompt_override)
+        res = generate_environment_image(
+            project_id,
+            req.environment_id,
+            req.prompt_override,
+            provider=req.provider
+        )
         if req.notify_telegram:
             try:
                 send_environment_approval(project_id, req.environment_id, auto_generate_if_missing=False)
             except Exception as e:
                 print(f"[Telegram Notify Error] {e}")
         return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/environments/generate-proposals")
+async def api_generate_environment_proposals(project_id: str, req: GenerateEnvironmentRequest):
+    try:
+        return generate_environment_proposals(
+            project_id=project_id,
+            environment_id=req.environment_id,
+            prompt_override=req.prompt_override,
+            provider=req.provider,
+            count=6
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/environments/select-proposal")
+async def api_select_environment_proposal(project_id: str, req: SelectEnvironmentProposalRequest):
+    try:
+        return select_environment_proposal(
+            project_id=project_id,
+            environment_id=req.environment_id,
+            file_path=req.file_path,
+            seed=req.seed,
+            provider=req.provider,
+            prompt_used=req.prompt_used
+        )
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
 @app.post("/api/projects/{project_id}/environments/{environment_id}/optimize-prompt")
-async def api_optimize_env_prompt(project_id: str, environment_id: str):
+async def api_optimize_env_prompt(project_id: str, environment_id: str, req: Optional[OptimizeEnvPromptRequest] = None):
     try:
         proj = get_project(project_id)
         esc = next(
@@ -654,7 +849,33 @@ async def api_optimize_env_prompt(project_id: str, environment_id: str):
         )
         if not esc:
             raise HTTPException(status_code=404, detail="Escenario no encontrado")
-        crafted = craft_environment_prompt(esc, proj)
+
+        reglas_escenario = None
+        style_prompt_override = None
+        if req:
+            if req.descripcion_visual is not None and req.descripcion_visual.strip():
+                esc["descripcion_visual"] = req.descripcion_visual.strip()
+            if req.nombre is not None and req.nombre.strip():
+                esc["nombre"] = req.nombre.strip()
+            if req.tipo is not None:
+                esc["tipo"] = req.tipo.strip().lower()
+            if req.estilo_visual is not None and req.estilo_visual.strip():
+                proj["estilo_visual"] = req.estilo_visual.strip()
+            if req.estilo_detalles is not None:
+                proj["estilo_detalles"] = req.estilo_detalles.strip()
+            if req.estilo_prompt_en is not None and req.estilo_prompt_en.strip():
+                style_prompt_override = req.estilo_prompt_en.strip()
+            if req.reglas_escenario is not None:
+                reglas_escenario = req.reglas_escenario
+                esc["reglas_escenario"] = reglas_escenario
+
+        crafted = craft_environment_prompt(
+            esc,
+            proj,
+            force_refresh=True,
+            reglas_override=reglas_escenario,
+            style_prompt_override=style_prompt_override
+        )
         esc["prompt_escenario"] = crafted
         save_or_update_project(proj)
         return {"success": True, "prompt_escenario": crafted, "environment": esc}
@@ -667,6 +888,8 @@ async def api_upload_env_image(project_id: str, environment_id: str, file: Uploa
         content = await file.read()
         res = save_environment_upload(project_id, environment_id, content)
         return res
+    except ValueError as e:
+        raise HTTPException(status_code=400, detail=str(e))
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
@@ -1009,6 +1232,38 @@ async def api_audit_characters(project_id: str, auto_heal: bool = Query(True)):
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.post("/api/projects/{project_id}/audit-characters-coherence")
+async def api_audit_characters_coherence(project_id: str, req: Optional[Dict[str, Any]] = None):
+    try:
+        ref_id = (req or {}).get("reference_char_id")
+        return audit_character_prompts_coherence(project_id, reference_char_id=ref_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/sync-characters-prompts")
+async def api_sync_characters_prompts(project_id: str, req: Optional[Dict[str, Any]] = None):
+    try:
+        char_ids = (req or {}).get("character_ids")
+        return sync_incoherent_character_prompts(project_id, character_ids=char_ids)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/audit-environments-coherence")
+async def api_audit_environments_coherence(project_id: str, req: Optional[Dict[str, Any]] = None):
+    try:
+        ref_id = (req or {}).get("reference_env_id")
+        return audit_environment_prompts_coherence(project_id, reference_env_id=ref_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/projects/{project_id}/sync-environments-prompts")
+async def api_sync_environments_prompts(project_id: str, req: Optional[Dict[str, Any]] = None):
+    try:
+        ref_id = (req or {}).get("reference_env_id")
+        return sync_incoherent_environment_prompts(project_id, reference_env_id=ref_id)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/projects/{project_id}/audit-environments")
 async def api_audit_environments(project_id: str, auto_heal: bool = Query(True)):
     try:
@@ -1028,6 +1283,27 @@ async def api_upload_project_document(project_id: str, file: UploadFile = File(.
         raise HTTPException(status_code=500, detail=str(e))
 
 # 4. Capítulos y Storyboard (Capa 2: Episodio / Vídeo)
+@app.post("/api/storyboard/propose")
+async def api_propose_storyboard(req: StoryboardRequest):
+    if not req.text.strip():
+        raise HTTPException(status_code=400, detail="El texto base es obligatorio.")
+    try:
+        proposal = propose_chapter_treatment(
+            text=req.text,
+            chapter_title=req.chapter_title or "Capítulo",
+            characters=req.characters,
+            escenarios=req.escenarios,
+            style_key=req.style_key or "cinematic",
+            style_details=req.style_details or "",
+            audiencia=req.audiencia or "",
+            ambiente=req.ambiente or "",
+            target_scenes=req.target_scenes,
+            project_id=req.project_id
+        )
+        return {"success": True, "proposal": proposal}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/storyboard/generate")
 async def api_generate_storyboard(req: StoryboardRequest):
     if not req.text.strip():
@@ -1043,7 +1319,8 @@ async def api_generate_storyboard(req: StoryboardRequest):
             audiencia=req.audiencia or "",
             ambiente=req.ambiente or "",
             target_scenes=req.target_scenes,
-            project_id=req.project_id
+            project_id=req.project_id,
+            propuesta=req.propuesta
         )
         return {"success": True, "scenes": scenes}
     except Exception as e:
@@ -1084,6 +1361,49 @@ async def api_inject_anchors(req: InjectAnchorsRequest):
         req.scene["prompt_imagen"] = enriched
         attach_consistency_metadata_to_scene(req.scene, req.characters, project_id=req.project_id)
         return {"success": True, "scene": req.scene}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/storyboard/generate-prompt")
+async def api_generate_prompt_from_description(req: ScenePromptFromDescRequest):
+    if not req.descripcion_escena.strip():
+        raise HTTPException(status_code=400, detail="La descripción de la escena está vacía.")
+    try:
+        prompt_imagen = generate_scene_prompt_from_description(
+            descripcion_escena=req.descripcion_escena,
+            characters_in_scene=req.personajes_en_escena or [],
+            project_characters=req.characters or [],
+            escenario_clave=req.escenario_clave,
+            project_escenarios=req.escenarios or [],
+            style_key=req.style_key or "cinematic",
+            style_details=req.style_details or "",
+            ambiente=req.ambiente or "",
+            audiencia=req.audiencia or "",
+            project_id=req.project_id,
+            scene_index=req.scene_index,
+            propuesta=req.propuesta,
+        )
+        return {"success": True, "prompt_imagen": prompt_imagen}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/storyboard/generate-description")
+async def api_generate_description_from_proposal(req: SceneDescriptionFromProposalRequest):
+    try:
+        descripcion_escena = generate_scene_description_from_proposal(
+            scene_index=req.scene_index,
+            propuesta=req.propuesta,
+            characters_in_scene=req.personajes_en_escena or [],
+            project_characters=req.characters or [],
+            escenario_clave=req.escenario_clave,
+            project_escenarios=req.escenarios or [],
+            narrador=req.narrador or "",
+            chapter_text=req.chapter_text or "",
+            ambiente=req.ambiente or "",
+            audiencia=req.audiencia or "",
+            project_id=req.project_id,
+        )
+        return {"success": True, "descripcion_escena": descripcion_escena}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 

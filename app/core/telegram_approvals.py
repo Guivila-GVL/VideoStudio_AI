@@ -452,7 +452,22 @@ def apply_approval_decision(
         match_item["estado_aprobacion"] = "aprobado"
         match_item["aprobado_en"] = now_iso
         match_item["motivo_rechazo"] = ""
+        if is_char:
+            try:
+                from app.core.project_manager import get_character_consistency_tokens, sync_character_reference_bank
+                tokens = get_character_consistency_tokens(match_item, project_id=project_id)
+                match_item["seed_consistencia"] = tokens.get("seed_consistencia")
+                match_item["cref_url"] = tokens.get("cref_url")
+                match_item["ancla_visual"] = tokens.get("ancla_visual")
+            except Exception:
+                pass
         save_or_update_project(proj)
+        if is_char:
+            try:
+                from app.core.project_manager import sync_character_reference_bank
+                sync_character_reference_bank(project_id, auto_generate_missing=False)
+            except Exception:
+                pass
 
         if notify_telegram and enabled:
             msg = (
@@ -467,7 +482,21 @@ def apply_approval_decision(
             "status": "aprobado",
             "item_id": item_id,
             "nombre": item_name,
-            "collection": collection_key
+            "collection": collection_key,
+            "seed_consistencia": match_item.get("seed_consistencia")
+        }
+
+    elif action_norm in ("pend", "pending", "pendiente", "unapprove"):
+        match_item["estado_aprobacion"] = "pendiente"
+        match_item["motivo_rechazo"] = ""
+        save_or_update_project(proj)
+        return {
+            "ok": True,
+            "status": "pendiente",
+            "item_id": item_id,
+            "nombre": item_name,
+            "collection": collection_key,
+            "seed_consistencia": match_item.get("seed_consistencia")
         }
 
     elif action_norm in ("rejc", "reject", "rechazado", "rechazar", "no"):
@@ -1075,6 +1104,10 @@ def process_telegram_update(update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
         cb = update["callback_query"]
         cb_id = cb.get("id")
         data = cb.get("data", "")
+        if data.startswith("gw:"):
+            from app.core.telegram_generic_wizard import handle_wizard_callback
+            cb_chat_id = ((cb.get("message") or {}).get("chat") or {}).get("id") or get_telegram_config()[1]
+            return handle_wizard_callback(cb_id, cb_chat_id, data)
         parts = data.split(":")
 
         # Caso 1A: Botón de clip de escena -> {action}:s:{project_id}:{chapter_id}:{scene_id}
@@ -1144,9 +1177,13 @@ def process_telegram_update(update: Dict[str, Any]) -> Optional[Dict[str, Any]]:
                 send_telegram_api("answerCallbackQuery", {"callback_query_id": cb_id, "text": f"Error: {e}"})
                 return {"type": "callback_query", "error": str(e)}
 
-    # Caso 2: Mensaje de texto recibido (Respuesta o comando)
+    # Caso 2: Mensaje de texto o documento recibido (Wizard / Respuesta)
     if "message" in update:
         msg = update["message"]
+        from app.core.telegram_generic_wizard import handle_wizard_message
+        wiz_res = handle_wizard_message(msg)
+        if wiz_res:
+            return wiz_res
         text = msg.get("text", "")
         if not text:
             return None

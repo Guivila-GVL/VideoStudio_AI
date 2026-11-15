@@ -1,74 +1,161 @@
 {
   "project_id": "platero_y_yo",
   "chapter_id": "capitulo_2",
-  "titulo": "Capítulo 2",
+  "titulo": "Capítulo 2: Mariposas",
   "texto_original": "Mariposas blancas\nLa noche cae, brumosa ya y morada. Vagas claridades malvas y\nverdes perduran tras la torre de la iglesia. El camino sube, lleno de\nsombras, de campanillas, de fragancia de hierba, de canciones, de\ncansancio y de anhelo. De pronto, un hombre oscuro, con una gorra\ny un pincho, roja un instante la cara fea por la luz del cigarro, baja\na nosotros de una casucha miserable, perdida entre sacas de carbón.\nPlatero se amedrenta.\n—¿Va argo?\n—Vea usted… Mariposas blancas…\nEl hombre quiere clavar su pincho de hierro en el seroncillo, y\nno lo evito. Abro la alforja y él no ve nada. Y el alimento ideal pasa,\nlibre y cándido, sin pagar su tributo a los Consumos…",
   "scenes": [
     {
       "id": 1,
-      "narrador": "La noche brumosa cae sobre el camino, lleno de sombras, fragancias y anhelos.",
-      "prompt_imagen": "A dimly lit path at twilight, with purple and green hues in the sky. Platero, the small, fluffy donkey with soft fur and black eyes, looks apprehensive. An ominous man wearing a cap and holding a pitchfork is descending from a shabby hut hidden among coal sacks. The atmosphere is filled with the scent of herbs and the sounds of nature. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "descripcion_escena": "La escena se sitúa en Calles Blancas y Azoteas de Moguer, bajo una atmósfera Moguer y la campiña andaluza a comienzos del siglo XX, envueltos en una luz dorada y deslumbrante que baña las fachadas encaladas y las azoteas de cal blanca. El aire está impregnado de aromas campesinos: el azahar de los naranjales, el aroma resinoso de los pinares de Mazagón, la tierra seca al mediodía y el mosto dulce de las bodegas al caer la tarde.\n\nUn universo poético donde la sencillez rústica y el aislamiento provinciano conviven con una profunda contemplación lírica de la vida. Los caminos polvorientos, los olivares plateados bajo la brisa atlántica y el silencio solemne de las siestas crean una atmósfera nostálgica, tierna y teñida de serena melancolía.. En pantalla, plano general de situación en Calles Blancas y Azoteas de Moguer: se presenta a Platero en un ambiente tranquilo y cercano, situando al espectador mientras arranca la narración. Aparece en primer término Platero (Burro pequeño, peludo, suave, de pelaje gris plateado como de algodón y ojos negros como escarabajos de cristal), desplazándose con naturalidad por Calles Blancas y Azoteas de Moguer, mostrando gestos expresivos y cercanos a cámara. El encuadre vertical 9:16 y la iluminación acompañan el tono general (Corto narrativo sobre 'Capítulo 2: Mariposas' pensado para Todos los públicos en Calles Blancas y Azoteas de Moguer (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar) durante los 5 segundos mientras el narrador recita su tramo.",
+      "narrador": "Mariposas blancas\nLa noche cae, brumosa ya y morada. Vagas claridades malvas y\nverdes perduran tras la torre de la iglesia. El camino sube, lleno de\nsombras, de campanillas, de fragancia de hierba, de canciones, de\ncansancio y de anhelo.",
+      "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Calles Blancas y Azoteas de Moguer [seed_escenario:120095]: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, [Escena 1: Plano inicial de apertura] Opening scene establishing the setting and characters, Warm medium close-up shot with gentle camera push-in showing Platero positioned naturally in the scene with expressive storybook posture and warm lighting, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
-        "Platero",
-        "El Poeta"
+        "Platero"
       ],
-      "escenario_clave": "Escenario específico",
-      "duracion_estimada": 6,
-      "audio_url": null,
-      "image_url": null,
-      "duracion_real": null
+      "escenario_clave": "Calles Blancas y Azoteas de Moguer",
+      "duracion_estimada": 5,
+      "audio_url": "/static/media/audio_11658e18f0.mp3",
+      "image_url": "/static/media/img_ec95c9cb3c.jpg",
+      "duracion_real": 21.26,
+      "referencias_personajes": [
+        {
+          "id": "platero",
+          "nombre": "Platero",
+          "rol": "Protagonista",
+          "tipo": "animal",
+          "imagen_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157",
+          "clean_image_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+          "hoja_referencia_path": "proyectos/platero_y_yo/personajes/platero.jpg",
+          "reference_exists": true,
+          "cref_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+          "cref_weight": 100,
+          "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
+          "lora_model": "platero_y_yo_platero_v1",
+          "lora_weight": 0.85,
+          "lora_trigger": "chr_platero",
+          "lora_directive": "<lora:platero_y_yo_platero_v1:0.85> chr_platero",
+          "ancla_visual": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, no humans)",
+          "seed_consistencia": 363728
+        }
+      ],
+      "reference_image": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157",
+      "seed_consistencia": 363728,
+      "prompt_tecnico_cref": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Calles Blancas y Azoteas de Moguer [seed_escenario:120095]: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, [Escena 1: Plano inicial de apertura] Opening scene establishing the setting and characters, Warm medium close-up shot with gentle camera push-in showing Platero positioned naturally in the scene with expressive storybook posture and warm lighting, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100"
     },
     {
       "id": 2,
-      "narrador": "El hombre oscuro se acerca, con su mirada voraz, mientras Platero se amedrenta.",
-      "prompt_imagen": "Close-up of the menacing man with a cap and pitchfork, his face illuminated for a moment by a glowing cigarette, casting shadows. Platero, the small and fluffy donkey, stands nervously nearby, his eyes wide. The background is the dimly lit path, evoking tension. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "descripcion_escena": "Continuidad desde la escena anterior: Desde el plano general anterior, la cámara se acerca suavemente sin perder la continuidad dentro de Calles Blancas y Azoteas de Moguer. En pantalla, acercamiento suave sobre Platero en Calles Blancas y Azoteas de Moguer: se aprecia su expresión, postura y detalles principales en movimiento natural para acompañar el relato. Aparece en primer término Platero (Burro pequeño, peludo, suave, de pelaje gris plateado como de algodón y ojos negros como escarabajos de cristal), desplazándose con naturalidad por Calles Blancas y Azoteas de Moguer, mostrando gestos expresivos y cercanos a cámara. El encuadre vertical 9:16 y la iluminación acompañan el tono general (Corto narrativo sobre 'Capítulo 2: Mariposas' pensado para Todos los públicos en Calles Blancas y Azoteas de Moguer (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar) durante los 5 segundos mientras el narrador recita su tramo.",
+      "narrador": "De pronto, un hombre oscuro, con una gorra\ny un pincho, roja un instante la cara fea por la luz del cigarro, baja\na nosotros de una casucha miserable, perdida entre sacas de carbón. Platero se amedrenta. —¿Va argo?",
+      "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Calles Blancas y Azoteas de Moguer [seed_escenario:120095]: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, [Transición Escena 1→2: Desde el plano general anterior, la cámara se acerca suavemente sin perder la continuidad dentro de Calles Blancas y Azoteas de Moguer.] Continuous visual flow from Scene 1, maintaining identical lighting, environment geometry and character proportions, Warm medium close-up shot with gentle camera push-in showing Platero positioned naturally in the scene with expressive storybook posture and warm lighting, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
-        "Platero",
-        "El Poeta",
-        "El Hombre Oscuro"
+        "Platero"
       ],
-      "escenario_clave": "Escenario específico",
+      "escenario_clave": "Calles Blancas y Azoteas de Moguer",
       "duracion_estimada": 5,
-      "audio_url": null,
-      "image_url": null,
-      "duracion_real": null
+      "audio_url": "/static/media/audio_6feb48039c.mp3",
+      "image_url": "/static/media/img_ba849d31ae.jpg",
+      "duracion_real": 17.45,
+      "referencias_personajes": [
+        {
+          "id": "platero",
+          "nombre": "Platero",
+          "rol": "Protagonista",
+          "tipo": "animal",
+          "imagen_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157",
+          "clean_image_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+          "hoja_referencia_path": "proyectos/platero_y_yo/personajes/platero.jpg",
+          "reference_exists": true,
+          "cref_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+          "cref_weight": 100,
+          "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
+          "lora_model": "platero_y_yo_platero_v1",
+          "lora_weight": 0.85,
+          "lora_trigger": "chr_platero",
+          "lora_directive": "<lora:platero_y_yo_platero_v1:0.85> chr_platero",
+          "ancla_visual": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, no humans)",
+          "seed_consistencia": 363728
+        }
+      ],
+      "reference_image": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157",
+      "seed_consistencia": 363728,
+      "prompt_tecnico_cref": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Calles Blancas y Azoteas de Moguer [seed_escenario:120095]: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, [Transición Escena 1→2: Desde el plano general anterior, la cámara se acerca suavemente sin perder la continuidad dentro de Calles Blancas y Azoteas de Moguer.] Continuous visual flow from Scene 1, maintaining identical lighting, environment geometry and character proportions, Warm medium close-up shot with gentle camera push-in showing Platero positioned naturally in the scene with expressive storybook posture and warm lighting, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100"
     },
     {
       "id": 3,
-      "narrador": "—¿Va argo? El hombre pregunta, con un tono amenazante y ansioso.",
-      "prompt_imagen": "The menacing man, leaning forward, asks a question with a threatening tone. Platero, the small, fluffy donkey, looks frightened, his ears pinned back. The Poet stands protectively near Platero, observing the situation with concern. The background remains the dark, shadowy path. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
+      "descripcion_escena": "Continuidad desde la escena anterior: Continuando desde la escena anterior, el encuadre acompaña el movimiento de Platero hacia la luz de Calles Blancas y Azoteas de Moguer. En pantalla, plano de interacción o desplazamiento dentro de Calles Blancas y Azoteas de Moguer: Platero avanza o realiza un gesto cercano hacia la cámara/luz antes del cierre. Aparece en primer término Platero (Burro pequeño, peludo, suave, de pelaje gris plateado como de algodón y ojos negros como escarabajos de cristal), desplazándose con naturalidad por Calles Blancas y Azoteas de Moguer, mostrando gestos expresivos y cercanos a cámara. El encuadre vertical 9:16 y la iluminación acompañan el tono general (Corto narrativo sobre 'Capítulo 2: Mariposas' pensado para Todos los públicos en Calles Blancas y Azoteas de Moguer (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar) durante los 5 segundos mientras el narrador recita su tramo.",
+      "narrador": "—Vea usted… Mariposas blancas…\nEl hombre quiere clavar su pincho de hierro en el seroncillo, y\nno lo evito. Abro la alforja y él no ve nada. Y el alimento ideal pasa,\nlibre y cándido, sin pagar su tributo a los Consumos…",
+      "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Calles Blancas y Azoteas de Moguer [seed_escenario:120095]: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, [Transición Escena 2→3: Continuando desde la escena anterior, el encuadre acompaña el movimiento de Platero hacia la luz de Calles Blancas y Azoteas de Moguer.] Continuous visual flow from Scene 2, maintaining identical lighting, environment geometry and character proportions, Warm medium close-up shot with gentle camera push-in showing Platero walking gently forward towards the sunlit wooden doorway with natural graceful movement, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
-        "Platero",
-        "El Poeta",
-        "El Hombre Oscuro"
+        "Platero"
       ],
-      "escenario_clave": "Escenario específico",
+      "escenario_clave": "Calles Blancas y Azoteas de Moguer",
       "duracion_estimada": 5,
-      "audio_url": null,
-      "image_url": null,
-      "duracion_real": null
-    },
-    {
-      "id": 4,
-      "narrador": "Mariposas blancas… La esperanza brilla en la oscuridad.",
-      "prompt_imagen": "A whimsical image of white butterflies fluttering in the twilight, symbolizing hope amidst the darkness. Platero, the small, fluffy donkey, watches in awe, while the Poet observes the butterflies with a sense of wonder. The background is the dimly lit path, creating a magical atmosphere. Delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, Acuarela poética con pigmentos transparentes, aguadas luminosas, contornos sutiles de lápiz y luz solar mediterránea., vertical 9:16 portrait composition, masterpiece",
-      "personajes_en_escena": [
-        "Platero",
-        "El Poeta"
+      "audio_url": "/static/media/audio_07a1af9b96.mp3",
+      "image_url": "/static/media/img_4355cdd788.jpg",
+      "duracion_real": 18.94,
+      "referencias_personajes": [
+        {
+          "id": "platero",
+          "nombre": "Platero",
+          "rol": "Protagonista",
+          "tipo": "animal",
+          "imagen_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157",
+          "clean_image_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+          "hoja_referencia_path": "proyectos/platero_y_yo/personajes/platero.jpg",
+          "reference_exists": true,
+          "cref_url": "/proyectos_data/platero_y_yo/personajes/platero.jpg",
+          "cref_weight": 100,
+          "cref_directive": "--cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
+          "lora_model": "platero_y_yo_platero_v1",
+          "lora_weight": 0.85,
+          "lora_trigger": "chr_platero",
+          "lora_directive": "<lora:platero_y_yo_platero_v1:0.85> chr_platero",
+          "ancla_visual": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, no humans)",
+          "seed_consistencia": 363728
+        }
       ],
-      "escenario_clave": "Escenario específico",
-      "duracion_estimada": 6,
-      "audio_url": null,
-      "image_url": null,
-      "duracion_real": null
+      "reference_image": "/proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157",
+      "seed_consistencia": 363728,
+      "prompt_tecnico_cref": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Calles Blancas y Azoteas de Moguer [seed_escenario:120095]: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, [Transición Escena 2→3: Continuando desde la escena anterior, el encuadre acompaña el movimiento de Platero hacia la luz de Calles Blancas y Azoteas de Moguer.] Continuous visual flow from Scene 2, maintaining identical lighting, environment geometry and character proportions, Warm medium close-up shot with gentle camera push-in showing Platero walking gently forward towards the sunlit wooden doorway with natural graceful movement, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100"
     }
   ],
-  "video_url": null,
-  "duracion": null,
-  "origen_tipo": "manual",
-  "origen_ref": "",
+  "video_url": "/proyectos_data/platero_y_yo/videos/capitulo_2.mp4",
+  "duracion": 57.65,
+  "origen_tipo": "section",
+  "origen_ref": "II Mariposas blancas La noche cae, brumosa ya y morada. Vagas claridades malvas y",
   "orden": 2,
   "id": "capitulo_2",
-  "creado_en": "2026-10-22 18:34:49",
-  "actualizado_en": "2026-10-22 18:34:49"
+  "creado_en": "2026-11-14 18:24:32",
+  "actualizado_en": "2026-11-15 12:09:17",
+  "propuesta": {
+    "enfoque_general": "Corto narrativo sobre 'Capítulo 2: Mariposas' pensado para Todos los públicos en Calles Blancas y Azoteas de Moguer (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar.",
+    "bloques": [
+      {
+        "id": 1,
+        "titulo": "Escena 1",
+        "transicion_desde_anterior": "",
+        "que_ocurre": "Plano general de situación en Calles Blancas y Azoteas de Moguer: se presenta a Platero en un ambiente tranquilo y cercano, situando al espectador mientras arranca la narración.",
+        "texto_narrado": "Mariposas blancas\nLa noche cae, brumosa ya y morada. Vagas claridades malvas y\nverdes perduran tras la torre de la iglesia. El camino sube, lleno de\nsombras, de campanillas, de fragancia de hierba, de canciones, de\ncansancio y de anhelo.",
+        "duracion_seg": 5
+      },
+      {
+        "id": 2,
+        "titulo": "Escena 2",
+        "transicion_desde_anterior": "Desde el plano general anterior, la cámara se acerca suavemente sin perder la continuidad dentro de Calles Blancas y Azoteas de Moguer.",
+        "que_ocurre": "Acercamiento suave sobre Platero en Calles Blancas y Azoteas de Moguer: se aprecia su expresión, postura y detalles principales en movimiento natural para acompañar el relato.",
+        "texto_narrado": "De pronto, un hombre oscuro, con una gorra\ny un pincho, roja un instante la cara fea por la luz del cigarro, baja\na nosotros de una casucha miserable, perdida entre sacas de carbón. Platero se amedrenta. —¿Va argo?",
+        "duracion_seg": 5
+      },
+      {
+        "id": 3,
+        "titulo": "Escena 3",
+        "transicion_desde_anterior": "Continuando desde la escena anterior, el encuadre acompaña el movimiento de Platero hacia la luz de Calles Blancas y Azoteas de Moguer.",
+        "que_ocurre": "Plano de interacción o desplazamiento dentro de Calles Blancas y Azoteas de Moguer: Platero avanza o realiza un gesto cercano hacia la cámara/luz antes del cierre.",
+        "texto_narrado": "—Vea usted… Mariposas blancas…\nEl hombre quiere clavar su pincho de hierro en el seroncillo, y\nno lo evito. Abro la alforja y él no ve nada. Y el alimento ideal pasa,\nlibre y cándido, sin pagar su tributo a los Consumos…",
+        "duracion_seg": 5
+      }
+    ],
+    "duracion_total_seg": 15
+  },
+  "peso_mb": 6.65
 }

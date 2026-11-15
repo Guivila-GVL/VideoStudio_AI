@@ -161,6 +161,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const univVoice = document.getElementById("univ-voice");
   const univStyle = document.getElementById("univ-style");
   const univStyleDetails = document.getElementById("univ-style-details");
+  const univImageEngine = document.getElementById("univ-image-engine");
   const univRecurrentChars = document.getElementById("univ-recurrent-chars");
 
   const styleImplicationsBanner = document.getElementById("style-implications-banner");
@@ -298,6 +299,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   const modalSettings = document.getElementById("modal-settings");
   const settingOpenai = document.getElementById("setting-openai");
+  const settingFal = document.getElementById("setting-fal");
   const settingEleven = document.getElementById("setting-eleven");
   const settingPollinations = document.getElementById("setting-pollinations");
   const settingGemini = document.getElementById("setting-gemini");
@@ -333,7 +335,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const timeText = document.getElementById("status-time");
     const spinner = document.getElementById("status-spinner-box");
 
-    if (!card || !badge) return;
+    if (!badge) return;
 
     if (_statusTimeout) {
       clearTimeout(_statusTimeout);
@@ -344,28 +346,32 @@ document.addEventListener("DOMContentLoaded", () => {
     const timeStr = now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 
     // Resetear clases
-    card.className = "system-status-card";
-    badge.className = "status-indicator-badge";
+    if (card) card.className = "system-status-card";
+    badge.className = "status-indicator-badge header-status-pill";
 
     if (stateType === "busy") {
-      card.classList.add("status-busy");
+      if (card) card.classList.add("status-busy");
       badge.classList.add("busy");
+      badge.title = title || "Procesando...";
       if (tag) tag.textContent = "PROCESANDO";
       if (spinner) spinner.style.display = "flex";
       if (primaryText) primaryText.textContent = title || "Procesando...";
       if (secondaryText) secondaryText.textContent = message || "La Inteligencia Artificial está generando los contenidos...";
       if (timeText) timeText.textContent = timeStr;
     } else if (stateType === "healing") {
-      card.classList.add("status-healing");
+      if (card) card.classList.add("status-healing");
       badge.classList.add("healing");
+      badge.title = title || "Corrigiendo...";
       if (tag) tag.textContent = "CORRIGIENDO";
       if (spinner) spinner.style.display = "flex";
       if (primaryText) primaryText.textContent = title || "Corrigiendo incoherencias...";
       if (secondaryText) secondaryText.textContent = message || "Regenerando elementos con IA para garantizar el estándar...";
       if (timeText) timeText.textContent = timeStr;
     } else if (stateType === "success") {
-      card.classList.add("status-success");
-      if (tag) tag.textContent = "COMPLETADO";
+      if (card) card.classList.add("status-success");
+      badge.classList.add("success");
+      badge.title = title || "Completado";
+      if (tag) tag.textContent = "LISTO";
       if (spinner) spinner.style.display = "none";
       if (primaryText) primaryText.textContent = title || "Operación finalizada";
       if (secondaryText) secondaryText.textContent = message || "Listo.";
@@ -375,8 +381,9 @@ document.addEventListener("DOMContentLoaded", () => {
         setSystemStatus("idle");
       }, 7000);
     } else if (stateType === "error") {
-      card.classList.add("status-error");
+      if (card) card.classList.add("status-error");
       badge.classList.add("error");
+      badge.title = title || "Error";
       if (tag) tag.textContent = "ERROR";
       if (spinner) spinner.style.display = "none";
       if (primaryText) primaryText.textContent = title || "Error en la operación";
@@ -384,10 +391,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (timeText) timeText.textContent = timeStr;
     } else {
       // idle
+      badge.title = "En espera";
       if (tag) tag.textContent = "EN ESPERA";
       if (spinner) spinner.style.display = "none";
       if (primaryText) primaryText.textContent = title || "Listo para recibir órdenes";
-      if (secondaryText) secondaryText.textContent = message || "El sistema está inactivo esperando que selecciones una acción (analizar libro, generar personajes, auditar coherencia o montar vídeo).";
+      if (secondaryText) secondaryText.textContent = message || "En espera.";
       if (timeText) timeText.textContent = "";
     }
   }
@@ -544,6 +552,29 @@ document.addEventListener("DOMContentLoaded", () => {
         if (modal) modal.classList.remove("open");
       });
     });
+
+    const lightboxModal = document.getElementById("modal-image-lightbox");
+    const lightboxImg = document.getElementById("lightbox-image-el");
+    const lightboxTitle = document.getElementById("lightbox-image-title");
+
+    document.addEventListener("click", (e) => {
+      const img = e.target.closest(".char-portrait-frame img, .char-4views-grid img, .env-portrait-frame img, .scene-image-box img");
+      if (img && lightboxModal && lightboxImg) {
+        lightboxImg.src = img.src;
+        if (lightboxTitle) lightboxTitle.textContent = img.alt || "Vista ampliada";
+        lightboxModal.classList.add("open");
+        return;
+      }
+      if (lightboxModal && e.target === lightboxModal) {
+        lightboxModal.classList.remove("open");
+      }
+    });
+
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape" && lightboxModal?.classList.contains("open")) {
+        lightboxModal.classList.remove("open");
+      }
+    });
   }
 
   // ========================================================
@@ -667,6 +698,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   async function selectProject(projectId) {
+    state.universeRenderedOk = false;
     try {
       const res = await fetch(`/api/projects/${projectId}`);
       const project = await res.json();
@@ -681,10 +713,14 @@ document.addEventListener("DOMContentLoaded", () => {
       univAudience.value = project.audiencia || "Todos los públicos";
       univAmbient.value = project.ambiente || "";
       univStyle.value = project.estilo_visual || "cinematic";
-      univStyleDetails.value = project.estilo_detalles || "";
+      if (univStyleDetails) univStyleDetails.value = project.estilo_detalles || "";
+      if (univImageEngine) univImageEngine.value = project.motor_imagenes || "flux";
+      applyGenerationRulesToUI(project.reglas_generacion);
       updateStyleImplications(univStyle.value, false);
-      if (project.voz_defecto) univVoice.value = project.voz_defecto;
+      if (univVoice && project.voz_defecto) univVoice.value = project.voz_defecto;
       if (univRecurrentChars) univRecurrentChars.value = project.personajes_recurrentes_texto || "";
+      renderRecurrentCharsGrid(project.personajes_recurrentes_texto || "", project.personajes || [], project.referencia_personaje_id || null);
+      renderRecurrentEnvsGrid(project.escenarios || [], project.referencia_escenario_id || null);
 
       // Cargar y sincronizar perfil del narrador (Punto 5)
       populateNarratorFields(project.perfil_narrador, project.voz_defecto);
@@ -694,6 +730,7 @@ document.addEventListener("DOMContentLoaded", () => {
       // Renderizar tarjetas de personajes y escenarios guardados
       renderCharacterCards(project.personajes || []);
       renderEnvironmentCards(project.escenarios || []);
+      state.universeRenderedOk = true;
 
       // Actualizar mini banner
       updateMiniBanner();
@@ -709,7 +746,7 @@ document.addEventListener("DOMContentLoaded", () => {
         if (savedBookPath) savedBookPath.textContent = `proyectos/${project.id}/documentos/`;
         if (savedBookMeta) {
           const docsCount = project.documentos_detalle ? project.documentos_detalle.length : 1;
-          savedBookMeta.textContent = `Manuscrito guardado (${project.documento_activo.tamano_formateado || project.documento_activo.tamano || '1.1 MB'}). ${docsCount} archivo(s) en disco.`;
+          savedBookMeta.textContent = `${project.documento_activo.tamano_formateado || project.documento_activo.tamano || ''} · ${docsCount} archivo(s)`.replace(/^\s*·\s*/, '');
         }
         // Cargar estructura completa del manuscrito (páginas y capítulos detectados)
         await loadManuscriptStructure(project.id);
@@ -921,7 +958,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Modal Crear Proyecto
-  btnCreateProjectModal.addEventListener("click", () => {
+  btnCreateProjectModal?.addEventListener("click", () => {
     newProjTitle.value = "";
     newProjDesc.value = "";
     modalProjectCreate.classList.add("open");
@@ -1093,8 +1130,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     btnAiAnalyzeBook.disabled = true;
-    btnAiAnalyzeBook.innerHTML = '<span class="btn-icon-symbol">⏳</span> Analizando Universo y Personajes con IA...';
-    setSystemStatus("busy", "Analizando libro con IA...", "Extrayendo universo literario, estilo visual, personajes principales y escenarios clave...");
+    btnAiAnalyzeBook.innerHTML = '<span class="btn-icon-symbol">⏳</span> Analizando libro con IA...';
+    setSystemStatus("busy", "Analizando libro con IA...", "Extrayendo ambiente, personajes, escenarios y perfil del narrador (sin alterar tu estilo visual)...");
 
     try {
       const hint = univRecurrentChars ? univRecurrentChars.value.trim() : "";
@@ -1108,39 +1145,7 @@ document.addEventListener("DOMContentLoaded", () => {
       });
       const data = await res.json();
       if (data.success && data.analysis) {
-        const a = data.analysis;
-
-        // Auto-completar campos de la Capa Genérica
-        if (a.titulo_sugerido && (!univTitle.value.trim() || univTitle.value.startsWith("Nuevo"))) {
-          univTitle.value = a.titulo_sugerido;
-        }
-        if (a.audiencia) univAudience.value = a.audiencia;
-        if (a.ambiente) univAmbient.value = a.ambiente;
-        if (a.estilo_visual) univStyle.value = a.estilo_visual;
-        if (a.estilo_detalles) univStyleDetails.value = a.estilo_detalles;
-        if (a.voz_defecto) univVoice.value = a.voz_defecto;
-        if (a.personajes_recurrentes_texto && univRecurrentChars) {
-          univRecurrentChars.value = a.personajes_recurrentes_texto;
-        }
-
-        // Reemplazar o incorporar personajes y escenarios detectados
-        if (a.personajes && a.personajes.length > 0) {
-          renderCharacterCards(a.personajes);
-        }
-        if (a.escenarios && a.escenarios.length > 0) {
-          renderEnvironmentCards(a.escenarios);
-        }
-
-        // Incorporar perfil del narrador detectado por IA (Punto 5)
-        if (a.perfil_narrador) {
-          populateNarratorFields(a.perfil_narrador, a.voz_defecto || a.perfil_narrador.voz_recomendada);
-        }
-
-        // Guardar automáticamente los cambios de la biblia
-        await saveUniverse(false);
-
-        showToast("¡Análisis completado! Universo, Estilo, Personajes y Escenarios configurados.", "success");
-        setSystemStatus("success", "¡Análisis de libro completado!", "Universo, personajes y escenarios clave listos en la Capa Genérica.");
+        await processAiBookAnalysisResult(data.analysis);
       } else {
         showToast(data.detail || "Error analizando libro con IA", "error");
         setSystemStatus("error", "Error en análisis de libro", data.detail || "Fallo al procesar el texto con IA.");
@@ -1150,13 +1155,274 @@ document.addEventListener("DOMContentLoaded", () => {
       setSystemStatus("error", "Error de conexión en análisis", e.message);
     } finally {
       btnAiAnalyzeBook.disabled = false;
-      btnAiAnalyzeBook.innerHTML = '<span class="btn-icon-symbol">🔮</span> Analizar Libro con IA';
+      btnAiAnalyzeBook.innerHTML = '<span class="btn-icon-symbol">🔮</span> Analizar IA';
     }
+  }
+
+  function applySingleAiField(key, a) {
+    if (key === "titulo" && a.titulo_sugerido && univTitle) {
+      univTitle.value = a.titulo_sugerido;
+    } else if (key === "audiencia" && a.audiencia && univAudience) {
+      univAudience.value = a.audiencia;
+    } else if (key === "ambiente" && a.ambiente && univAmbient) {
+      univAmbient.value = a.ambiente;
+    } else if (key === "personajes" && Array.isArray(a.personajes) && a.personajes.length > 0) {
+      if (a.personajes_recurrentes_texto && univRecurrentChars) {
+        univRecurrentChars.value = a.personajes_recurrentes_texto;
+      }
+      renderCharacterCards(a.personajes);
+    } else if (key === "escenarios" && Array.isArray(a.escenarios) && a.escenarios.length > 0) {
+      renderEnvironmentCards(a.escenarios);
+    } else if (key === "narrador") {
+      if (univVoice && a.voz_defecto) univVoice.value = a.voz_defecto;
+      if (a.perfil_narrador) {
+        populateNarratorFields(a.perfil_narrador, a.voz_defecto || a.perfil_narrador.voz_recomendada);
+      }
+    }
+  }
+
+  function shortenPreview(text, maxLen = 130) {
+    const clean = String(text || "").replace(/\s+/g, " ").trim();
+    if (!clean) return "(vacío)";
+    return clean.length > maxLen ? clean.slice(0, maxLen) + "…" : clean;
+  }
+
+  async function processAiBookAnalysisResult(a) {
+    const existingChars = collectCharactersFromUI();
+    const existingEnvs = collectEnvironmentsFromUI();
+    const savedAudience = (state.currentProject?.universo?.audiencia || "").trim();
+
+    const fieldSpecs = [
+      {
+        key: "titulo",
+        label: "1. Título del proyecto",
+        hasAiValue: Boolean(a.titulo_sugerido && a.titulo_sugerido.trim()),
+        isEmpty: !univTitle?.value.trim() || univTitle.value.trim().startsWith("Nuevo"),
+        isSame: univTitle?.value.trim() === (a.titulo_sugerido || "").trim(),
+        currentPreview: univTitle?.value.trim() || "",
+        aiPreview: a.titulo_sugerido || ""
+      },
+      {
+        key: "audiencia",
+        label: "1. Público objetivo",
+        hasAiValue: Boolean(a.audiencia && a.audiencia.trim()),
+        isEmpty: !savedAudience && !univAmbient?.value.trim() && existingChars.length === 0,
+        isSame: univAudience?.value === a.audiencia,
+        currentPreview: univAudience?.value || "",
+        aiPreview: a.audiencia || ""
+      },
+      {
+        key: "ambiente",
+        label: "2. Ambiente (no toca tu estilo visual)",
+        hasAiValue: Boolean(a.ambiente && a.ambiente.trim()),
+        isEmpty: !univAmbient?.value.trim(),
+        isSame: univAmbient?.value.trim() === (a.ambiente || "").trim(),
+        currentPreview: shortenPreview(univAmbient?.value, 140),
+        aiPreview: shortenPreview(a.ambiente, 140)
+      },
+      {
+        key: "personajes",
+        label: "3. Personajes",
+        hasAiValue: Array.isArray(a.personajes) && a.personajes.length > 0,
+        isEmpty: existingChars.length === 0,
+        isSame: false,
+        warning: existingChars.some(c => c.imagen_url)
+          ? `⚠️ Tienes ${existingChars.filter(c => c.imagen_url).length} personaje(s) con imagen generada. Si sobrescribes, se reemplazarán las tarjetas actuales.`
+          : "",
+        currentPreview: `${existingChars.length} personaje(s): ${existingChars.map(c => c.nombre).slice(0, 4).join(", ")}${existingChars.length > 4 ? "…" : ""}`,
+        aiPreview: `${(a.personajes || []).length} personaje(s): ${(a.personajes || []).map(c => c.nombre).slice(0, 4).join(", ")}${(a.personajes || []).length > 4 ? "…" : ""}`
+      },
+      {
+        key: "escenarios",
+        label: "4. Escenarios",
+        hasAiValue: Array.isArray(a.escenarios) && a.escenarios.length > 0,
+        isEmpty: existingEnvs.length === 0,
+        isSame: false,
+        warning: existingEnvs.some(e => e.imagen_url)
+          ? `⚠️ Tienes ${existingEnvs.filter(e => e.imagen_url).length} escenario(s) con imagen generada. Si sobrescribes, se reemplazarán las tarjetas actuales.`
+          : "",
+        currentPreview: `${existingEnvs.length} escenario(s): ${existingEnvs.map(e => e.nombre).slice(0, 4).join(", ")}${existingEnvs.length > 4 ? "…" : ""}`,
+        aiPreview: `${(a.escenarios || []).length} escenario(s): ${(a.escenarios || []).map(e => e.nombre).slice(0, 4).join(", ")}${(a.escenarios || []).length > 4 ? "…" : ""}`
+      },
+      {
+        key: "narrador",
+        label: "5. Narración (perfil y voz)",
+        hasAiValue: Boolean(a.perfil_narrador || a.voz_defecto),
+        isEmpty: !narratorName?.value.trim() && !narratorTone?.value.trim() && !narratorJustification?.value.trim(),
+        isSame: false,
+        currentPreview: `${narratorName?.value.trim() || "Sin nombre"} · ${shortenPreview(narratorTone?.value, 70)}`,
+        aiPreview: `${a.perfil_narrador?.nombre || "Narrador IA"} · ${shortenPreview(a.perfil_narrador?.tono, 70)}`
+      }
+    ];
+
+    const emptyAppliedLabels = [];
+    const conflicts = [];
+
+    fieldSpecs.forEach(spec => {
+      if (!spec.hasAiValue) return;
+      if (spec.isEmpty) {
+        applySingleAiField(spec.key, a);
+        emptyAppliedLabels.push(spec.label);
+      } else if (!spec.isSame) {
+        conflicts.push(spec);
+      }
+    });
+
+    if (emptyAppliedLabels.length > 0) {
+      await saveUniverse(false);
+    }
+
+    if (conflicts.length === 0) {
+      showToast("¡Análisis completado! Campos vacíos rellenados sin alterar tu estilo visual.", "success");
+      setSystemStatus("success", "¡Análisis completado!", "Se han rellenado los campos correspondientes respetando tu estilo visual.");
+      return;
+    }
+
+    openAiOverwriteModal(a, emptyAppliedLabels, conflicts);
+  }
+
+  function openAiOverwriteModal(analysis, emptyAppliedLabels, conflicts) {
+    const modal = document.getElementById("modal-ai-overwrite-confirm");
+    const emptyInfo = document.getElementById("ai-overwrite-empty-info");
+    const listEl = document.getElementById("ai-overwrite-list");
+    const btnAllYes = document.getElementById("btn-ai-overwrite-all-yes");
+    const btnAllNo = document.getElementById("btn-ai-overwrite-all-no");
+    const btnApply = document.getElementById("btn-ai-overwrite-apply");
+    if (!modal || !listEl || !btnApply) return;
+
+    if (emptyInfo) {
+      if (emptyAppliedLabels.length > 0) {
+        emptyInfo.style.display = "block";
+        emptyInfo.textContent = `✅ Ya se han rellenado automáticamente los campos que estaban vacíos: ${emptyAppliedLabels.join(", ")}.`;
+      } else {
+        emptyInfo.style.display = "none";
+      }
+    }
+
+    listEl.innerHTML = conflicts.map(item => `
+      <div class="ai-overwrite-row" data-key="${item.key}" style="padding:0.75rem 0.9rem; border-radius:8px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.09);">
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.75rem; flex-wrap:wrap; margin-bottom:0.45rem;">
+          <strong style="font-size:0.9rem; color:#e2e8f0;">${escapeHtml(item.label)}</strong>
+          <div style="display:flex; gap:0.5rem; align-items:center; font-size:0.82rem;">
+            <label style="display:inline-flex; align-items:center; gap:4px; cursor:pointer; padding:3px 9px; border-radius:6px; background:rgba(239,68,68,0.12); border:1px solid rgba(239,68,68,0.3);">
+              <input type="radio" name="ai-ow-${item.key}" value="yes"> Sí, sobrescribir
+            </label>
+            <label style="display:inline-flex; align-items:center; gap:4px; cursor:pointer; padding:3px 9px; border-radius:6px; background:rgba(16,185,129,0.12); border:1px solid rgba(16,185,129,0.3);">
+              <input type="radio" name="ai-ow-${item.key}" value="no" checked> No, mantener actual
+            </label>
+          </div>
+        </div>
+        ${item.warning ? `<div style="font-size:0.78rem; color:#fbbf24; margin-bottom:0.4rem;">${escapeHtml(item.warning)}</div>` : ""}
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.6rem; font-size:0.78rem;">
+          <div style="padding:0.45rem 0.6rem; border-radius:6px; background:rgba(15,23,42,0.55); border:1px solid rgba(255,255,255,0.06);">
+            <div style="color:#94a3b8; font-weight:600; margin-bottom:2px;">Actual</div>
+            <div style="color:#cbd5e1;">${escapeHtml(item.currentPreview)}</div>
+          </div>
+          <div style="padding:0.45rem 0.6rem; border-radius:6px; background:rgba(99,102,241,0.08); border:1px solid rgba(99,102,241,0.22);">
+            <div style="color:#a5b4fc; font-weight:600; margin-bottom:2px;">Propuesta IA</div>
+            <div style="color:#e2e8f0;">${escapeHtml(item.aiPreview)}</div>
+          </div>
+        </div>
+      </div>
+    `).join("");
+
+    const setAllChoices = (val) => {
+      listEl.querySelectorAll(`input[type="radio"][value="${val}"]`).forEach(r => { r.checked = true; });
+    };
+    if (btnAllYes) btnAllYes.onclick = () => setAllChoices("yes");
+    if (btnAllNo) btnAllNo.onclick = () => setAllChoices("no");
+
+    btnApply.onclick = async () => {
+      let overwritten = 0;
+      let kept = 0;
+      conflicts.forEach(item => {
+        const yesRadio = listEl.querySelector(`input[name="ai-ow-${item.key}"][value="yes"]`);
+        if (yesRadio && yesRadio.checked) {
+          applySingleAiField(item.key, analysis);
+          overwritten++;
+        } else {
+          kept++;
+        }
+      });
+
+      if (overwritten > 0) {
+        await saveUniverse(false);
+        showToast(`Actualizado(s) ${overwritten} campo(s) y mantenido(s) ${kept}.`, "success");
+        setSystemStatus("success", "Selección aplicada", `Sobrescritos ${overwritten} campo(s); ${kept} mantenido(s) intactos.`);
+      } else {
+        showToast("Se han mantenido todos los campos actuales sin cambios.", "info");
+        setSystemStatus("success", "Campos mantenidos", "No se ha sobrescrito ningún dato existente.");
+      }
+      modal.classList.remove("open");
+    };
+
+    setSystemStatus("success", "Esperando confirmación", "Elige Sí o No en cada campo que ya tenía datos.");
+    modal.classList.add("open");
   }
 
   // ========================================================
   // 5. GESTIÓN DE LA BIBLIA DE PERSONAJES & RETRATOS
   // ========================================================
+  function buildAssetHistoryHtml(category, itemId, historial, frameId, activeVersion = null) {
+    if (!Array.isArray(historial) || historial.length === 0) return "";
+    const sorted = [...historial].sort((a, b) => (b.version || 0) - (a.version || 0));
+    const targetVer = activeVersion !== null && activeVersion !== undefined
+      ? Number(activeVersion)
+      : (sorted[0]?.version ?? 0);
+    const options = sorted.map(h => {
+      const label = `v${String(h.version ?? 0).padStart(3, "0")} · ${h.provider || "ia"} (${(h.fecha || "").slice(5, 16)})`;
+      const sel = Number(h.version) === targetVer ? "selected" : "";
+      return `<option value="${h.version}" ${sel}>${label}</option>`;
+    }).join("");
+    return `
+      <div class="asset-history-bar" data-category="${category}" data-item-id="${itemId}" data-frame-id="${frameId}" style="display:flex; gap:4px; margin-top:6px; align-items:center; width:100%;">
+        <select class="form-select-xs asset-history-select" style="flex:1; min-width:0; font-size:0.72rem;" title="Selecciona una versión para activarla al instante sin gastar créditos (${historial.length})">
+          ${options}
+        </select>
+      </div>
+    `;
+  }
+
+  async function handleRestoreAssetVersion(barEl) {
+    if (!state.currentProject || !barEl) return;
+    const category = barEl.dataset.category;
+    const itemId = barEl.dataset.itemId;
+    const frameId = barEl.dataset.frameId;
+    const selectEl = barEl.querySelector(".asset-history-select");
+    if (!selectEl) return;
+    const version = parseInt(selectEl.value, 10);
+    if (Number.isNaN(version)) return;
+
+    try {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/${category}/${itemId}/restore-version`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ version })
+      });
+      const data = await res.json();
+      if (data.success && data.imagen_url) {
+        const frame = document.getElementById(frameId);
+        if (frame) {
+          const isPng = data.imagen_url.includes(".png");
+          if (isPng) frame.classList.add("transparent-bg");
+          else frame.classList.remove("transparent-bg");
+          const freshUrl = `${data.imagen_url.split("?")[0]}?t=${Date.now()}`;
+          frame.innerHTML = `<img src="${freshUrl}" alt="Versión v${version}">`;
+        }
+        const card = barEl.closest(".char-card");
+        if (card && data.prompt) {
+          const promptInput = card.querySelector(".char-input-prompt");
+          if (promptInput) promptInput.value = data.prompt;
+        }
+        showToast(`✅ Versión v${String(version).padStart(3, "0")} restaurada como activa`, "success");
+      } else {
+        showToast(data.detail || "No se pudo restaurar la versión", "error");
+      }
+    } catch (e) {
+      showToast(`Error restaurando versión: ${e.message}`, "error");
+    }
+  }
+
   function renderCharacterCards(characters) {
     charactersCardsGrid.innerHTML = "";
 
@@ -1175,6 +1441,41 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = createCharacterCardElement(char, index);
       charactersCardsGrid.appendChild(card);
     });
+  }
+
+  function getApprovalBadgeHtml(status, reason = "", btnClass = "btn-toggle-char-approval") {
+    if (status === "aprobado") {
+      return `<button type="button" class="badge ${btnClass}" style="background: rgba(34, 197, 94, 0.22); color: #4ade80; border: 1px solid #22c55e; font-size: 0.72rem; padding: 3px 10px; border-radius: 4px; cursor: pointer;" title="Pulsa para volver a Pendiente. Estando Aprobado, esta imagen y su semilla quedan fijadas como referencia para las escenas.">✅ Aprobado</button>`;
+    }
+    if (status === "en_revision") {
+      return `<button type="button" class="badge ${btnClass}" style="background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid #f59e0b; font-size: 0.72rem; padding: 3px 10px; border-radius: 4px; cursor: pointer;" title="En revisión: ${escapeHtml(reason || 'Revisar cambios de coherencia')}. Pulsa para aprobar cuando esté corregido.">⚠️ En revisión</button>`;
+    }
+    if (status === "rechazado") {
+      return `<button type="button" class="badge ${btnClass}" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-size: 0.72rem; padding: 3px 10px; border-radius: 4px; cursor: pointer;" title="Rechazado: ${escapeHtml(reason || 'No cuadra')}. Pulsa para aprobar esta imagen.">❌ Rechazado</button>`;
+    }
+    return `<button type="button" class="badge ${btnClass}" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; font-size: 0.72rem; padding: 3px 10px; border-radius: 4px; cursor: pointer;" title="Pulsa para aprobar esta imagen y fijar su semilla como referencia oficial para escenas.">⏳ Pendiente</button>`;
+  }
+
+  function render4ViewsGridHtml(vistas4, charName = "Personaje") {
+    const v = vistas4 || {};
+    const ts = Date.now();
+    const tiles = [
+      { key: "detalle", label: "Detalle" },
+      { key: "frontal", label: "Frontal" },
+      { key: "trasera", label: "Trasera" },
+      { key: "perfil", label: "Perfil" }
+    ];
+    return tiles.map(t => {
+      const rawUrl = v[t.key] || "";
+      const imgHtml = rawUrl
+        ? `<img src="${rawUrl.split('?')[0]}?t=${ts}" alt="${escapeHtml(charName)} - ${t.label}">`
+        : `<span>—</span>`;
+      return `
+        <div class="char-4view-tile">
+          <div class="char-4view-thumb">${imgHtml}</div>
+          <span class="char-4view-label">${t.label}</span>
+        </div>`;
+    }).join("");
   }
 
   function createCharacterCardElement(char, index) {
@@ -1199,107 +1500,126 @@ document.addEventListener("DOMContentLoaded", () => {
            <small>Sin foto 9:16</small>
          </div>`;
 
+    const vistas4Obj = char.vistas_4 || {};
+    const views4Html = render4ViewsGridHtml(vistas4Obj, char.nombre || "Personaje");
+
     const charTipo = char.tipo || ((char.nombre && char.nombre.toLowerCase().includes("platero")) || (char.descripcion_visual && char.descripcion_visual.toLowerCase().includes("burro")) ? "animal" : "humano");
+    card.dataset.rol = char.rol || "";
+    card.dataset.tipo = charTipo;
+    card.dataset.crefWeight = char.cref_weight !== undefined ? String(char.cref_weight) : "100";
+    card.dataset.loraModel = char.lora_model || "";
+    card.dataset.loraTrigger = char.lora_trigger || "";
+    card.dataset.seedConsistencia = char.seed_consistencia ? String(char.seed_consistencia) : "";
+    card.dataset.hoja4VistasUrl = char.hoja_4_vistas_url || "";
+    card.dataset.vistas4Json = JSON.stringify(vistas4Obj || {});
     const isPng = char.imagen_url && (char.imagen_url.includes(".png") || char.imagen_url.includes("nobg"));
     const isSinFondo = char.sin_fondo !== false;
-    const formatoVista = char.formato_vista || "giro_360";
+    const formatoVista = char.formato_vista === "retrato" ? "retrato" : "cuerpo_entero";
+
+    const projRules = (typeof getGenerationRulesFromUI === "function" ? getGenerationRulesFromUI() : null) || state.currentProject?.reglas_generacion || {};
+    const charRules = char.reglas_personaje || {};
+    const rFullBody = charRules.cuerpo_entero !== undefined ? Boolean(charRules.cuerpo_entero) : (char.formato_vista ? formatoVista !== "retrato" : projRules.cuerpo_entero !== false);
+    const rWhiteBg = charRules.fondo_blanco !== undefined ? Boolean(charRules.fondo_blanco) : (char.sin_fondo !== undefined ? isSinFondo : projRules.fondo_blanco !== false);
+    const rNoText = charRules.sin_texto !== undefined ? Boolean(charRules.sin_texto) : (projRules.sin_texto !== false);
+    const rVertical = charRules.formato_vertical !== undefined ? Boolean(charRules.formato_vertical) : (projRules.formato_vertical !== false);
+    const rDetail = charRules.nivel_detalle !== undefined ? Number(charRules.nivel_detalle) : (projRules.nivel_detalle !== undefined ? Number(projRules.nivel_detalle) : 75);
+    const rRealism = charRules.nivel_realismo !== undefined ? Number(charRules.nivel_realismo) : (projRules.nivel_realismo !== undefined ? Number(projRules.nivel_realismo) : 75);
 
     const approvalStatus = card.dataset.estadoAprobacion;
-    let statusBadge = "";
-    if (approvalStatus === "aprobado") {
-      statusBadge = `<span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Propuesta aprobada oficialmente">✅ Aprobado</span>`;
-    } else if (approvalStatus === "rechazado") {
-      statusBadge = `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Rechazado: ${char.motivo_rechazo || 'No cuadra'}">❌ Rechazado</span>`;
-    } else {
-      statusBadge = `<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Pendiente de aprobación en Telegram">⏳ Pendiente</span>`;
-    }
+    const statusBadge = getApprovalBadgeHtml(approvalStatus, char.motivo_rechazo);
 
     card.innerHTML = `
-      <!-- Columna Retrato -->
-      <div class="char-portrait-box">
-        <div class="char-portrait-frame ${isPng ? 'transparent-bg' : ''}" id="char-frame-${index}">
-          ${portraitHtml}
-        </div>
-        <div class="char-portrait-actions">
-          <button class="btn btn-secondary btn-xs btn-gen-portrait" data-index="${index}" title="Generar retrato u hoja de personaje en el estilo del proyecto">
-            🎨 ${char.imagen_url ? 'Regenerar IA' : 'Generar IA'}
-          </button>
-          ${char.imagen_url ? `
-            <button type="button" class="btn btn-ghost btn-xs btn-remove-bg" data-index="${index}" title="Recortar y eliminar fondo (PNG transparente con rembg)">
-              ✂️ Sin Fondo
+      <div class="char-card-main-row">
+        <!-- Columna Retrato -->
+        <div class="char-portrait-box">
+          <div class="char-portrait-frame ${isPng ? 'transparent-bg' : ''}" id="char-frame-${index}">
+            ${portraitHtml}
+          </div>
+          <div style="display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:6px;">
+            <div class="char-approval-slot">${statusBadge}</div>
+            <div style="font-size:0.71rem; color:#94a3b8; text-align:center; line-height:1.3;">
+              Ref: <code>${escapeHtml(card.dataset.id)}</code> · Seed: <code class="char-seed-code">${char.seed_consistencia || 'auto'}</code>
+            </div>
+          </div>
+          <div class="char-portrait-actions">
+            <button class="btn btn-secondary btn-xs btn-gen-portrait" data-index="${index}" title="Generar diseño inicial en tres cuartos (3/4) y formato vertical 9:16">
+              🎨 ${char.imagen_url ? 'Regenerar 3/4' : 'Generar 3/4'}
             </button>
-          ` : ''}
-          <label class="btn btn-ghost btn-xs">
-            📁 Subir
-            <input type="file" class="input-upload-portrait" data-index="${index}" accept="image/*" style="display:none;">
-          </label>
+            <label class="btn btn-ghost btn-xs">
+              📁 Subir
+              <input type="file" class="input-upload-portrait" data-index="${index}" accept="image/*" style="display:none;">
+            </label>
+          </div>
+          <div class="char-history-slot">
+            ${buildAssetHistoryHtml("personajes", card.dataset.id, char.historial_imagenes || [], `char-frame-${index}`, char.active_version)}
+          </div>
         </div>
-        <div class="char-approval-bar" style="display: flex; gap: 4px; margin-top: 6px; justify-content: center; flex-wrap: wrap;">
-          <button type="button" class="btn btn-outline btn-xxs btn-send-telegram-char" data-index="${index}" title="Enviar propuesta a Telegram para Human-in-the-Loop">📱 Telegram</button>
-          <button type="button" class="btn btn-ghost btn-xxs btn-approve-char" data-index="${index}" style="color: #4ade80;" title="Aprobar personaje">✅</button>
-          <button type="button" class="btn btn-ghost btn-xxs btn-reject-char" data-index="${index}" style="color: #f87171;" title="Rechazar personaje porque no cuadra">❌</button>
-          <button type="button" class="btn btn-ghost btn-xxs btn-redo-char" data-index="${index}" style="color: #60a5fa;" title="Rehacer propuesta">🔄</button>
-        </div>
-      </div>
 
-      <!-- Columna Detalles -->
-      <div class="char-details-box">
+        <!-- Columna Detalles -->
+        <div class="char-details-box">
         <div class="char-details-header" style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="text" class="char-input-name" placeholder="Nombre (ej: Mateo)" value="${char.nombre || ''}">
-          ${statusBadge}
-          <select class="char-select-type form-select-xs" title="Tipo de entidad">
-            <option value="humano" ${charTipo === 'humano' ? 'selected' : ''}>👤 Humano</option>
-            <option value="animal" ${charTipo === 'animal' ? 'selected' : ''}>🐴 Animal</option>
-            <option value="criatura" ${charTipo === 'criatura' ? 'selected' : ''}>🐉 Criatura</option>
-            <option value="objeto" ${charTipo === 'objeto' ? 'selected' : ''}>📦 Objeto</option>
-          </select>
+          <input type="text" class="char-input-name" placeholder="Nombre (ej: Platero)" value="${char.nombre || ''}" style="flex: 1;">
           <button class="btn-remove-char-card" data-index="${index}" title="Eliminar personaje">&times;</button>
         </div>
 
-        <div style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="text" class="char-input-role" placeholder="Rol (ej: Detective, Amigo, Mascota)" value="${char.rol || ''}" style="flex: 1;">
-          <select class="char-select-view form-select-xs" title="Formato y Perspectiva de Generación (Estándar obligatorio)">
-            <option value="giro_360" ${formatoVista === 'giro_360' ? 'selected' : ''}>🔄 Hoja 4 Vistas (Estándar Darbón)</option>
-            <option value="cuerpo_entero" ${formatoVista === 'cuerpo_entero' ? 'selected' : ''}>🧍 Cuerpo Completo Frontal</option>
-            <option value="retrato" ${formatoVista === 'retrato' ? 'selected' : ''}>👤 Retrato / Busto</option>
-          </select>
-          <label class="label-checkbox-nobg" title="Generar sobre fondo blanco puro y aislar recorte transparente (PNG)">
-            <input type="checkbox" class="char-check-nobg" ${isSinFondo ? 'checked' : ''}> Sin fondo
+        <label class="char-desc-label mt-2" style="display:block; font-size:0.71rem; font-weight:600; color:#94a3b8; margin-bottom:2px;">Descripción del personaje</label>
+        <textarea class="char-input-desc" rows="3" placeholder="Descripción visual del personaje tomada del documento (edad, pelaje/ropa, rasgos)...">${char.descripcion_visual || ''}</textarea>
+
+        <!-- Opciones específicas rápidas para este personaje (heredan de 2. Estilo visual) -->
+        <div class="char-rules-bar mt-2" style="display:flex; flex-wrap:wrap; gap:0.55rem; align-items:center; padding:5px 8px; border-radius:6px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); font-size:0.75rem;">
+          <span style="color:#94a3b8; font-weight:600;">Opciones:</span>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Mostrar cuerpo entero de pies a cabeza">
+            <input type="checkbox" class="char-rule-fullbody" ${rFullBody ? 'checked' : ''}> Cuerpo entero
+          </label>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Fondo blanco puro aislado (#FFFFFF)">
+            <input type="checkbox" class="char-rule-whitebg" ${rWhiteBg ? 'checked' : ''}> Fondo blanco
+          </label>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Prohibir textos, etiquetas o flechas en la imagen">
+            <input type="checkbox" class="char-rule-notext" ${rNoText ? 'checked' : ''}> Sin texto
+          </label>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Formato vertical 9:16 para personajes">
+            <input type="checkbox" class="char-rule-vertical" ${rVertical ? 'checked' : ''}> Vertical 9:16
           </label>
         </div>
-
-        <textarea class="char-input-desc" rows="4" placeholder="Rasgos visuales inmutables en español (edad, pelaje/ropa, expresión)...">${char.descripcion_visual || ''}</textarea>
+        <div class="char-sliders-bar">
+          <div>
+            <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+              <span>Detalle</span>
+              <strong class="char-slider-detail-val" style="color:#a5b4fc;">${rDetail}%</strong>
+            </div>
+            <input type="range" class="char-slider-detail" min="0" max="100" step="5" value="${rDetail}">
+            <div class="slider-effect-hint char-slider-detail-hint">${getDetailEffectHtml(rDetail)}</div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+              <span>Realismo</span>
+              <strong class="char-slider-realism-val" style="color:#a5b4fc;">${rRealism}%</strong>
+            </div>
+            <input type="range" class="char-slider-realism" min="0" max="100" step="5" value="${rRealism}">
+            <div class="slider-effect-hint char-slider-realism-hint">${getRealismEffectHtml(rRealism)}</div>
+          </div>
+        </div>
 
         <!-- Prompt en inglés para IA gráfica -->
         <div class="char-prompt-section mt-2">
           <div class="char-prompt-header">
-            <span class="label-hint">Prompt en Inglés para IA:</span>
-            <button type="button" class="btn btn-ghost btn-xxs btn-optimize-prompt" data-index="${index}" title="Optimizar prompt en inglés con IA">⚡ Optimizar IA</button>
+            <button type="button" class="btn btn-secondary btn-xs btn-optimize-prompt" data-index="${index}" title="Genera el prompt en inglés combinando descripción, opciones, detalle/realismo y estilo del proyecto">Generar prompt con IA</button>
           </div>
-          <textarea class="char-input-prompt" rows="2" placeholder="Prompt en inglés optimizado para FLUX/SD (ej: Full body character turnaround sheet...)...">${char.prompt_retrato || ''}</textarea>
+          <span class="char-prompt-desc">Traduce y combina descripción, opciones, detalle/realismo y estilo del proyecto.</span>
+          <textarea class="char-input-prompt" rows="3" placeholder="Pulsa 'Generar prompt con IA' para crear el prompt en inglés con el estilo del proyecto...">${char.prompt_retrato || ''}</textarea>
         </div>
+      </div>
+      </div>
 
-        <!-- Banco de Consistencia (--cref / LoRA) -->
-        <div class="char-consistency-bank-section mt-2" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 6px; padding: 6px 8px; font-size: 0.74rem;">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-            <strong style="color: #a5b4fc;">🗂️ Banco Consistencia (--cref / LoRA)</strong>
-            <span class="text-muted" title="Semilla determinista de consistencia">🎲 Seed: <code>${char.seed_consistencia || 'auto'}</code></span>
-          </div>
-          <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
-            <label style="display: flex; align-items: center; gap: 4px;" title="Peso de fidelidad de referencia (--cw 0-100)">
-              <span>--cw:</span>
-              <input type="number" class="char-input-cref-weight form-input" min="0" max="100" value="${char.cref_weight !== undefined ? char.cref_weight : 100}" style="width: 56px; padding: 2px 4px; font-size: 0.72rem;">
-            </label>
-            <label style="display: flex; align-items: center; gap: 4px; flex: 1;" title="Identificador de modelo LoRA del personaje">
-              <span>LoRA:</span>
-              <input type="text" class="char-input-lora-model form-input" value="${char.lora_model || ''}" placeholder="modelo_lora" style="padding: 2px 6px; font-size: 0.72rem; flex: 1;">
-            </label>
-            <label style="display: flex; align-items: center; gap: 4px;" title="Trigger word del personaje">
-              <span>Trigger:</span>
-              <input type="text" class="char-input-lora-trigger form-input" value="${char.lora_trigger || ''}" placeholder="chr_id" style="width: 90px; padding: 2px 6px; font-size: 0.72rem;">
-            </label>
-          </div>
-          ${char.cref_directive ? `<div style="margin-top: 4px; color: #94a3b8; font-family: monospace; font-size: 0.68rem; word-break: break-all;"><code>${char.cref_directive}</code> | <code>${char.lora_directive || ''}</code></div>` : ''}
+      <!-- Fila inferior completa: 4 vistas (Detalle, Frontal, Trasera, Perfil) -->
+      <div class="char-4views-box">
+        <div class="char-4views-header">
+          <button type="button" class="btn btn-primary btn-xs btn-gen-4views" data-index="${index}" ${charImgUrl ? '' : 'disabled'} title="Genera las 4 vistas nuevas (Detalle facial, Frontal, Trasera y Perfil) a partir del diseño 3/4">
+            🔄 Generar vistas
+          </button>
+        </div>
+        <div class="char-4views-grid" id="char-4views-grid-${index}">
+          ${views4Html}
         </div>
       </div>
     `;
@@ -1312,26 +1632,78 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     }
 
-    const selectView = card.querySelector(".char-select-view");
-    if (selectView) {
-      selectView.addEventListener("change", () => {
+    card.querySelectorAll(".char-rule-fullbody, .char-rule-whitebg, .char-rule-notext, .char-rule-vertical").forEach(chk => {
+      chk.addEventListener("change", () => {
         card.dataset.descDirty = "true";
       });
-    }
+    });
 
-    const checkNobg = card.querySelector(".char-check-nobg");
-    if (checkNobg) {
-      checkNobg.addEventListener("change", () => {
-        card.dataset.descDirty = "true";
-      });
-    }
+    card.querySelector(".char-slider-detail")?.addEventListener("input", (ev) => {
+      const valEl = card.querySelector(".char-slider-detail-val");
+      if (valEl) valEl.textContent = `${ev.target.value}%`;
+      const hintEl = card.querySelector(".char-slider-detail-hint");
+      if (hintEl) hintEl.innerHTML = getDetailEffectHtml(ev.target.value);
+      card.dataset.descDirty = "true";
+    });
+    card.querySelector(".char-slider-realism")?.addEventListener("input", (ev) => {
+      const valEl = card.querySelector(".char-slider-realism-val");
+      if (valEl) valEl.textContent = `${ev.target.value}%`;
+      const hintEl = card.querySelector(".char-slider-realism-hint");
+      if (hintEl) hintEl.innerHTML = getRealismEffectHtml(ev.target.value);
+      card.dataset.descDirty = "true";
+    });
 
     card.querySelector(".btn-remove-char-card").addEventListener("click", async () => {
       await removeCharacterCard(index, char.id);
     });
 
+    card.querySelector(".asset-history-select")?.addEventListener("change", (ev) => {
+      handleRestoreAssetVersion(ev.currentTarget.closest(".asset-history-bar"));
+    });
+    card.querySelector(".char-approval-slot")?.addEventListener("click", async (ev) => {
+      const btnToggle = ev.target.closest(".btn-toggle-char-approval");
+      if (!btnToggle || !state.currentProject) return;
+      const isApproved = card.dataset.estadoAprobacion === "aprobado";
+      const nextAction = isApproved ? "pending" : "approve";
+      btnToggle.disabled = true;
+      try {
+        const res = await fetch(`/api/projects/${state.currentProject.id}/characters/${card.dataset.id}/decision`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: nextAction, feedback: "", notify_telegram: false })
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          const newStatus = data.status || (isApproved ? "pendiente" : "aprobado");
+          card.dataset.estadoAprobacion = newStatus;
+          if (data.seed_consistencia) {
+            card.dataset.seedConsistencia = String(data.seed_consistencia);
+            const seedEl = card.querySelector(".char-seed-code");
+            if (seedEl) seedEl.textContent = String(data.seed_consistencia);
+          }
+          const slot = card.querySelector(".char-approval-slot");
+          if (slot) slot.innerHTML = getApprovalBadgeHtml(newStatus, "");
+          syncCharacterApprovalLock(card);
+          showToast(
+            newStatus === "aprobado"
+              ? `✅ ${char.nombre || card.dataset.id} aprobado (Seed ${data.seed_consistencia || card.dataset.seedConsistencia || 'auto'} fijada como referencia)`
+              : `⏳ ${char.nombre || card.dataset.id} marcado como pendiente`,
+            newStatus === "aprobado" ? "success" : "info"
+          );
+        } else {
+          showToast(data.detail || "No se pudo cambiar el estado", "error");
+        }
+      } catch (err) {
+        showToast(`Error cambiando estado: ${err.message}`, "error");
+      } finally {
+        btnToggle.disabled = false;
+      }
+    });
     card.querySelector(".btn-gen-portrait").addEventListener("click", async () => {
       await generateCharacterPortrait(card, char.id, index);
+    });
+    card.querySelector(".btn-gen-4views")?.addEventListener("click", async () => {
+      await generateCharacter4Views(card, char.id, index);
     });
 
     const btnRemoveBg = card.querySelector(".btn-remove-bg");
@@ -1372,7 +1744,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    syncCharacterApprovalLock(card);
+
     return card;
+  }
+
+  function syncCharacterApprovalLock(card) {
+    if (!card) return;
+    const isApproved = card.dataset.estadoAprobacion === "aprobado";
+    const lockMsg = "Personaje aprobado y bloqueado. Pulsa '✅ Aprobado' para volver a 'Pendiente' si quieres cambiar o regenerar.";
+
+    const btnGen = card.querySelector(".btn-gen-portrait");
+    if (btnGen) {
+      btnGen.disabled = isApproved;
+      btnGen.title = isApproved ? lockMsg : "Generar diseño inicial en tres cuartos (3/4) y formato vertical 9:16";
+    }
+
+    const uploadInput = card.querySelector(".input-upload-portrait");
+    if (uploadInput) {
+      uploadInput.disabled = isApproved;
+      const lbl = uploadInput.closest("label");
+      if (lbl) {
+        lbl.classList.toggle("is-locked", isApproved);
+        lbl.title = isApproved ? lockMsg : "Subir imagen manualmente";
+      }
+    }
+
+    const histSelect = card.querySelector(".asset-history-select");
+    if (histSelect) {
+      histSelect.disabled = isApproved;
+      histSelect.title = isApproved ? lockMsg : "Cambiar a una versión anterior";
+    }
   }
 
   function addCharacterCard(name = "", role = "", desc = "", tipo = "humano", prompt = "") {
@@ -1414,17 +1816,36 @@ document.addEventListener("DOMContentLoaded", () => {
     cards.forEach((card, idx) => {
       const charId = card.dataset.id || `char_${idx+1}`;
       const name = card.querySelector(".char-input-name").value.trim();
-      const role = card.querySelector(".char-input-role").value.trim();
-      const tipo = card.querySelector(".char-select-type")?.value || "humano";
+      const role = card.querySelector(".char-input-role")?.value.trim() ?? (card.dataset.rol || "");
+      const tipo = card.querySelector(".char-select-type")?.value ?? (card.dataset.tipo || "humano");
       const desc = card.querySelector(".char-input-desc").value.trim();
       const prompt = card.querySelector(".char-input-prompt")?.value.trim() || "";
       const img = card.querySelector(".char-portrait-frame img");
       const imgUrl = img ? img.getAttribute("src") : null;
-      const formatoVista = card.querySelector(".char-select-view")?.value || "giro_360";
-      const sinFondo = card.querySelector(".char-check-nobg") ? card.querySelector(".char-check-nobg").checked : true;
-      const crefWeight = parseInt(card.querySelector(".char-input-cref-weight")?.value || "100", 10);
-      const loraModel = card.querySelector(".char-input-lora-model")?.value.trim() || "";
-      const loraTrigger = card.querySelector(".char-input-lora-trigger")?.value.trim() || "";
+      const rFull = card.querySelector(".char-rule-fullbody")?.checked ?? true;
+      const rWhite = card.querySelector(".char-rule-whitebg")?.checked ?? true;
+      const rNoText = card.querySelector(".char-rule-notext")?.checked ?? true;
+      const rVertical = card.querySelector(".char-rule-vertical")?.checked ?? true;
+      const rDetail = parseInt(card.querySelector(".char-slider-detail")?.value || "75", 10);
+      const rRealism = parseInt(card.querySelector(".char-slider-realism")?.value || "75", 10);
+      const formatoVista = rFull ? "cuerpo_entero" : "retrato";
+      const sinFondo = rWhite;
+      const reglasPersonaje = {
+        hoja_4_vistas: false,
+        cuerpo_entero: rFull,
+        fondo_blanco: rWhite,
+        sin_texto: rNoText,
+        formato_vertical: rVertical,
+        nivel_detalle: isNaN(rDetail) ? 75 : rDetail,
+        nivel_realismo: isNaN(rRealism) ? 75 : rRealism
+      };
+      let vistas4Parsed = null;
+      try {
+        if (card.dataset.vistas4Json) vistas4Parsed = JSON.parse(card.dataset.vistas4Json);
+      } catch (e) { vistas4Parsed = null; }
+      const crefWeight = parseInt(card.querySelector(".char-input-cref-weight")?.value || card.dataset.crefWeight || "100", 10);
+      const loraModel = card.querySelector(".char-input-lora-model")?.value.trim() ?? (card.dataset.loraModel || "");
+      const loraTrigger = card.querySelector(".char-input-lora-trigger")?.value.trim() ?? (card.dataset.loraTrigger || "");
 
       characters.push({
         id: charId,
@@ -1433,9 +1854,12 @@ document.addEventListener("DOMContentLoaded", () => {
         tipo: tipo,
         descripcion_visual: desc,
         imagen_url: imgUrl,
+        hoja_4_vistas_url: card.dataset.hoja4VistasUrl || null,
+        vistas_4: vistas4Parsed,
         prompt_retrato: prompt,
         sin_fondo: sinFondo,
         formato_vista: formatoVista,
+        reglas_personaje: reglasPersonaje,
         cref_weight: isNaN(crefWeight) ? 100 : crefWeight,
         lora_model: loraModel || null,
         lora_trigger: loraTrigger || null,
@@ -1456,10 +1880,27 @@ document.addEventListener("DOMContentLoaded", () => {
     const actualId = charId || card.dataset.id;
     const desc = card.querySelector(".char-input-desc")?.value.trim() || "";
     const name = card.querySelector(".char-input-name")?.value.trim() || "Personaje";
-    const role = card.querySelector(".char-input-role")?.value.trim() || "";
-    const tipo = card.querySelector(".char-select-type")?.value || "humano";
-    const formatoVista = card.querySelector(".char-select-view")?.value || "giro_360";
-    const sinFondo = card.querySelector(".char-check-nobg") ? card.querySelector(".char-check-nobg").checked : true;
+    const role = card.querySelector(".char-input-role")?.value.trim() ?? (card.dataset.rol || "");
+    const tipo = card.querySelector(".char-select-type")?.value ?? (card.dataset.tipo || "humano");
+    const rFull = card.querySelector(".char-rule-fullbody")?.checked ?? true;
+    const rWhite = card.querySelector(".char-rule-whitebg")?.checked ?? true;
+    const rNoText = card.querySelector(".char-rule-notext")?.checked ?? true;
+    const rVertical = card.querySelector(".char-rule-vertical")?.checked ?? true;
+    const rDetail = parseInt(card.querySelector(".char-slider-detail")?.value || "75", 10);
+    const rRealism = parseInt(card.querySelector(".char-slider-realism")?.value || "75", 10);
+    const formatoVista = rFull ? "cuerpo_entero" : "retrato";
+    const sinFondo = rWhite;
+    const reglasPersonaje = {
+      hoja_4_vistas: false,
+      cuerpo_entero: rFull,
+      fondo_blanco: rWhite,
+      sin_texto: rNoText,
+      formato_vertical: rVertical,
+      nivel_detalle: isNaN(rDetail) ? 75 : rDetail,
+      nivel_realismo: isNaN(rRealism) ? 75 : rRealism
+    };
+    const stylePromptEl = document.getElementById("univ-style-prompt-en");
+    const stylePromptEn = stylePromptEl ? (stylePromptEl.value || stylePromptEl.textContent || "").trim() : "";
 
     const btn = card.querySelector(".btn-optimize-prompt");
     if (btn) {
@@ -1470,7 +1911,7 @@ document.addEventListener("DOMContentLoaded", () => {
     setSystemStatus(
       "busy",
       `Optimizando prompt de ${name}...`,
-      "Traduciendo descripción en español a inglés y blindando cuerpo completo y fondo blanco puro..."
+      "Traduciendo descripción al inglés, aplicando opciones del personaje y estilo del proyecto..."
     );
 
     try {
@@ -1483,7 +1924,11 @@ document.addEventListener("DOMContentLoaded", () => {
           rol: role,
           tipo: tipo,
           formato_vista: formatoVista,
-          sin_fondo: sinFondo
+          sin_fondo: sinFondo,
+          estilo_visual: univStyle ? univStyle.value : undefined,
+          estilo_detalles: univStyleDetails ? univStyleDetails.value.trim() : undefined,
+          estilo_prompt_en: stylePromptEn || undefined,
+          reglas_personaje: reglasPersonaje
         })
       });
       const data = await res.json();
@@ -1503,99 +1948,318 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       if (btn) {
         btn.disabled = false;
-        btn.textContent = "⚡ Optimizar IA";
+        btn.textContent = "Generar prompt con IA";
       }
     }
   }
 
-  // Generar Retrato / Hoja de Personaje con IA
+  let activeProposalContext = null;
+
+  function applySelectedPortraitToCard(card, actualId, charName, index, data) {
+    const frame = (index !== undefined ? document.getElementById(`char-frame-${index}`) : null) || card.querySelector(".char-portrait-frame");
+    if (frame) {
+      if (data.sin_fondo) frame.classList.add("transparent-bg");
+      else frame.classList.remove("transparent-bg");
+      const freshUrl = `${data.imagen_url.split('?')[0]}?t=${Date.now()}`;
+      frame.innerHTML = `<img src="${freshUrl}" alt="${escapeHtml(charName)}">`;
+    }
+    const btn = card.querySelector(".btn-gen-portrait");
+    if (btn) btn.textContent = "🎨 Regenerar 3/4";
+    const btn4v = card.querySelector(".btn-gen-4views");
+    if (btn4v) btn4v.disabled = false;
+
+    if (data.seed_consistencia) {
+      card.dataset.seedConsistencia = String(data.seed_consistencia);
+      const seedEl = card.querySelector(".char-seed-code");
+      if (seedEl) seedEl.textContent = String(data.seed_consistencia);
+    }
+    if (data.prompt_used) {
+      const promptInput = card.querySelector(".char-input-prompt");
+      if (promptInput) promptInput.value = data.prompt_used;
+    }
+    if (Array.isArray(data.historial_imagenes)) {
+      const histSlot = card.querySelector(".char-history-slot");
+      const frameIdAttr = frame ? frame.id : `char-frame-${index}`;
+      if (histSlot) {
+        histSlot.innerHTML = buildAssetHistoryHtml("personajes", actualId, data.historial_imagenes, frameIdAttr, data.active_version);
+        histSlot.querySelector(".asset-history-select")?.addEventListener("change", (ev) => {
+          handleRestoreAssetVersion(ev.currentTarget.closest(".asset-history-bar"));
+        });
+      }
+    }
+    card.dataset.estadoAprobacion = "pendiente";
+    const appSlot = card.querySelector(".char-approval-slot");
+    if (appSlot) {
+      appSlot.innerHTML = getApprovalBadgeHtml("pendiente", "");
+    }
+    syncCharacterApprovalLock(card);
+  }
+
+  function applySelectedEnvironmentToCard(card, actualId, envName, index, data) {
+    const frame = (index !== undefined ? document.getElementById(`env-frame-${index}`) : null) || card.querySelector(".env-preview-frame");
+    if (frame) {
+      const freshUrl = `${data.imagen_url.split('?')[0]}?t=${Date.now()}`;
+      frame.innerHTML = `<img src="${freshUrl}" alt="${escapeHtml(envName)}">`;
+    }
+    const btn = card.querySelector(".btn-gen-env");
+    if (btn) btn.textContent = "🎨 Regenerar";
+    if (data.seed_consistencia) {
+      card.dataset.seedConsistencia = String(data.seed_consistencia);
+      const seedEl = card.querySelector(".env-seed-code");
+      if (seedEl) seedEl.textContent = String(data.seed_consistencia);
+    }
+    if (data.prompt_used) {
+      const promptInput = card.querySelector(".env-input-prompt");
+      if (promptInput) promptInput.value = data.prompt_used;
+    }
+    if (Array.isArray(data.historial_imagenes)) {
+      const histSlot = card.querySelector(".env-history-slot");
+      const frameIdAttr = frame ? frame.id : `env-frame-${index}`;
+      if (histSlot) {
+        histSlot.innerHTML = buildAssetHistoryHtml("escenarios", actualId, data.historial_imagenes, frameIdAttr, data.active_version);
+        histSlot.querySelector(".asset-history-select")?.addEventListener("change", (ev) => {
+          handleRestoreAssetVersion(ev.currentTarget.closest(".asset-history-bar"));
+        });
+      }
+    }
+    card.dataset.estadoAprobacion = "pendiente";
+    const appSlot = card.querySelector(".env-approval-slot");
+    if (appSlot) {
+      appSlot.innerHTML = getApprovalBadgeHtml("pendiente", "", "btn-toggle-env-approval");
+    }
+    syncEnvironmentApprovalLock(card);
+  }
+
+  async function loadCharacterPortraitProposals(ctx) {
+    const modal = document.getElementById("modal-portrait-proposals");
+    const grid = document.getElementById("proposals-grid");
+    const titleEl = document.getElementById("proposals-modal-title");
+    const subEl = document.getElementById("proposals-modal-subtitle");
+    const btnRegen6 = document.getElementById("btn-regenerate-6-proposals");
+    if (!modal || !grid) return;
+
+    const isEnv = ctx.kind === "environment";
+    const itemName = ctx.charName || ctx.envName || "Elemento";
+    if (titleEl) titleEl.textContent = isEnv ? `🎨 6 propuestas de escenario para ${itemName}` : `🎨 6 propuestas 3/4 para ${itemName}`;
+    if (subEl) subEl.textContent = "Generando 6 variaciones con distintas semillas para que elijas la que mejor encaja...";
+    grid.innerHTML = Array.from({ length: 6 }, (_, i) => `
+      <div class="proposal-card">
+        <div class="proposal-skeleton">Generando #${i + 1}...</div>
+      </div>
+    `).join("");
+    if (btnRegen6) btnRegen6.disabled = true;
+    modal.classList.add("open");
+
+    setSystemStatus(
+      "busy",
+      `Generando 6 propuestas de ${itemName}...`,
+      `Pintando 6 variaciones en formato vertical 9:16 y técnica ${state.currentProject?.estilo_visual || 'acuarela'}...`
+    );
+
+    try {
+      const genUrl = isEnv
+        ? `/api/projects/${state.currentProject.id}/environments/generate-proposals`
+        : `/api/projects/${state.currentProject.id}/characters/generate-portrait-proposals`;
+      const genBody = isEnv
+        ? {
+            environment_id: ctx.actualId,
+            prompt_override: ctx.promptOverride,
+            provider: univImageEngine ? univImageEngine.value : "basic"
+          }
+        : {
+            character_id: ctx.actualId,
+            prompt_override: ctx.promptOverride,
+            sin_fondo: ctx.sinFondo,
+            formato_vista: ctx.formatoVista,
+            descripcion_visual: ctx.desc,
+            provider: univImageEngine ? univImageEngine.value : "basic"
+          };
+
+      const res = await fetch(genUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(genBody)
+      });
+      const data = await res.json();
+      if (!res.ok || !data.success || !Array.isArray(data.proposals)) {
+        throw new Error(data.detail || "No se pudieron generar las 6 propuestas.");
+      }
+
+      if (subEl) subEl.textContent = `Elige una de las ${data.proposals.length} propuestas para fijarla en ${itemName}.`;
+      grid.innerHTML = data.proposals.map((p, idx) => `
+        <div class="proposal-card">
+          <div class="proposal-img-wrap">
+            <img src="${p.url}" alt="Propuesta ${idx + 1}">
+          </div>
+          <div style="display:flex; justify-content:space-between; align-items:center; font-size:0.72rem; color:#94a3b8;">
+            <span>Opción #${idx + 1}</span>
+            <code>Seed: ${p.seed || 'auto'}</code>
+          </div>
+          <button type="button" class="btn btn-primary btn-xs btn-choose-proposal" data-pidx="${idx}">
+            ✅ Elegir esta
+          </button>
+        </div>
+      `).join("");
+
+      grid.querySelectorAll(".btn-choose-proposal").forEach(choiceBtn => {
+        choiceBtn.addEventListener("click", async () => {
+          const p = data.proposals[Number(choiceBtn.dataset.pidx)];
+          if (!p) return;
+          choiceBtn.disabled = true;
+          choiceBtn.textContent = "⏳ Guardando...";
+          try {
+            const selUrl = isEnv
+              ? `/api/projects/${state.currentProject.id}/environments/select-proposal`
+              : `/api/projects/${state.currentProject.id}/characters/select-portrait-proposal`;
+            const selBody = isEnv
+              ? {
+                  environment_id: ctx.actualId,
+                  file_path: p.file_path,
+                  seed: p.seed,
+                  provider: p.provider,
+                  prompt_used: data.prompt_used
+                }
+              : {
+                  character_id: ctx.actualId,
+                  file_path: p.file_path,
+                  seed: p.seed,
+                  provider: p.provider,
+                  prompt_used: data.prompt_used,
+                  sin_fondo: ctx.sinFondo,
+                  formato_vista: ctx.formatoVista
+                };
+
+            const selRes = await fetch(selUrl, {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify(selBody)
+            });
+            const selData = await selRes.json();
+            if (!selRes.ok || !selData.success) {
+              throw new Error(selData.detail || "Error guardando la propuesta elegida.");
+            }
+            modal.classList.remove("open");
+            try {
+              if (isEnv) applySelectedEnvironmentToCard(ctx.card, ctx.actualId, itemName, ctx.index, selData);
+              else applySelectedPortraitToCard(ctx.card, ctx.actualId, itemName, ctx.index, selData);
+            } catch (uiErr) {
+              console.error("[applySelectedProposal]", uiErr);
+            }
+            showToast(`¡Propuesta #${Number(choiceBtn.dataset.pidx) + 1} aplicada a ${itemName} (Seed ${p.seed})!`, "success");
+            setSystemStatus("success", `¡Diseño de ${itemName} actualizado!`, `Propuesta guardada con semilla ${p.seed}. Ya puedes aprobarlo.`);
+          } catch (err) {
+            showToast(err.message || "Error al seleccionar propuesta", "error");
+            choiceBtn.disabled = false;
+            choiceBtn.textContent = "✅ Elegir esta";
+          }
+        });
+      });
+
+      setSystemStatus("success", `6 propuestas listas para ${itemName}`, "Selecciona una opción en la ventana emergente.");
+    } catch (err) {
+      grid.innerHTML = `<div style="grid-column: 1 / -1; padding: 1rem; color: #f87171;">❌ ${escapeHtml(err.message || "Error generando propuestas")}</div>`;
+      showToast(err.message || "Error generando propuestas", "error");
+      setSystemStatus("error", `Error generando propuestas de ${itemName}`, err.message || "Fallo en motor de imagen.");
+    } finally {
+      if (btnRegen6) btnRegen6.disabled = false;
+    }
+  }
+
+  document.getElementById("btn-regenerate-6-proposals")?.addEventListener("click", async () => {
+    if (activeProposalContext) {
+      await loadCharacterPortraitProposals(activeProposalContext);
+    }
+  });
+
+  // Generar Retrato 3/4 de Personaje con IA (abre selector de 6 propuestas)
   async function generateCharacterPortrait(card, charId, index) {
     if (!state.currentProject) return;
     if (!card) card = document.querySelector(`.char-card[data-id="${charId}"]`) || document.querySelector(`.char-card[data-index="${index}"]`);
     if (!card) return;
 
+    if (card.dataset.estadoAprobacion === "aprobado") {
+      showToast("Este personaje está aprobado y bloqueado. Pulsa '✅ Aprobado' para pasarlo a Pendiente si quieres regenerarlo.", "warning");
+      return;
+    }
+
     const actualId = charId || card.dataset.id;
     const charName = card.querySelector(".char-input-name")?.value.trim() || "Personaje";
 
-    // Si la descripción en español ha cambiado o se marcó dirty, optimizar y traducir primero
     if (card.dataset.descDirty === "true") {
       await optimizeCharacterPrompt(card, actualId);
       card.dataset.descDirty = "false";
     }
 
-    // Primero guardar el estado actual de los campos
     await saveUniverse(false);
 
     const promptOverride = card.querySelector(".char-input-prompt")?.value.trim() || "";
     const desc = card.querySelector(".char-input-desc")?.value.trim() || "";
-    const sinFondo = card.querySelector(".char-check-nobg") ? card.querySelector(".char-check-nobg").checked : true;
-    const formatoVista = card.querySelector(".char-select-view")?.value || "giro_360";
+    const rFull = card.querySelector(".char-rule-fullbody")?.checked ?? true;
+    const sinFondo = card.querySelector(".char-rule-whitebg")?.checked ?? true;
+    const formatoVista = rFull ? "cuerpo_entero" : "retrato";
 
-    const btn = card.querySelector(".btn-gen-portrait");
-    if (btn) {
-      btn.disabled = true;
-      btn.textContent = "🎨 Dibujando...";
+    activeProposalContext = {
+      card,
+      actualId,
+      charName,
+      index,
+      promptOverride,
+      desc,
+      sinFondo,
+      formatoVista
+    };
+    await loadCharacterPortraitProposals(activeProposalContext);
+  }
+
+  async function generateCharacter4Views(card, charId, index) {
+    if (!state.currentProject) return;
+    if (!card) card = document.querySelector(`.char-card[data-id="${charId}"]`);
+    if (!card) return;
+
+    const actualId = charId || card.dataset.id;
+    const charName = card.querySelector(".char-input-name")?.value.trim() || actualId;
+    const btn4v = card.querySelector(".btn-gen-4views");
+    if (btn4v) {
+      btn4v.disabled = true;
+      btn4v.textContent = "🔄 Generando 4 vistas...";
     }
 
     setSystemStatus(
       "busy",
-      `Generando ${charName} con IA...`,
-      `Pintando hoja de 4 perspectivas de cuerpo completo sobre fondo blanco puro en técnica ${state.currentProject?.estilo_visual || 'acuarela'}...`
+      `Generando 4 vistas de ${charName}...`,
+      "Usando FLUX Kontext con el diseño 3/4 como referencia para crear vista frontal, trasera y perfil..."
     );
 
     try {
-      const res = await fetch(`/api/projects/${state.currentProject.id}/characters/generate-portrait`, {
+      const res = await fetch(`/api/projects/${state.currentProject.id}/characters/${actualId}/generate-4-views`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          character_id: actualId,
-          prompt_override: promptOverride,
-          sin_fondo: sinFondo,
-          formato_vista: formatoVista,
-          descripcion_visual: desc
+          provider: univImageEngine ? univImageEngine.value : "fal_flux_dev"
         })
       });
       const data = await res.json();
-      if (data.success && data.imagen_url) {
-        const frame = (index !== undefined ? document.getElementById(`char-frame-${index}`) : null) || card.querySelector(".char-portrait-frame");
-        if (frame) {
-          if (data.sin_fondo) frame.classList.add("transparent-bg");
-          else frame.classList.remove("transparent-bg");
-          const freshUrl = `${data.imagen_url.split('?')[0]}?t=${Date.now()}`;
-          frame.innerHTML = `<img src="${freshUrl}" alt="${charName}">`;
+      if (data.success && (data.vistas_4 || data.hoja_4_vistas_url)) {
+        if (data.hoja_4_vistas_url) card.dataset.hoja4VistasUrl = data.hoja_4_vistas_url;
+        if (data.vistas_4) card.dataset.vistas4Json = JSON.stringify(data.vistas_4);
+        const grid4v = (index !== undefined ? document.getElementById(`char-4views-grid-${index}`) : null) || card.querySelector(".char-4views-grid");
+        if (grid4v && data.vistas_4) {
+          grid4v.innerHTML = render4ViewsGridHtml(data.vistas_4, charName);
         }
-        if (btn) btn.textContent = "🎨 Regenerar IA";
-
-        // Asegurar que exista el botón de Sin Fondo
-        const actionsBox = card.querySelector(".char-portrait-actions");
-        if (actionsBox && !actionsBox.querySelector(".btn-remove-bg")) {
-          const remBtn = document.createElement("button");
-          remBtn.type = "button";
-          remBtn.className = "btn btn-ghost btn-xs btn-remove-bg";
-          remBtn.dataset.index = index;
-          remBtn.title = "Recortar y eliminar fondo (PNG transparente con rembg)";
-          remBtn.textContent = "✂️ Sin Fondo";
-          remBtn.addEventListener("click", () => removeCharacterBackground(index));
-          actionsBox.insertBefore(remBtn, actionsBox.querySelector("label"));
-        }
-
-        if (data.prompt_used) {
-          const promptInput = card.querySelector(".char-input-prompt");
-          if (promptInput) promptInput.value = data.prompt_used;
-        }
-        showToast(data.sin_fondo ? `¡${charName} generado sobre fondo blanco puro!` : `¡${charName} generado con éxito!`, "success");
-        setSystemStatus("success", `¡${charName} generado con éxito!`, "Hoja de 4 perspectivas de cuerpo completo sobre fondo blanco puro lista.");
+        showToast(`¡4 vistas de ${charName} generadas! Pulsa cualquier cuadradito para ampliarlo.`, "success");
+        setSystemStatus("success", `¡4 vistas de ${charName} listas!`, "Pulsa sobre cualquier cuadradito para verlo en grande.");
       } else {
-        showToast(data.detail || "Error generando personaje", "error");
-        if (btn) btn.textContent = "🎨 Reintentar";
-        setSystemStatus("error", `Error generando ${charName}`, data.detail || "Fallo en motor de imagen.");
+        showToast(data.detail || "Error generando las 4 vistas", "error");
+        setSystemStatus("error", `Error en 4 vistas de ${charName}`, data.detail || "No se pudo generar la hoja de 4 vistas.");
       }
     } catch (e) {
-      showToast("Error generando personaje con IA", "error");
-      if (btn) btn.textContent = "🎨 Reintentar";
-      setSystemStatus("error", `Error generando ${charName}`, "No se pudo conectar con el motor gráfico.");
+      showToast("Error conectando para generar las 4 vistas", "error");
+      setSystemStatus("error", `Error en 4 vistas de ${charName}`, "Fallo de conexión con el motor gráfico.");
     } finally {
-      if (btn) btn.disabled = false;
+      if (btn4v) {
+        btn4v.disabled = false;
+        btn4v.textContent = "🔄 Generar vistas";
+      }
     }
   }
 
@@ -1688,6 +2352,7 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = createEnvironmentCardElement(env, index);
       environmentsCardsGrid.appendChild(card);
     });
+    renderRecurrentEnvsGrid(environments, state.currentProject?.referencia_escenario_id || null);
   }
 
   function createEnvironmentCardElement(env, index) {
@@ -1695,9 +2360,10 @@ document.addEventListener("DOMContentLoaded", () => {
     card.className = "env-card";
     card.dataset.index = index;
     card.dataset.id = env.id || `esc_${index+1}`;
+    card.dataset.tipo = env.tipo || "exterior_urbano";
     card.dataset.estadoAprobacion = env.estado_aprobacion || (env.imagen_url ? "aprobado" : "pendiente");
     card.dataset.motivoRechazo = env.motivo_rechazo || "";
-    card.dataset.telegramMessageId = env.telegram_message_id || "";
+    card.dataset.seedConsistencia = env.seed_consistencia || "";
 
     let envImgUrl = env.imagen_url;
     if (envImgUrl) {
@@ -1712,16 +2378,16 @@ document.addEventListener("DOMContentLoaded", () => {
            <small>Sin arte 9:16</small>
          </div>`;
 
-    const envTipo = env.tipo || "exterior_urbano";
+    const projRules = (typeof getGenerationRulesFromUI === "function") ? getGenerationRulesFromUI() : {};
+    const envRules = env.reglas_escenario || {};
+    const rNoPeople = envRules.escenarios_sin_personas ?? envRules.sin_personas ?? projRules.escenarios_sin_personas ?? true;
+    const rNoText = envRules.sin_texto ?? projRules.sin_texto ?? true;
+    const rVertical = envRules.formato_vertical ?? projRules.formato_vertical ?? true;
+    const rDetail = Number.isFinite(Number(envRules.nivel_detalle)) ? Number(envRules.nivel_detalle) : 75;
+    const rRealism = Number.isFinite(Number(envRules.nivel_realismo)) ? Number(envRules.nivel_realismo) : 75;
+
     const approvalStatus = card.dataset.estadoAprobacion;
-    let statusBadge = "";
-    if (approvalStatus === "aprobado") {
-      statusBadge = `<span class="badge" style="background: rgba(34, 197, 94, 0.2); color: #4ade80; border: 1px solid #22c55e; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Escenario aprobado oficialmente">✅ Aprobado</span>`;
-    } else if (approvalStatus === "rechazado") {
-      statusBadge = `<span class="badge" style="background: rgba(239, 68, 68, 0.2); color: #f87171; border: 1px solid #ef4444; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Rechazado: ${env.motivo_rechazo || 'No cuadra'}">❌ Rechazado</span>`;
-    } else {
-      statusBadge = `<span class="badge" style="background: rgba(234, 179, 8, 0.2); color: #facc15; border: 1px solid #eab308; font-size: 0.72rem; padding: 2px 6px; border-radius: 4px;" title="Pendiente de aprobación en Telegram">⏳ Pendiente</span>`;
-    }
+    const statusBadge = getApprovalBadgeHtml(approvalStatus, card.dataset.motivoRechazo, "btn-toggle-env-approval");
 
     card.innerHTML = `
       <!-- Columna Visual del Escenario -->
@@ -1729,45 +2395,74 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="env-preview-frame" id="env-frame-${index}">
           ${previewHtml}
         </div>
+        <div style="display:flex; flex-direction:column; align-items:center; gap:4px; margin-top:6px;">
+          <div class="env-approval-slot">${statusBadge}</div>
+          <div style="font-size:0.71rem; color:#94a3b8; text-align:center; line-height:1.3;">
+            Ref: <code>${escapeHtml(card.dataset.id)}</code> · Seed: <code class="env-seed-code">${env.seed_consistencia || 'auto'}</code>
+          </div>
+        </div>
         <div class="env-preview-actions">
-          <button class="btn btn-secondary btn-xs btn-gen-env" data-index="${index}" title="Generar arte conceptual del escenario">
-            🎨 ${env.imagen_url ? 'Regenerar IA' : 'Generar IA'}
+          <button class="btn btn-secondary btn-xs btn-gen-env" data-index="${index}" title="Generar 6 propuestas de escenario en formato vertical 9:16">
+            🎨 ${env.imagen_url ? 'Regenerar' : 'Generar'}
           </button>
           <label class="btn btn-ghost btn-xs">
             📁 Subir
             <input type="file" class="input-upload-env" data-index="${index}" accept="image/*" style="display:none;">
           </label>
         </div>
-        <div class="env-approval-bar" style="display: flex; gap: 4px; margin-top: 6px; justify-content: center; flex-wrap: wrap;">
-          <button type="button" class="btn btn-outline btn-xxs btn-send-telegram-env" data-index="${index}" title="Enviar propuesta a Telegram">📱 Telegram</button>
-          <button type="button" class="btn btn-ghost btn-xxs btn-approve-env" data-index="${index}" style="color: #4ade80;" title="Aprobar escenario">✅</button>
-          <button type="button" class="btn btn-ghost btn-xxs btn-reject-env" data-index="${index}" style="color: #f87171;" title="Rechazar escenario porque no cuadra">❌</button>
-          <button type="button" class="btn btn-ghost btn-xxs btn-redo-env" data-index="${index}" style="color: #60a5fa;" title="Rehacer escenario">🔄</button>
+        <div class="env-history-slot">
+          ${buildAssetHistoryHtml("escenarios", card.dataset.id, env.historial_imagenes || [], `env-frame-${index}`, env.active_version)}
         </div>
       </div>
 
       <!-- Columna Detalles del Escenario -->
       <div class="env-details-box">
         <div class="env-details-header" style="display: flex; gap: 0.5rem; align-items: center;">
-          <input type="text" class="env-input-name" placeholder="Nombre del Escenario (ej: Calles de Moguer)" value="${env.nombre || ''}">
-          ${statusBadge}
-          <select class="env-select-type form-select-xs" title="Tipo de entorno">
-            <option value="exterior_urbano" ${envTipo === 'exterior_urbano' ? 'selected' : ''}>🏛️ Urbano / Calles</option>
-            <option value="naturaleza" ${envTipo === 'naturaleza' ? 'selected' : ''}>🌿 Naturaleza / Paisaje</option>
-            <option value="interior" ${envTipo === 'interior' ? 'selected' : ''}>🏠 Interior / Rústico</option>
-            <option value="panoramica" ${envTipo === 'panoramica' ? 'selected' : ''}>🌄 Vista Panorámica</option>
-          </select>
+          <input type="text" class="env-input-name" placeholder="Nombre del Escenario (ej: Calles de Moguer)" value="${env.nombre || ''}" style="flex: 1;">
           <button class="btn-remove-env-card" data-index="${index}" title="Eliminar escenario">&times;</button>
         </div>
-        <textarea class="env-input-desc" rows="4" placeholder="Descripción visual detallada (arquitectura, colores, iluminación, clima)...">${env.descripcion_visual || ''}</textarea>
+        <label class="char-desc-label mt-2" style="display:block; font-size:0.71rem; font-weight:600; color:#94a3b8; margin-bottom:2px;">Descripción del escenario</label>
+        <textarea class="env-input-desc" rows="3" placeholder="Descripción visual detallada (arquitectura, colores, iluminación, clima)...">${env.descripcion_visual || ''}</textarea>
+
+        <!-- Opciones generales del escenario (heredan de 2. Estilo visual) -->
+        <div class="char-rules-bar mt-2" style="display:flex; flex-wrap:wrap; gap:0.55rem; align-items:center; padding:5px 8px; border-radius:6px; background:rgba(255,255,255,0.03); border:1px solid rgba(255,255,255,0.08); font-size:0.75rem;">
+          <span style="color:#94a3b8; font-weight:600;">Opciones:</span>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Escenario limpio sin personas ni personajes">
+            <input type="checkbox" class="env-rule-nopeople" ${rNoPeople ? 'checked' : ''}> Sin personas
+          </label>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Prohibir textos, etiquetas o carteles en la imagen">
+            <input type="checkbox" class="env-rule-notext" ${rNoText ? 'checked' : ''}> Sin texto
+          </label>
+          <label style="display:inline-flex; align-items:center; gap:3px; cursor:pointer;" title="Formato vertical 9:16 para escenarios">
+            <input type="checkbox" class="env-rule-vertical" ${rVertical ? 'checked' : ''}> Vertical 9:16
+          </label>
+        </div>
+        <div class="char-sliders-bar">
+          <div>
+            <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+              <span>Detalle</span>
+              <strong class="env-slider-detail-val" style="color:#a5b4fc;">${rDetail}%</strong>
+            </div>
+            <input type="range" class="env-slider-detail" min="0" max="100" step="5" value="${rDetail}">
+            <div class="slider-effect-hint env-slider-detail-hint">${getDetailEffectHtml(rDetail)}</div>
+          </div>
+          <div>
+            <div style="display:flex; justify-content:space-between; color:#cbd5e1;">
+              <span>Realismo</span>
+              <strong class="env-slider-realism-val" style="color:#a5b4fc;">${rRealism}%</strong>
+            </div>
+            <input type="range" class="env-slider-realism" min="0" max="100" step="5" value="${rRealism}">
+            <div class="slider-effect-hint env-slider-realism-hint">${getRealismEffectHtml(rRealism)}</div>
+          </div>
+        </div>
 
         <!-- Prompt en inglés para IA gráfica -->
-        <div class="env-prompt-section mt-2">
-          <div class="env-prompt-header">
-            <span class="label-hint">Prompt en Inglés para Escenario (Sin Personas):</span>
-            <button type="button" class="btn btn-ghost btn-xxs btn-optimize-env-prompt" data-index="${index}" title="Optimizar prompt en inglés con IA">⚡ Optimizar IA</button>
+        <div class="char-prompt-section mt-2">
+          <div class="char-prompt-header">
+            <button type="button" class="btn btn-secondary btn-xs btn-optimize-env-prompt" data-index="${index}" title="Genera el prompt en inglés combinando descripción, opciones, detalle/realismo y estilo del proyecto">Generar prompt con IA</button>
           </div>
-          <textarea class="env-input-prompt" rows="2" placeholder="Scenic background art, empty street, no people, vertical 9:16...">${env.prompt_escenario || ''}</textarea>
+          <span class="char-prompt-desc">Traduce y combina descripción, opciones, detalle/realismo y estilo del proyecto.</span>
+          <textarea class="env-input-prompt" rows="3" placeholder="Pulsa 'Generar prompt con IA' para crear el prompt en inglés con el estilo del proyecto...">${env.prompt_escenario || ''}</textarea>
         </div>
       </div>
     `;
@@ -1777,33 +2472,69 @@ document.addEventListener("DOMContentLoaded", () => {
       await removeEnvironmentCard(index, env.id);
     });
 
+    card.querySelector(".asset-history-select")?.addEventListener("change", (ev) => {
+      handleRestoreAssetVersion(ev.currentTarget.closest(".asset-history-bar"));
+    });
+    card.querySelector(".env-approval-slot")?.addEventListener("click", async (ev) => {
+      const btnToggle = ev.target.closest(".btn-toggle-env-approval");
+      if (!btnToggle || !state.currentProject) return;
+      const isApproved = card.dataset.estadoAprobacion === "aprobado";
+      const nextAction = isApproved ? "pending" : "approve";
+      btnToggle.disabled = true;
+      try {
+        const res = await fetch(`/api/projects/${state.currentProject.id}/environments/${card.dataset.id}/decision`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ action: nextAction, feedback: "", notify_telegram: false })
+        });
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          const newStatus = data.status || (isApproved ? "pendiente" : "aprobado");
+          card.dataset.estadoAprobacion = newStatus;
+          if (data.seed_consistencia) {
+            card.dataset.seedConsistencia = String(data.seed_consistencia);
+            const seedEl = card.querySelector(".env-seed-code");
+            if (seedEl) seedEl.textContent = String(data.seed_consistencia);
+          }
+          const slot = card.querySelector(".env-approval-slot");
+          if (slot) slot.innerHTML = getApprovalBadgeHtml(newStatus, "", "btn-toggle-env-approval");
+          syncEnvironmentApprovalLock(card);
+          showToast(
+            newStatus === "aprobado"
+              ? `✅ ${env.nombre || card.dataset.id} aprobado (Seed ${data.seed_consistencia || card.dataset.seedConsistencia || 'auto'} fijada como referencia)`
+              : `⏳ ${env.nombre || card.dataset.id} marcado como pendiente`,
+            newStatus === "aprobado" ? "success" : "info"
+          );
+        } else {
+          showToast(data.detail || "No se pudo cambiar el estado", "error");
+        }
+      } catch (err) {
+        showToast(`Error cambiando estado: ${err.message}`, "error");
+      } finally {
+        btnToggle.disabled = false;
+      }
+    });
     card.querySelector(".btn-gen-env").addEventListener("click", async () => {
       await generateEnvironmentImage(index);
     });
 
+    card.querySelector(".env-slider-detail")?.addEventListener("input", (ev) => {
+      const v = Number(ev.target.value);
+      const valEl = card.querySelector(".env-slider-detail-val");
+      if (valEl) valEl.textContent = `${v}%`;
+      const hintEl = card.querySelector(".env-slider-detail-hint");
+      if (hintEl) hintEl.innerHTML = getDetailEffectHtml(v);
+    });
+    card.querySelector(".env-slider-realism")?.addEventListener("input", (ev) => {
+      const v = Number(ev.target.value);
+      const valEl = card.querySelector(".env-slider-realism-val");
+      if (valEl) valEl.textContent = `${v}%`;
+      const hintEl = card.querySelector(".env-slider-realism-hint");
+      if (hintEl) hintEl.innerHTML = getRealismEffectHtml(v);
+    });
+
     card.querySelector(".btn-optimize-env-prompt").addEventListener("click", async () => {
-      await optimizeEnvironmentPrompt(index);
-    });
-
-    card.querySelector(".btn-send-telegram-env")?.addEventListener("click", async () => {
-      await sendEnvironmentToTelegram(env.id, index);
-    });
-
-    card.querySelector(".btn-approve-env")?.addEventListener("click", async () => {
-      await applyApprovalDecision("environment", env.id, "approve");
-    });
-
-    card.querySelector(".btn-reject-env")?.addEventListener("click", async () => {
-      const feedback = prompt("Indica el motivo del rechazo o qué revisar porque no cuadra:", "No cuadra con la visión del escenario.");
-      if (feedback !== null) {
-        await applyApprovalDecision("environment", env.id, "reject", feedback);
-      }
-    });
-
-    card.querySelector(".btn-redo-env")?.addEventListener("click", async () => {
-      if (confirm(`¿Rehacer y regenerar la propuesta para '${env.nombre || env.id}'?`)) {
-        await applyApprovalDecision("environment", env.id, "redo", "Rehacer porque no cuadra");
-      }
+      await optimizeEnvironmentPrompt(card, card.dataset.id);
     });
 
     card.querySelector(".input-upload-env").addEventListener("change", async e => {
@@ -1812,7 +2543,37 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
 
+    syncEnvironmentApprovalLock(card);
+
     return card;
+  }
+
+  function syncEnvironmentApprovalLock(card) {
+    if (!card) return;
+    const isApproved = card.dataset.estadoAprobacion === "aprobado";
+    const lockMsg = "Escenario aprobado y bloqueado. Pulsa '✅ Aprobado' para volver a 'Pendiente' si quieres cambiar o regenerar.";
+
+    const btnGen = card.querySelector(".btn-gen-env");
+    if (btnGen) {
+      btnGen.disabled = isApproved;
+      btnGen.title = isApproved ? lockMsg : "Generar 6 propuestas de escenario en formato vertical 9:16";
+    }
+
+    const uploadInput = card.querySelector(".input-upload-env");
+    if (uploadInput) {
+      uploadInput.disabled = isApproved;
+      const lbl = uploadInput.closest("label");
+      if (lbl) {
+        lbl.classList.toggle("is-locked", isApproved);
+        lbl.title = isApproved ? lockMsg : "Subir imagen manualmente";
+      }
+    }
+
+    const histSelect = card.querySelector(".asset-history-select");
+    if (histSelect) {
+      histSelect.disabled = isApproved;
+      histSelect.title = isApproved ? lockMsg : "Cambiar a una versión anterior";
+    }
   }
 
   function addEnvironmentCard(name = "", tipo = "exterior_urbano", desc = "", prompt = "") {
@@ -1850,97 +2611,126 @@ document.addEventListener("DOMContentLoaded", () => {
     const environments = [];
     cards.forEach((card, idx) => {
       const imgEl = card.querySelector(".env-preview-frame img");
+      const rNoPeople = card.querySelector(".env-rule-nopeople")?.checked ?? true;
+      const rNoText = card.querySelector(".env-rule-notext")?.checked ?? true;
+      const rVertical = card.querySelector(".env-rule-vertical")?.checked ?? true;
+      const rDetail = parseInt(card.querySelector(".env-slider-detail")?.value || "75", 10);
+      const rRealism = parseInt(card.querySelector(".env-slider-realism")?.value || "75", 10);
       environments.push({
         id: card.dataset.id || `esc_${idx+1}`,
         nombre: card.querySelector(".env-input-name")?.value.trim() || `Escenario ${idx+1}`,
-        tipo: card.querySelector(".env-select-type")?.value || "exterior_urbano",
+        tipo: card.dataset.tipo || "exterior_urbano",
         descripcion_visual: card.querySelector(".env-input-desc")?.value.trim() || "",
         imagen_url: imgEl ? imgEl.getAttribute("src") : null,
         prompt_escenario: card.querySelector(".env-input-prompt")?.value.trim() || "",
+        reglas_escenario: {
+          escenarios_sin_personas: rNoPeople,
+          sin_texto: rNoText,
+          formato_vertical: rVertical,
+          nivel_detalle: isNaN(rDetail) ? 75 : rDetail,
+          nivel_realismo: isNaN(rRealism) ? 75 : rRealism
+        },
         estado_aprobacion: card.dataset.estadoAprobacion || "pendiente",
         motivo_rechazo: card.dataset.motivoRechazo || "",
-        telegram_message_id: card.dataset.telegramMessageId || null
+        seed_consistencia: card.dataset.seedConsistencia ? Number(card.dataset.seedConsistencia) : null
       });
     });
     return environments;
   }
 
-  async function optimizeEnvironmentPrompt(index) {
+  async function optimizeEnvironmentPrompt(card, envId) {
     if (!state.currentProject) return;
-    await saveUniverse(false);
-    const card = document.querySelector(`.env-card[data-index="${index}"]`);
+    if (!card) card = document.querySelector(`.env-card[data-id="${envId}"]`);
     if (!card) return;
-    const envId = card.dataset.id;
+
+    const actualId = envId || card.dataset.id;
+    const name = card.querySelector(".env-input-name")?.value.trim() || "Escenario";
+    const desc = card.querySelector(".env-input-desc")?.value.trim() || "";
+    const tipo = card.dataset.tipo || "exterior_urbano";
+    const rNoPeople = card.querySelector(".env-rule-nopeople")?.checked ?? true;
+    const rNoText = card.querySelector(".env-rule-notext")?.checked ?? true;
+    const rVertical = card.querySelector(".env-rule-vertical")?.checked ?? true;
+    const rDetail = parseInt(card.querySelector(".env-slider-detail")?.value || "75", 10);
+    const rRealism = parseInt(card.querySelector(".env-slider-realism")?.value || "75", 10);
+    const reglasEscenario = {
+      escenarios_sin_personas: rNoPeople,
+      sin_texto: rNoText,
+      formato_vertical: rVertical,
+      nivel_detalle: isNaN(rDetail) ? 75 : rDetail,
+      nivel_realismo: isNaN(rRealism) ? 75 : rRealism
+    };
+    const stylePromptEl = document.getElementById("univ-style-prompt-en");
+    const stylePromptEn = stylePromptEl ? (stylePromptEl.value || stylePromptEl.textContent || "").trim() : "";
+
     const btn = card.querySelector(".btn-optimize-env-prompt");
-    btn.disabled = true;
-    btn.textContent = "⏳ Optimizando...";
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳ Optimizando...";
+    }
+
+    setSystemStatus(
+      "busy",
+      `Optimizando prompt de ${name}...`,
+      "Traduciendo descripción al inglés, aplicando opciones del escenario y estilo del proyecto..."
+    );
+
     try {
-      const res = await fetch(`/api/projects/${state.currentProject.id}/environments/${envId}/optimize-prompt`, {
-        method: "POST"
+      const res = await fetch(`/api/projects/${state.currentProject.id}/environments/${actualId}/optimize-prompt`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nombre: name,
+          descripcion_visual: desc,
+          tipo: tipo,
+          estilo_visual: univStyle ? univStyle.value : undefined,
+          estilo_detalles: univStyleDetails ? univStyleDetails.value.trim() : undefined,
+          estilo_prompt_en: stylePromptEn || undefined,
+          reglas_escenario: reglasEscenario
+        })
       });
       const data = await res.json();
-      if (data.success && data.prompt_escenario) {
+      if (res.ok && data.success && data.prompt_escenario) {
         const promptInput = card.querySelector(".env-input-prompt");
         if (promptInput) promptInput.value = data.prompt_escenario;
-        showToast("¡Prompt de escenario optimizado para fondo limpio!", "success");
+        setSystemStatus("success", `Prompt de ${name} optimizado`, "Incluye estilo del proyecto, descripción y opciones del escenario.");
+        showToast("¡Prompt de escenario optimizado con estilo, descripción y opciones!", "success");
+      } else {
+        setSystemStatus("error", "Error optimizando prompt de escenario", data.detail || "No se pudo optimizar");
+        showToast(data.detail || "Error optimizando prompt de escenario", "error");
       }
     } catch (e) {
+      setSystemStatus("error", "Error optimizando prompt de escenario", e.message);
       showToast("Error optimizando prompt de escenario", "error");
     } finally {
-      btn.disabled = false;
-      btn.textContent = "⚡ Optimizar IA";
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "Generar prompt con IA";
+      }
     }
   }
 
   async function generateEnvironmentImage(index) {
     if (!state.currentProject) return;
-    await saveUniverse(false);
     const card = document.querySelector(`.env-card[data-index="${index}"]`);
     if (!card) return;
-    const envId = card.dataset.id;
-    const envName = card.querySelector(".env-input-nombre")?.value.trim() || "Escenario";
-    const promptOverride = card.querySelector(".env-input-prompt")?.value.trim() || "";
-    const btn = card.querySelector(".btn-gen-env");
-    btn.disabled = true;
-    btn.textContent = "🎨 Dibujando...";
-    setSystemStatus(
-      "busy",
-      `Pintando ${envName}...`,
-      "Generando arte conceptual en formato 9:16 con el estilo visual del universo..."
-    );
-    try {
-      const res = await fetch(`/api/projects/${state.currentProject.id}/environments/generate`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          environment_id: envId,
-          prompt_override: promptOverride
-        })
-      });
-      const data = await res.json();
-      if (data.success && data.imagen_url) {
-        const frame = document.getElementById(`env-frame-${index}`);
-        const freshUrl = data.imagen_url.includes("?") ? `${data.imagen_url}&t=${Date.now()}` : `${data.imagen_url}?t=${Date.now()}`;
-        frame.innerHTML = `<img src="${freshUrl}" alt="Escenario">`;
-        btn.textContent = "🎨 Regenerar IA";
-        if (data.prompt_used) {
-          const promptInput = card.querySelector(".env-input-prompt");
-          if (promptInput && !promptInput.value) promptInput.value = data.prompt_used;
-        }
-        showToast("¡Arte de escenario generado con éxito!", "success");
-        setSystemStatus("success", `¡${envName} generado!`, "Escenario de referencia listo para las escenas del proyecto.");
-      } else {
-        showToast(data.detail || "Error generando escenario", "error");
-        setSystemStatus("error", `Error generando ${envName}`, data.detail || "Fallo en motor de imagen.");
-        btn.textContent = "🎨 Reintentar";
-      }
-    } catch (e) {
-      showToast("Error generando escenario con IA", "error");
-      setSystemStatus("error", `Error de conexión generando ${envName}`, e.message);
-      btn.textContent = "🎨 Reintentar";
-    } finally {
-      btn.disabled = false;
+    if (card.dataset.estadoAprobacion === "aprobado") {
+      showToast("Este escenario está aprobado y bloqueado. Pulsa '✅ Aprobado' para pasarlo a Pendiente si quieres regenerarlo.", "warning");
+      return;
     }
+    await saveUniverse(false);
+    const envId = card.dataset.id;
+    const envName = card.querySelector(".env-input-name")?.value.trim() || "Escenario";
+    const promptOverride = card.querySelector(".env-input-prompt")?.value.trim() || "";
+
+    activeProposalContext = {
+      kind: "environment",
+      card,
+      actualId: envId,
+      envName,
+      index,
+      promptOverride
+    };
+    await loadCharacterPortraitProposals(activeProposalContext);
   }
 
   async function uploadEnvironmentImage(index, file) {
@@ -2127,13 +2917,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
   // Guardar Universo del Proyecto
   async function saveUniverse(showFeedback = true) {
-    if (!state.currentProject) return;
+    if (!state.currentProject || state.universeRenderedOk === false) return;
 
     const title = univTitle.value.trim() || state.currentProject.titulo;
     const chars = collectCharactersFromUI();
     const envs = collectEnvironmentsFromUI();
 
-    const activeVoice = (narratorVoiceSelect ? narratorVoiceSelect.value : null) || univVoice.value || "openai_fable";
+    const activeVoice = (narratorVoiceSelect ? narratorVoiceSelect.value : null) || (univVoice ? univVoice.value : null) || "openai_fable";
     const narratorProfile = {
       nombre: narratorName ? narratorName.value.trim() : "El Poeta / Muchacho de Moguer (Narrador Lírico)",
       genero: narratorGender ? narratorGender.value : "masculino",
@@ -2152,10 +2942,14 @@ document.addEventListener("DOMContentLoaded", () => {
       audiencia: univAudience.value,
       ambiente: univAmbient.value.trim(),
       estilo_visual: univStyle.value,
-      estilo_detalles: univStyleDetails.value.trim(),
+      estilo_detalles: univStyleDetails ? univStyleDetails.value.trim() : "",
+      reglas_generacion: getGenerationRulesFromUI(),
+      motor_imagenes: univImageEngine ? univImageEngine.value : "flux",
       voz_defecto: activeVoice,
       perfil_narrador: narratorProfile,
       personajes_recurrentes_texto: univRecurrentChars ? univRecurrentChars.value.trim() : "",
+      referencia_personaje_id: state.currentProject?.referencia_personaje_id || null,
+      referencia_escenario_id: state.currentProject?.referencia_escenario_id || null,
       personajes: chars,
       escenarios: envs
     };
@@ -2225,7 +3019,7 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
-    const voiceId = voiceIdOverride || (narratorVoiceSelect ? narratorVoiceSelect.value : univVoice.value) || "openai_fable";
+    const voiceId = voiceIdOverride || (narratorVoiceSelect ? narratorVoiceSelect.value : (univVoice ? univVoice.value : null)) || "openai_fable";
     const sample = (narratorSampleText ? narratorSampleText.value.trim() : "") || "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos.";
 
     if (btnTestNarratorVoice) {
@@ -2282,7 +3076,7 @@ document.addEventListener("DOMContentLoaded", () => {
     btnTestNarratorVoice.addEventListener("click", () => testNarratorVoice());
   }
 
-  // Recomendar narrador con IA
+  // Proponer narrador según la especificación del perfil superior
   if (btnAiRecommendNarrator) {
     btnAiRecommendNarrator.addEventListener("click", async () => {
       if (!state.currentProject) {
@@ -2291,28 +3085,47 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       btnAiRecommendNarrator.disabled = true;
-      btnAiRecommendNarrator.innerHTML = '<span class="btn-icon-symbol">⏳</span> Analizando Narrador con IA...';
-      setSystemStatus("busy", "Analizando voz del narrador con IA...", "Deduciendo perfil psicológico, edad y timbre idóneo a partir del libro...");
+      btnAiRecommendNarrator.innerHTML = '<span class="btn-icon-symbol">⏳</span> Buscando narrador acorde...';
+      setSystemStatus("busy", "Proponiendo narrador...", "Evaluando la especificación narrativa de arriba para elegir la voz más adecuada...");
+
+      const specPayload = {
+        nombre: narratorNameInput ? narratorNameInput.value.trim() : "",
+        genero: narratorGenderSelect ? narratorGenderSelect.value : "masculino",
+        edad_aprox: narratorAgeInput ? narratorAgeInput.value.trim() : "",
+        rango_edad: narratorAgeBracket ? narratorAgeBracket.value : "joven",
+        tono: narratorToneInput ? narratorToneInput.value.trim() : "",
+        justificacion: narratorJustification ? narratorJustification.value.trim() : ""
+      };
 
       try {
         const res = await fetch(`/api/projects/${state.currentProject.id}/narrator/recommend-ai`, {
-          method: "POST"
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(specPayload)
         });
         const data = await res.json();
         if (data.success && data.perfil_narrador) {
-          populateNarratorFields(data.perfil_narrador, data.perfil_narrador.voz_recomendada);
-          showToast("¡Perfil del narrador y voz recomendada actualizados con IA!", "success");
-          setSystemStatus("success", "Narrador configurado", `Recomendado: ${data.perfil_narrador.nombre} (${data.perfil_narrador.edad_aprox || ''})`);
+          const proposedVoice = data.perfil_narrador.voz_recomendada;
+          if (proposedVoice && narratorVoiceSelect) {
+            narratorVoiceSelect.value = proposedVoice;
+            updateSelectedVoiceCard(proposedVoice);
+            document.querySelectorAll(".btn-quick-voice").forEach(b => {
+              b.classList.toggle("active", b.dataset.voice === proposedVoice);
+            });
+          }
+          const motivo = data.perfil_narrador.motivo_propuesta || `Voz propuesta: ${proposedVoice}`;
+          showToast(`🔮 ${motivo}`, "success");
+          setSystemStatus("success", "Narrador propuesto según especificación", motivo);
         } else {
-          showToast(data.detail || "Error recomendando narrador", "error");
-          setSystemStatus("error", "Error en análisis de narrador", data.detail || "");
+          showToast(data.detail || "Error proponiendo narrador", "error");
+          setSystemStatus("error", "Error proponiendo narrador", data.detail || "");
         }
       } catch (e) {
-        showToast("Error al recomendar narrador con IA", "error");
-        setSystemStatus("error", "Error de red en análisis de narrador", e.message);
+        showToast("Error al proponer narrador", "error");
+        setSystemStatus("error", "Error de red proponiendo narrador", e.message);
       } finally {
         btnAiRecommendNarrator.disabled = false;
-        btnAiRecommendNarrator.innerHTML = '🔮 Recomendar Narrador con IA';
+        btnAiRecommendNarrator.innerHTML = '🔮 Proponer Narrador según la Especificación de Arriba';
       }
     });
   }
@@ -2332,49 +3145,403 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // Actualizar tarjeta de implicaciones técnicas del estilo visual seleccionado
-  function updateStyleImplications(styleKey, updateDetailsField = false) {
-    const meta = STYLE_METADATA[styleKey] || STYLE_METADATA["watercolor"];
-    if (styleImplicationsIcon) styleImplicationsIcon.textContent = meta.icon;
-    if (styleImplicationsTitle) styleImplicationsTitle.textContent = `Implicaciones Técnicas: ${meta.name}`;
-    if (styleImplicationsTags) {
-      styleImplicationsTags.innerHTML = meta.tags.map(t => `<span class="style-badge-tag">${t}</span>`).join("");
-    }
-    if (styleImplicationsDesc) {
-      styleImplicationsDesc.textContent = meta.desc;
-    }
-    const noteEl = document.querySelector(".style-implications-coherence-note span");
-    if (noteEl) {
-      noteEl.innerHTML = `<b>Regla de Coherencia Absoluta:</b> ${meta.coherenceNote}`;
+  const STYLE_NEGATIVES = {
+    watercolor: "Sin 3D CGI, sin fotorrealismo, sin bordes duros digitales ni texto en imagen.",
+    ghibli_anime: "Sin render 3D plástico, sin sombreado fotográfico ni estética cyberpunk.",
+    storybook_kids: "Sin realismo fotográfico, sin sombras duras ni proporciones adultas rígidas.",
+    pixar_3d: "Sin dibujo plano 2D, sin trazos de tinta ni estética low-poly.",
+    cinematic: "Sin estética cartoon, sin trazos de cómic ni colores planos sin volumen.",
+    anime: "Sin 3D CGI rígido, sin grano analógico sucio ni estilo acuarela difusa.",
+    noir_bw: "Sin color (ni acentos cromáticos), sin iluminación plana de día.",
+    comic: "Sin fotorrealismo ni difuminados acuarela; mantener entintado limpio.",
+    dark_fantasy: "Sin colores pastel alegres ni estética infantil cartoon.",
+    cyberpunk: "Sin iluminación natural diurna rural ni acabados vintage analógicos.",
+    vintage: "Sin neones digitales modernos ni render 3D sintético."
+  };
+
+  function renderRecurrentCharsGrid(rawText, personajesList = [], refCharId = null) {
+    const gridEl = document.getElementById("univ-recurrent-chars-grid");
+    if (!gridEl) return;
+    const text = (rawText || "").trim();
+    let items = [];
+    if (text) {
+      items = text.split(/,(?![^()]*\))/).map(s => s.trim()).filter(Boolean).map((entry, idx) => {
+        const m = entry.match(/^([^(]+)\(([^)]+)\)$/);
+        const nombre = m ? m[1].trim() : entry;
+        const detalle = m ? m[2].trim() : "";
+        const matched = (personajesList || []).find(c =>
+          (c.nombre || "").toLowerCase().includes(nombre.toLowerCase()) ||
+          nombre.toLowerCase().includes((c.nombre || "").toLowerCase())
+        );
+        return { id: matched?.id || `char_${idx + 1}`, nombre, detalle };
+      });
+    } else if (Array.isArray(personajesList) && personajesList.length > 0) {
+      items = personajesList.map(c => ({ id: c.id, nombre: c.nombre || c.id, detalle: c.rol || "" }));
     }
 
-    if (updateDetailsField && univStyleDetails) {
-      const currentVal = univStyleDetails.value.trim();
-      const isDefaultOfAny = Object.values(STYLE_METADATA).some(m => m.defaultDetails.trim() === currentVal);
-      if (!currentVal || isDefaultOfAny) {
-        univStyleDetails.value = meta.defaultDetails;
+    if (items.length === 0) {
+      gridEl.innerHTML = `<div class="text-muted" style="font-size:0.8rem;">Sin personajes recurrentes definidos aún.</div>`;
+      return;
+    }
+
+    const activeRefId = refCharId || state.currentProject?.referencia_personaje_id || items[0]?.id;
+    if (state.currentProject && !state.currentProject.referencia_personaje_id && activeRefId) {
+      state.currentProject.referencia_personaje_id = activeRefId;
+    }
+
+    gridEl.innerHTML = items.map(it => {
+      const isRef = it.id === activeRefId;
+      return `
+        <div class="recurrent-char-chip ${isRef ? 'is-reference' : ''}" data-char-id="${escapeHtml(it.id)}" title="Pulsa para marcar a ${escapeHtml(it.nombre)} como personaje de referencia principal">
+          <strong>${isRef ? '★ ' : ''}${escapeHtml(it.nombre)}</strong>
+          ${it.detalle ? `<span>${escapeHtml(it.detalle)}</span>` : ""}
+        </div>
+      `;
+    }).join("");
+
+    gridEl.querySelectorAll(".recurrent-char-chip").forEach(chip => {
+      chip.addEventListener("click", async () => {
+        const chosenId = chip.dataset.charId;
+        if (!chosenId) return;
+        if (state.currentProject) state.currentProject.referencia_personaje_id = chosenId;
+        renderRecurrentCharsGrid(rawText, personajesList, chosenId);
+        await saveUniverse(false);
+        showToast(`★ Personaje de referencia fijado: ${chip.querySelector("strong")?.textContent.replace("★ ", "")}`, "info");
+      });
+    });
+  }
+
+  function renderRecurrentEnvsGrid(escenariosList = [], refEnvId = null) {
+    const gridEl = document.getElementById("univ-recurrent-envs-grid");
+    if (!gridEl) return;
+    const list = Array.isArray(escenariosList) ? escenariosList : [];
+    if (list.length === 0) {
+      gridEl.innerHTML = `<div class="text-muted" style="font-size:0.8rem;">Sin escenarios recurrentes definidos aún.</div>`;
+      return;
+    }
+
+    const activeRefId = refEnvId || state.currentProject?.referencia_escenario_id || list[0]?.id;
+    if (state.currentProject && !state.currentProject.referencia_escenario_id && activeRefId) {
+      state.currentProject.referencia_escenario_id = activeRefId;
+    }
+
+    gridEl.innerHTML = list.map((e, idx) => {
+      const eid = e.id || `esc_${idx + 1}`;
+      const ename = e.nombre || eid;
+      const isRef = eid === activeRefId;
+      const descShort = (e.descripcion_visual || "").trim();
+      const snippet = descShort.length > 65 ? `${descShort.slice(0, 62)}...` : descShort;
+      return `
+        <div class="recurrent-char-chip ${isRef ? 'is-reference' : ''}" data-env-id="${escapeHtml(eid)}" title="Pulsa para marcar ${escapeHtml(ename)} como escenario de referencia principal">
+          <strong>${isRef ? '★ ' : ''}${escapeHtml(ename)}</strong>
+          ${snippet ? `<span>${escapeHtml(snippet)}</span>` : ""}
+        </div>
+      `;
+    }).join("");
+
+    gridEl.querySelectorAll(".recurrent-char-chip").forEach(chip => {
+      chip.addEventListener("click", async () => {
+        const chosenId = chip.dataset.envId;
+        if (!chosenId) return;
+        if (state.currentProject) state.currentProject.referencia_escenario_id = chosenId;
+        renderRecurrentEnvsGrid(list, chosenId);
+        await saveUniverse(false);
+        showToast(`★ Escenario de referencia fijado: ${chip.querySelector("strong")?.textContent.replace("★ ", "")}`, "info");
+      });
+    });
+  }
+
+  document.getElementById("btn-toggle-recurrent-raw")?.addEventListener("click", () => {
+    if (!univRecurrentChars) return;
+    const isHidden = univRecurrentChars.style.display === "none" || !univRecurrentChars.style.display;
+    univRecurrentChars.style.display = isHidden ? "block" : "none";
+  });
+
+  univRecurrentChars?.addEventListener("input", () => {
+    renderRecurrentCharsGrid(univRecurrentChars.value, state.currentProject?.personajes || []);
+  });
+
+  const RULE_CHECKBOX_MAP = {
+    fondo_blanco: "rule-fondo-blanco",
+    cuerpo_entero: "rule-cuerpo-entero",
+    sin_texto: "rule-sin-texto",
+    escenarios_sin_personas: "rule-escenarios-sin-personas",
+    formato_vertical: "rule-formato-vertical"
+  };
+
+  const RULE_PROMPTS_EN = {
+    fondo_blanco: "isolated on solid plain pure white background (#FFFFFF)",
+    cuerpo_entero: "full body standing head to toe, wide safety margins, no cropped feet",
+    sin_texto: "no text, no words, no labels, no watermarks, no arrows",
+    escenarios_sin_personas: "empty scene, no people, no characters, pure background art",
+    formato_vertical: "vertical 9:16 portrait composition"
+  };
+
+  let customRulesList = [];
+
+  function renderCustomRulesInGrid() {
+    const grid = document.getElementById("gen-rules-grid");
+    if (!grid) return;
+    grid.querySelectorAll(".custom-rule-item").forEach(el => el.remove());
+    customRulesList.forEach((rule, idx) => {
+      const label = document.createElement("label");
+      label.className = "gen-rule-check custom-rule-item";
+      label.innerHTML = `
+        <input type="checkbox" class="custom-rule-checkbox" data-idx="${idx}" ${rule.checked ? "checked" : ""}>
+        <span style="flex:1;">📌 ${rule.label}</span>
+        <button type="button" class="btn btn-ghost btn-xxs btn-del-custom-rule" data-idx="${idx}" title="Quitar regla" style="padding:0 4px;">&times;</button>
+      `;
+      label.querySelector(".custom-rule-checkbox").addEventListener("change", (e) => {
+        customRulesList[idx].checked = e.target.checked;
+        updateFinalStylePromptEN();
+      });
+      label.querySelector(".btn-del-custom-rule").addEventListener("click", (e) => {
+        e.preventDefault();
+        customRulesList.splice(idx, 1);
+        renderCustomRulesInGrid();
+        updateFinalStylePromptEN();
+      });
+      grid.appendChild(label);
+    });
+  }
+
+  document.getElementById("btn-add-custom-rule")?.addEventListener("click", () => {
+    const inp = document.getElementById("new-custom-rule-input");
+    const val = inp ? inp.value.trim() : "";
+    if (!val) return;
+    customRulesList.push({ label: val, checked: true });
+    if (inp) inp.value = "";
+    renderCustomRulesInGrid();
+    updateFinalStylePromptEN();
+  });
+
+  function getDetailEffectHtml(detailVal) {
+    const d = Number(detailVal);
+    if (d <= 20) return "<strong>0–20% Minimalista:</strong> Formas simples, muy poco detalle, aguadas planas.";
+    if (d <= 40) return "<strong>21–40% Sencillo:</strong> Trazo limpio y sombreado mínimo de cuento.";
+    if (d <= 60) return "<strong>41–60% Equilibrado:</strong> Detalle medio de álbum ilustrado y aguadas suaves.";
+    if (d <= 80) return "<strong>61–80% Delicado:</strong> Tinta fina sepia, detalle cuidado y veladuras suaves.";
+    return "<strong>81–100% Muy detallado:</strong> Tinta muy fina, trazo intrincado y capas ricas.";
+  }
+
+  function getRealismEffectHtml(realismVal) {
+    const r = Number(realismVal);
+    if (r <= 20) return "<strong>0–20% Cartoon 2D:</strong> Dibujo animado muy estilizado y proporciones juguetonas.";
+    if (r <= 40) return "<strong>21–40% Cuento animado:</strong> Semi-estilizado suave tipo animación clásica.";
+    if (r <= 60) return "<strong>41–60% Cuento clásico:</strong> Ilustración tradicional a mano con proporciones poéticas.";
+    if (r <= 80) return "<strong>61–80% Ilustración estilizada:</strong> Álbum ilustrado con rasgos simplificados (sin anatomía realista).";
+    return "<strong>81–100% Ilustración naturalista:</strong> Proporciones más fieles de libro clásico (sin fotorrealismo).";
+  }
+
+  function getSliderPromptEn(detailVal, realismVal) {
+    const d = Number(detailVal);
+    const r = Number(realismVal);
+    const parts = [];
+    if (d <= 20) parts.push("minimalist simplified shapes, very low detail, clean uncluttered lines, simple flat washes");
+    else if (d <= 40) parts.push("simple charming storybook detail, clean uncluttered ink lines, soft minimal shading");
+    else if (d <= 60) parts.push("balanced medium storybook detail, clear expressive features, gentle watercolor washes");
+    else if (d <= 80) parts.push("delicate storybook detail, fine sepia ink linework and soft artistic translucent washes");
+    else parts.push("intricate fine ink linework, rich delicate storybook detail and layered translucent washes");
+
+    if (r <= 20) parts.push("stylized 2D cartoon character design, exaggerated playful proportions, expressive animated look");
+    else if (r <= 40) parts.push("semi-stylized animated storybook character, gentle charming stylized proportions");
+    else if (r <= 60) parts.push("classic hand-drawn storybook illustration proportions, gentle stylized poetic character design");
+    else if (r <= 80) parts.push("gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features");
+    else parts.push("refined classic picture-book illustration proportions, expressive hand-drawn storybook style");
+    return parts.join(", ");
+  }
+
+  function getGenerationRulesFromUI() {
+    const out = {};
+    for (const [k, elId] of Object.entries(RULE_CHECKBOX_MAP)) {
+      const el = document.getElementById(elId);
+      out[k] = el ? el.checked : true;
+    }
+    const detailEl = document.getElementById("slider-nivel-detalle");
+    const realismEl = document.getElementById("slider-nivel-realismo");
+    out.nivel_detalle = detailEl ? parseInt(detailEl.value, 10) : 75;
+    out.nivel_realismo = realismEl ? parseInt(realismEl.value, 10) : 75;
+    if (customRulesList.length > 0) {
+      out._custom = customRulesList;
+    }
+    return out;
+  }
+
+  function applyGenerationRulesToUI(reglas) {
+    const r = reglas || {};
+    for (const [k, elId] of Object.entries(RULE_CHECKBOX_MAP)) {
+      const el = document.getElementById(elId);
+      if (el) el.checked = r[k] !== undefined ? Boolean(r[k]) : true;
+    }
+    const detailEl = document.getElementById("slider-nivel-detalle");
+    const detailValEl = document.getElementById("slider-nivel-detalle-val");
+    const detailHintEl = document.getElementById("slider-nivel-detalle-hint");
+    const dVal = r.nivel_detalle !== undefined ? Number(r.nivel_detalle) : 75;
+    if (detailEl) detailEl.value = String(dVal);
+    if (detailValEl) detailValEl.textContent = `${dVal}%`;
+    if (detailHintEl) detailHintEl.innerHTML = getDetailEffectHtml(dVal);
+
+    const realismEl = document.getElementById("slider-nivel-realismo");
+    const realismValEl = document.getElementById("slider-nivel-realismo-val");
+    const realismHintEl = document.getElementById("slider-nivel-realismo-hint");
+    const rVal = r.nivel_realismo !== undefined ? Number(r.nivel_realismo) : 75;
+    if (realismEl) realismEl.value = String(rVal);
+    if (realismValEl) realismValEl.textContent = `${rVal}%`;
+    if (realismHintEl) realismHintEl.innerHTML = getRealismEffectHtml(rVal);
+
+    customRulesList = Array.isArray(r._custom) ? r._custom.map(x => ({ ...x })) : [];
+    renderCustomRulesInGrid();
+    updateFinalStylePromptEN();
+  }
+
+  function updateFinalStylePromptEN() {
+    const outEl = document.getElementById("univ-final-prompt-en");
+    if (!outEl) return;
+    const styleKey = univStyle ? univStyle.value : "watercolor";
+    const parts = [];
+    parts.push(STYLE_PROMPTS_EN[styleKey] || STYLE_PROMPTS_EN["cinematic"]);
+
+    for (const [k, elId] of Object.entries(RULE_CHECKBOX_MAP)) {
+      const el = document.getElementById(elId);
+      if (el && el.checked && RULE_PROMPTS_EN[k]) {
+        parts.push(RULE_PROMPTS_EN[k]);
       }
     }
+    const detailEl = document.getElementById("slider-nivel-detalle");
+    const realismEl = document.getElementById("slider-nivel-realismo");
+    parts.push(getSliderPromptEn(detailEl ? detailEl.value : 75, realismEl ? realismEl.value : 75));
+
+    customRulesList.forEach(r => {
+      if (r.checked && r.label) parts.push(r.label);
+    });
+
+    const manualNotes = univStyleDetails ? univStyleDetails.value.trim() : "";
+    if (manualNotes) parts.push(manualNotes);
+
+    outEl.value = parts.join(", ");
+  }
+
+  Object.values(RULE_CHECKBOX_MAP).forEach(elId => {
+    document.getElementById(elId)?.addEventListener("change", updateFinalStylePromptEN);
+  });
+  document.getElementById("slider-nivel-detalle")?.addEventListener("input", (ev) => {
+    const vEl = document.getElementById("slider-nivel-detalle-val");
+    if (vEl) vEl.textContent = `${ev.target.value}%`;
+    const hEl = document.getElementById("slider-nivel-detalle-hint");
+    if (hEl) hEl.innerHTML = getDetailEffectHtml(ev.target.value);
+    updateFinalStylePromptEN();
+  });
+  document.getElementById("slider-nivel-realismo")?.addEventListener("input", (ev) => {
+    const vEl = document.getElementById("slider-nivel-realismo-val");
+    if (vEl) vEl.textContent = `${ev.target.value}%`;
+    const hEl = document.getElementById("slider-nivel-realismo-hint");
+    if (hEl) hEl.innerHTML = getRealismEffectHtml(ev.target.value);
+    updateFinalStylePromptEN();
+  });
+  univStyleDetails?.addEventListener("input", updateFinalStylePromptEN);
+
+  const STYLE_PROMPTS_EN = {
+    cinematic: "cinematic lighting, photorealistic 8k, shot on 35mm lens, atmospheric depth of field, dramatic shadows, no cartoon, no comic outlines, no flat colors",
+    noir_bw: "black and white film noir photography, dramatic high contrast monochrome, sharp shadows, moody lighting, classic monochrome 35mm film, strictly monochrome, no color, no flat daylight",
+    anime: "anime aesthetic, Makoto Shinkai style, vibrant colors, beautiful sky, high quality anime screencap, trending on Pixiv, no 3D CGI, no analog grain, no blurry watercolor",
+    ghibli_anime: "Studio Ghibli aesthetic, Hayao Miyazaki hand-drawn anime, painterly backgrounds, warm nostalgic feel, whimsical art, no plastic 3D render, no photorealism, no cyberpunk",
+    watercolor: "delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, no 3D CGI, no photorealism",
+    storybook_kids: "whimsical children's book illustration, vibrant friendly colors, charming storybook character art, soft lighting, family friendly, highly detailed, no photorealism, no harsh shadows",
+    pixar_3d: "3D animated movie render, Pixar Disney style, soft volumetric subsurface scattering, expressive character facial features, 4k 8k, no flat 2D drawing, no ink outlines, no low-poly",
+    dark_fantasy: "dark fantasy, hyperdetailed, grimdark aesthetic, ominous lighting, mystical atmosphere, concept art, Unreal Engine 5 render, no bright pastel colors, no cartoon",
+    cyberpunk: "cyberpunk style, neon lights, rainy reflection, high tech dystopian, blade runner aesthetic, volumetric glow, no rural daylight, no vintage analog",
+    vintage: "vintage 1970s film grain, warm Kodak Portra color tones, nostalgic, retro photography, authentic cinematic texture, no modern neon, no synthetic 3D render",
+    comic: "graphic novel comic illustration, bold ink lines, dynamic comic book shading, expressive colors, Frank Miller style, no photorealism, no soft watercolor wash"
+  };
+
+  function updateStyleImplications(styleKey, _unused = false) {
+    const meta = STYLE_METADATA[styleKey] || STYLE_METADATA["watercolor"];
+    if (styleImplicationsIcon) styleImplicationsIcon.textContent = meta.icon;
+    if (styleImplicationsTitle) styleImplicationsTitle.textContent = `Estilo: ${meta.name}`;
+    if (styleImplicationsTags) {
+      const cleanTags = (meta.tags || []).filter(t => !t.includes("4 Vistas"));
+      styleImplicationsTags.innerHTML = cleanTags.map(t => `<span class="style-badge-tag">${t}</span>`).join("");
+    }
+    if (styleImplicationsDesc) {
+      const negRule = STYLE_NEGATIVES[styleKey] || "";
+      styleImplicationsDesc.textContent = negRule ? `${meta.desc} (${negRule})` : meta.desc;
+    }
+    const promptEnEl = document.getElementById("style-implications-prompt-en");
+    if (promptEnEl) {
+      promptEnEl.textContent = STYLE_PROMPTS_EN[styleKey] || STYLE_PROMPTS_EN["cinematic"];
+    }
+    updateFinalStylePromptEN();
   }
 
   // Sincronizar y propagar técnica visual a todos los personajes y escenarios
-  async function syncStyleToAllEntities() {
+  function openSyncStyleConfirmation() {
+    if (!state.currentProject) {
+      showToast("Selecciona un proyecto primero", "warning");
+      return;
+    }
+    const modal = document.getElementById("modal-sync-style-confirm");
+    if (!modal) {
+      syncStyleToAllEntities(true, true);
+      return;
+    }
+
+    const chars = collectCharactersFromUI();
+    const envs = collectEnvironmentsFromUI();
+    const styleLabel = univStyle?.options[univStyle.selectedIndex]?.text || univStyle?.value || "—";
+
+    const nameEl = document.getElementById("sync-style-modal-name");
+    const charsInfoEl = document.getElementById("sync-style-chars-info");
+    const envsInfoEl = document.getElementById("sync-style-envs-info");
+    if (nameEl) nameEl.textContent = styleLabel;
+    if (charsInfoEl) {
+      const withPrompt = chars.filter(c => (c.prompt_retrato || "").trim()).length;
+      charsInfoEl.textContent = chars.length > 0
+        ? `${chars.length} personaje(s) (${withPrompt} con prompt actual que se actualizará).`
+        : "No hay personajes todavía.";
+    }
+    if (envsInfoEl) {
+      const withPrompt = envs.filter(e => (e.prompt_escenario || "").trim()).length;
+      envsInfoEl.textContent = envs.length > 0
+        ? `${envs.length} escenario(s) (${withPrompt} con prompt actual que se actualizará).`
+        : "No hay escenarios todavía.";
+    }
+
+    const btnConfirm = document.getElementById("btn-confirm-sync-style");
+    if (btnConfirm) {
+      btnConfirm.onclick = async () => {
+        const syncChars = modal.querySelector('input[name="sync-opt-chars"][value="yes"]')?.checked !== false;
+        const syncEnvs = modal.querySelector('input[name="sync-opt-envs"][value="yes"]')?.checked !== false;
+        modal.classList.remove("open");
+        if (!syncChars && !syncEnvs) {
+          showToast("No se ha modificado ningún prompt.", "info");
+          return;
+        }
+        await syncStyleToAllEntities(syncChars, syncEnvs);
+      };
+    }
+
+    modal.classList.add("open");
+  }
+
+  async function syncStyleToAllEntities(syncCharacters = true, syncEnvironments = true) {
     if (!state.currentProject) {
       showToast("Selecciona un proyecto primero", "warning");
       return;
     }
 
+    await saveUniverse(false);
     const currentStyle = univStyle.value;
-    const currentDetails = univStyleDetails.value.trim();
+    const currentDetails = univStyleDetails ? univStyleDetails.value.trim() : "";
 
     if (btnSyncStyleToAll) {
       btnSyncStyleToAll.disabled = true;
-      btnSyncStyleToAll.textContent = "⏳ Sincronizando con IA...";
+      btnSyncStyleToAll.textContent = "⏳ Sincronizando...";
     }
 
     setSystemStatus(
       "busy",
       "Sincronizando Estilo del Universo...",
-      `Traduciendo descripciones y adaptando hojas de 4 vistas (2x2 grid) y escenarios a la técnica '${currentStyle}'...`
+      `Actualizando prompts seleccionados a la técnica '${currentStyle}'...`
     );
 
     try {
@@ -2383,7 +3550,9 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           estilo_visual: currentStyle,
-          estilo_detalles: currentDetails
+          estilo_detalles: currentDetails,
+          sync_characters: syncCharacters,
+          sync_environments: syncEnvironments
         })
       });
       const data = await res.json();
@@ -2397,11 +3566,11 @@ document.addEventListener("DOMContentLoaded", () => {
         renderEnvironmentCards(data.escenarios || []);
         updateMiniBanner();
 
-        showToast(`✅ ¡Estilo sincronizado! ${data.characters_synced} personajes (hojas 4 vistas estándar Darbón) y ${data.environments_synced} escenarios actualizados.`, "success");
+        showToast(`✅ ¡Estilo sincronizado! ${data.characters_synced} personaje(s) y ${data.environments_synced} escenario(s) actualizados.`, "success");
         setSystemStatus(
           "success",
-          "Estilo sincronizado en todo el universo",
-          `${data.characters_synced} personajes (2x2 grid) y ${data.environments_synced} escenarios adaptados a '${currentStyle}'.`
+          "Estilo sincronizado",
+          `${data.characters_synced} personaje(s) y ${data.environments_synced} escenario(s) adaptados a '${currentStyle}' (imágenes intactas).`
         );
       } else {
         showToast("Error al sincronizar estilo", "error");
@@ -2413,7 +3582,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } finally {
       if (btnSyncStyleToAll) {
         btnSyncStyleToAll.disabled = false;
-        btnSyncStyleToAll.textContent = "⚡ Sincronizar estilo en Personajes y Escenarios";
+        btnSyncStyleToAll.textContent = "⚡ Sincronizar estilo";
       }
     }
   }
@@ -2422,7 +3591,7 @@ document.addEventListener("DOMContentLoaded", () => {
     univStyle.addEventListener("change", () => updateStyleImplications(univStyle.value, true));
   }
   if (btnSyncStyleToAll) {
-    btnSyncStyleToAll.addEventListener("click", syncStyleToAllEntities);
+    btnSyncStyleToAll.addEventListener("click", openSyncStyleConfirmation);
   }
 
   // ========================================================
@@ -2514,46 +3683,89 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btnAuditCharacters) {
       btnAuditCharacters.disabled = true;
-      btnAuditCharacters.innerHTML = `⏳ Auditando con Visión IA...`;
+      btnAuditCharacters.innerHTML = `⏳ Revisando prompts y estilo...`;
     }
 
-    showToast("🔍 Auditando personajes: verificando 4 perspectivas, fondo limpio y técnica plástica uniforme...", "info");
+    // Guardar cambios actuales antes de auditar
+    await saveUniverse(false);
+    const refCharId = state.currentProject?.referencia_personaje_id || null;
+
     setSystemStatus(
       "busy",
-      "Auditando Coherencia de Personajes...",
-      "GPT-4o Vision revisando que cada personaje tenga 4 vistas en cuadrícula 2x2, fondo limpio y técnica uniforme..."
+      "Revisando Coherencia de Personajes...",
+      "Comprobando que todos los prompts cuadren con el estilo del libro, opciones particulares y personaje de referencia..."
     );
 
     try {
-      const res = await fetch(`/api/projects/${state.currentProject.id}/audit-characters?auto_heal=true`, {
-        method: "POST"
+      const res = await fetch(`/api/projects/${state.currentProject.id}/audit-characters-coherence`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference_char_id: refCharId })
       });
       const data = await res.json();
       if (data.success) {
-        await selectProject(state.currentProject.id);
+        // Actualizar las tarjetas en pantalla para reflejar los que pasaron a "En revisión"
+        (data.results || []).forEach(r => {
+          const cardEl = document.querySelector(`.char-card[data-id="${r.id}"]`);
+          if (cardEl && r.estado_aprobacion) {
+            cardEl.dataset.estadoAprobacion = r.estado_aprobacion;
+            cardEl.dataset.motivoRechazo = r.status !== "APPROVED" ? (r.reason || "") : "";
+            const slot = cardEl.querySelector(".char-approval-slot");
+            if (slot) {
+              if (r.estado_aprobacion === "en_revision") {
+                slot.innerHTML = `<button type="button" class="badge btn-toggle-char-approval" style="background: rgba(245, 158, 11, 0.22); color: #fbbf24; border: 1px solid #f59e0b; font-size: 0.72rem; padding: 3px 10px; border-radius: 4px; cursor: pointer;" title="${escapeHtml(r.reason || 'En revisión')}">⚠️ En revisión</button>`;
+              }
+            }
+          }
+        });
 
-        let toastMsg = `Auditoría finalizada: ${data.approved} coherentes`;
-        if (data.healed > 0) {
-          toastMsg += ` y ${data.healed} corregidos automáticamente`;
-          setSystemStatus(
-            "healing",
-            "Personajes corregidos automáticamente",
-            `${data.healed} personaje(s) regenerados con cuadrícula 2x2. ${data.approved} personajes aprobados.`
-          );
-        } else {
-          setSystemStatus(
-            "success",
-            "Auditoría de personajes aprobada (100%)",
-            `Los ${data.approved} personajes cumplen el estándar de 4 vistas (2x2 grid) y técnica de acuarela.`
-          );
-        }
-        showToast(toastMsg, data.healed > 0 ? "warning" : "success");
+        const toastMsg = data.rejected === 0
+          ? `✅ Todos los personajes (${data.approved}) son coherentes con ${data.reference_char_name || 'la referencia'}`
+          : `⚠️ ${data.rejected} personaje(s) pasaron a "En revisión" por diferencias con ${data.reference_char_name || 'la referencia'}`;
+        showToast(toastMsg, data.rejected > 0 ? "warning" : "success");
+        setSystemStatus(
+          data.rejected > 0 ? "warning" : "success",
+          data.rejected > 0 ? `${data.rejected} personaje(s) en revisión` : "Coherencia de personajes al 100%",
+          `Referencia principal: ${data.reference_char_name || 'N/A'} · Estilo: ${data.style}`
+        );
 
         openAuditModal(
-          "🔍 Auditoría de Coherencia de Personajes",
-          `Evaluación exhaustiva de 4 perspectivas, fondo blanco y técnica artística (${data.style}).`
+          "🔍 Revisión de Coherencia de Personajes",
+          data.rejected > 0
+            ? `Estos son los cambios necesarios respecto a ${data.reference_char_name || 'la referencia'} (${data.style}). Se les ha quitado el Aprobado y han pasado a "En revisión".`
+            : `Todos los personajes cumplen con el estilo (${data.style}) y con el prompt de ${data.reference_char_name || 'la referencia'}.`
         );
         renderAuditResults(data, "characters");
+
+        if (data.rejected > 0) {
+          const listEl = document.getElementById("audit-results-list");
+          if (listEl) {
+            const actionWrap = document.createElement("div");
+            actionWrap.style.cssText = "display:flex; justify-content:flex-end; margin-top:12px;";
+            actionWrap.innerHTML = `<button type="button" class="btn btn-primary btn-sm" id="btn-sync-incoherent-prompts">⚡ Actualizar solo los ${data.rejected} prompts desalineados (sin tocar imágenes)</button>`;
+            listEl.appendChild(actionWrap);
+            document.getElementById("btn-sync-incoherent-prompts")?.addEventListener("click", async (ev) => {
+              const b = ev.currentTarget;
+              b.disabled = true;
+              b.textContent = "⏳ Sincronizando prompts...";
+              try {
+                const sRes = await fetch(`/api/projects/${state.currentProject.id}/sync-incoherent-prompts`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ reference_char_id: refCharId })
+                });
+                const sData = await sRes.json();
+                if (sData.success) {
+                  await selectProject(state.currentProject.id);
+                  renderAuditResults(sData.audit, "characters");
+                  showToast(`✅ ${sData.updated_count} prompts actualizados y alineados sin tocar imágenes`, "success");
+                }
+              } finally {
+                b.disabled = false;
+              }
+            });
+          }
+        }
       } else {
         showToast("Error en auditoría: " + (data.detail || "desconocido"), "error");
         setSystemStatus("error", "Error en auditoría de personajes", data.detail || "Desconocido");
@@ -2577,46 +3789,85 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (btnAuditEnvironments) {
       btnAuditEnvironments.disabled = true;
-      btnAuditEnvironments.innerHTML = `⏳ Auditando con Visión IA...`;
+      btnAuditEnvironments.innerHTML = `⏳ Revisando prompts y estilo...`;
     }
 
-    showToast("🔍 Auditando escenarios: verificando ausencia de personas, técnica artística y encuadre 9:16...", "info");
+    await saveUniverse(false);
+    const refEnvId = state.currentProject?.referencia_escenario_id || null;
+
     setSystemStatus(
       "busy",
-      "Auditando Coherencia de Escenarios...",
-      "GPT-4o Vision comprobando que los fondos escénicos estén libres de personas y cumplan el formato 9:16..."
+      "Revisando Coherencia de Escenarios...",
+      "Comprobando que todos los prompts cuadren con el estilo del libro, opciones particulares y escenario de referencia..."
     );
 
     try {
-      const res = await fetch(`/api/projects/${state.currentProject.id}/audit-environments?auto_heal=true`, {
-        method: "POST"
+      const res = await fetch(`/api/projects/${state.currentProject.id}/audit-environments-coherence`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ reference_env_id: refEnvId })
       });
       const data = await res.json();
       if (data.success) {
-        await selectProject(state.currentProject.id);
+        (data.results || []).forEach(r => {
+          const cardEl = document.querySelector(`.env-card[data-id="${r.id}"]`);
+          if (cardEl && r.estado_aprobacion) {
+            cardEl.dataset.estadoAprobacion = r.estado_aprobacion;
+            cardEl.dataset.motivoRechazo = r.status !== "APPROVED" ? (r.reason || "") : "";
+            const slot = cardEl.querySelector(".env-approval-slot");
+            if (slot) {
+              slot.innerHTML = getApprovalBadgeHtml(r.estado_aprobacion, cardEl.dataset.motivoRechazo, "btn-toggle-env-approval");
+            }
+          }
+        });
 
-        let toastMsg = `Auditoría finalizada: ${data.approved} escenarios coherentes`;
-        if (data.healed > 0) {
-          toastMsg += ` y ${data.healed} regenerados automáticamente`;
-          setSystemStatus(
-            "healing",
-            "Escenarios corregidos automáticamente",
-            `${data.healed} fondo(s) regenerados sin personas en formato 9:16. ${data.approved} aprobados.`
-          );
-        } else {
-          setSystemStatus(
-            "success",
-            "Auditoría de escenarios aprobada (100%)",
-            `Los ${data.approved} escenarios cumplen con fondos escénicos limpios y técnica de acuarela.`
-          );
-        }
-        showToast(toastMsg, data.healed > 0 ? "warning" : "success");
+        const toastMsg = data.rejected === 0
+          ? `✅ Todos los escenarios (${data.approved}) son coherentes con ${data.reference_env_name || 'la referencia'}`
+          : `⚠️ ${data.rejected} escenario(s) pasaron a "En revisión" por diferencias con ${data.reference_env_name || 'la referencia'}`;
+        showToast(toastMsg, data.rejected > 0 ? "warning" : "success");
+        setSystemStatus(
+          data.rejected > 0 ? "warning" : "success",
+          data.rejected > 0 ? `${data.rejected} escenario(s) en revisión` : "Coherencia de escenarios al 100%",
+          `Referencia principal: ${data.reference_env_name || 'N/A'} · Estilo: ${data.style}`
+        );
 
         openAuditModal(
-          "🔍 Auditoría de Coherencia de Escenarios",
-          `Evaluación de fondos limpios sin personas, encuadre 9:16 y técnica plástica (${data.style}).`
+          "🔍 Revisión de Coherencia de Escenarios",
+          data.rejected > 0
+            ? `Estos son los cambios necesarios respecto a ${data.reference_env_name || 'la referencia'} (${data.style}). Se les ha quitado el Aprobado y han pasado a "En revisión".`
+            : `Todos los escenarios cumplen con el estilo (${data.style}) y con el prompt de ${data.reference_env_name || 'la referencia'}.`
         );
         renderAuditResults(data, "environments");
+
+        if (data.rejected > 0) {
+          const listEl = document.getElementById("audit-results-list");
+          if (listEl) {
+            const actionWrap = document.createElement("div");
+            actionWrap.style.cssText = "display:flex; justify-content:flex-end; margin-top:12px;";
+            actionWrap.innerHTML = `<button type="button" class="btn btn-primary btn-sm" id="btn-sync-incoherent-env-prompts">⚡ Actualizar solo los ${data.rejected} prompts desalineados (sin tocar imágenes)</button>`;
+            listEl.appendChild(actionWrap);
+            document.getElementById("btn-sync-incoherent-env-prompts")?.addEventListener("click", async (ev) => {
+              const b = ev.currentTarget;
+              b.disabled = true;
+              b.textContent = "⏳ Sincronizando prompts...";
+              try {
+                const sRes = await fetch(`/api/projects/${state.currentProject.id}/sync-environments-prompts`, {
+                  method: "POST",
+                  headers: { "Content-Type": "application/json" },
+                  body: JSON.stringify({ reference_env_id: refEnvId })
+                });
+                const sData = await sRes.json();
+                if (sData.success) {
+                  await selectProject(state.currentProject.id);
+                  renderAuditResults(sData.audit, "environments");
+                  showToast(`✅ ${sData.updated_count} prompts de escenarios actualizados sin tocar imágenes`, "success");
+                }
+              } finally {
+                b.disabled = false;
+              }
+            });
+          }
+        }
       } else {
         showToast("Error en auditoría: " + (data.detail || "desconocido"), "error");
         setSystemStatus("error", "Error en auditoría de escenarios", data.detail || "Desconocido");
@@ -2642,6 +3893,158 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========================================================
   // 6. CAPA ESPECÍFICA: GENERACIÓN DE STORYBOARD Y VÍDEOS
   // ========================================================
+  // PROPUESTA PREVIA (PASO 1) Y GENERACIÓN DE ESCENAS (PASO 2)
+  // ========================================================
+  function renderChapterProposal(proposal) {
+    const panel = document.getElementById("chapter-proposal-panel");
+    const enfoqueEl = document.getElementById("proposal-enfoque-input");
+    const blocksEl = document.getElementById("proposal-blocks-list");
+    const totalEl = document.getElementById("proposal-total-duration");
+    if (!panel || !enfoqueEl || !blocksEl) return;
+
+    if (!proposal || !Array.isArray(proposal.bloques) || proposal.bloques.length === 0) {
+      state.currentProposal = null;
+      panel.style.display = "none";
+      blocksEl.innerHTML = "";
+      return;
+    }
+
+    state.currentProposal = proposal;
+    panel.style.display = "block";
+    enfoqueEl.value = proposal.enfoque_general || "";
+    blocksEl.innerHTML = "";
+
+    const recalcTotal = () => {
+      let sum = 0;
+      blocksEl.querySelectorAll(".proposal-block-dur").forEach(inp => {
+        sum += Math.max(1, parseInt(inp.value) || 5);
+      });
+      if (totalEl) totalEl.textContent = sum;
+    };
+
+    proposal.bloques.forEach((b, idx) => {
+      const row = document.createElement("div");
+      row.className = "proposal-block-row";
+      row.style.cssText = "padding:0.65rem 0.75rem; background:rgba(15,23,42,0.55); border:1px solid rgba(148,163,184,0.2); border-radius:8px; display:flex; flex-direction:column; gap:0.4rem;";
+      const transHtml = idx > 0 ? `
+        <div style="display:flex; align-items:center; gap:0.45rem; padding:0.35rem 0.5rem; background:rgba(59,130,246,0.08); border-left:3px solid #60a5fa; border-radius:4px;">
+          <span style="font-size:0.76rem; color:#93c5fd; white-space:nowrap; font-weight:600;">↪️ Paso desde Escena ${idx}:</span>
+          <input type="text" class="form-input proposal-block-trans" value="${escapeHtml(b.transicion_desde_anterior || "")}" placeholder="Cómo se pasa desde la escena anterior..." style="font-size:0.8rem; padding:0.25rem 0.45rem; flex:1;" />
+        </div>
+      ` : "";
+      row.innerHTML = `
+        <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
+          <input type="text" class="form-input proposal-block-title" value="${escapeHtml(b.titulo || `Escena ${idx + 1}`)}" style="font-weight:600; font-size:0.86rem; padding:0.3rem 0.5rem; flex:1;" />
+          <label style="display:flex; align-items:center; gap:0.3rem; font-size:0.8rem; color:#cbd5e1; white-space:nowrap;">
+            ⏱️ <input type="number" min="2" max="30" class="form-input proposal-block-dur" value="${parseInt(b.duracion_seg) || 5}" style="width:62px; padding:0.25rem 0.4rem; text-align:center;" /> s
+          </label>
+          <button type="button" class="btn btn-ghost btn-xxs btn-del-proposal-block" title="Quitar esta escena de la propuesta" style="color:#f87171;">🗑️</button>
+        </div>
+        ${transHtml}
+        <div style="margin-top:0.25rem;">
+          <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:0.25rem; font-weight:600;">
+            🎬 Qué ocurre visualmente en esta escena:
+          </label>
+          <textarea class="form-textarea proposal-block-desc" rows="3" style="width:100%; box-sizing:border-box; font-size:0.86rem; padding:0.5rem 0.65rem;">${escapeHtml(b.que_ocurre || "")}</textarea>
+        </div>
+        <div style="margin-top:0.25rem;">
+          <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:0.25rem; font-weight:600;">
+            🎙️ En esta escena el narrador leerá:
+          </label>
+          <textarea class="form-textarea proposal-block-narr" rows="3" style="width:100%; box-sizing:border-box; font-size:0.86rem; padding:0.5rem 0.65rem; color:#e2e8f0; background:rgba(30,41,59,0.55);" placeholder="Fragmento de texto que leerá el narrador en esta escena...">${escapeHtml(b.texto_narrado || "")}</textarea>
+        </div>
+      `;
+      row.querySelector(".proposal-block-dur")?.addEventListener("input", recalcTotal);
+      row.querySelector(".btn-del-proposal-block")?.addEventListener("click", () => {
+        if (blocksEl.querySelectorAll(".proposal-block-row").length <= 1) {
+          showToast("Debe quedar al menos 1 escena en la propuesta", "info");
+          return;
+        }
+        row.remove();
+        recalcTotal();
+      });
+      blocksEl.appendChild(row);
+    });
+    recalcTotal();
+  }
+
+  function collectEditedProposal() {
+    const panel = document.getElementById("chapter-proposal-panel");
+    if (!panel || panel.style.display === "none") return null;
+    const enfoqueEl = document.getElementById("proposal-enfoque-input");
+    const blocksEl = document.getElementById("proposal-blocks-list");
+    if (!enfoqueEl || !blocksEl) return null;
+
+    const bloques = [];
+    let total = 0;
+    blocksEl.querySelectorAll(".proposal-block-row").forEach((row, idx) => {
+      const titulo = row.querySelector(".proposal-block-title")?.value.trim() || `Escena ${idx + 1}`;
+      const transicion_desde_anterior = row.querySelector(".proposal-block-trans")?.value.trim() || "";
+      const que_ocurre = row.querySelector(".proposal-block-desc")?.value.trim() || "";
+      const texto_narrado = row.querySelector(".proposal-block-narr")?.value.trim() || "";
+      const duracion_seg = Math.max(2, parseInt(row.querySelector(".proposal-block-dur")?.value) || 5);
+      total += duracion_seg;
+      bloques.push({ id: idx + 1, titulo, transicion_desde_anterior, que_ocurre, texto_narrado, duracion_seg });
+    });
+
+    if (bloques.length === 0) return null;
+    return {
+      enfoque_general: enfoqueEl.value.trim(),
+      bloques,
+      duracion_total_seg: total
+    };
+  }
+
+  const btnGenerateProposal = document.getElementById("btn-generate-proposal");
+  if (btnGenerateProposal) {
+    btnGenerateProposal.addEventListener("click", async () => {
+      const text = rawChapterText.value.trim();
+      if (!text) {
+        showToast("Escribe o selecciona el texto del capítulo antes de continuar", "error");
+        return;
+      }
+      if (!state.currentProject) {
+        showToast("Selecciona un proyecto primero", "error");
+        return;
+      }
+      btnGenerateProposal.disabled = true;
+      btnGenerateProposal.innerHTML = '<span class="btn-icon-symbol">⏳</span> Elaborando propuesta...';
+      const title = chapterTitleInput.value.trim() || "Capítulo";
+      try {
+        const res = await fetch("/api/storyboard/propose", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            project_id: state.currentProject.id,
+            chapter_title: title,
+            text,
+            characters: state.currentProject.personajes,
+            escenarios: state.currentProject.escenarios || [],
+            style_key: state.currentProject.estilo_visual,
+            style_details: state.currentProject.estilo_detalles || "",
+            audiencia: state.currentProject.audiencia || "",
+            ambiente: state.currentProject.ambiente || "",
+            target_scenes: parseInt(scenesCountSelect.value)
+          })
+        });
+        const data = await res.json();
+        if (data.success && data.proposal) {
+          renderChapterProposal(data.proposal);
+          await saveCurrentChapter(true);
+          document.getElementById("chapter-proposal-panel")?.scrollIntoView({ behavior: "smooth", block: "nearest" });
+          showToast("Propuesta generada y guardada. Puedes ajustarla antes de generar las escenas.", "success");
+        } else {
+          showToast(data.detail || "Error generando propuesta", "error");
+        }
+      } catch (e) {
+        showToast(`Error generando propuesta: ${e.message}`, "error");
+      } finally {
+        btnGenerateProposal.disabled = false;
+        btnGenerateProposal.innerHTML = '<span class="btn-icon-symbol">💡</span> Proponer Historia y Duración';
+      }
+    });
+  }
+
   btnGenerateStoryboard.addEventListener("click", async () => {
     const text = rawChapterText.value.trim();
     if (!text) {
@@ -2654,14 +4057,16 @@ document.addEventListener("DOMContentLoaded", () => {
       return;
     }
 
+    const editedProposal = collectEditedProposal();
+
     btnGenerateStoryboard.disabled = true;
-    btnGenerateStoryboard.innerHTML = '<span class="btn-icon-symbol">⏳</span> Desglosando con Biblia de Personajes...';
+    btnGenerateStoryboard.innerHTML = '<span class="btn-icon-symbol">⏳</span> Generando escenas desde la propuesta...';
 
     const title = chapterTitleInput.value.trim() || "Capítulo";
     setSystemStatus(
       "busy",
-      `Desglosando guión: ${title}...`,
-      "Extrayendo escenas y vinculando personajes canónicos de la biblia..."
+      `Generando escenas: ${title}...`,
+      "Creando locuciones y prompts visuales coherentes con tu propuesta y la biblia..."
     );
 
     try {
@@ -2678,19 +4083,21 @@ document.addEventListener("DOMContentLoaded", () => {
           style_details: state.currentProject.estilo_detalles || "",
           audiencia: state.currentProject.audiencia || "",
           ambiente: state.currentProject.ambiente || "",
-          target_scenes: parseInt(scenesCountSelect.value)
+          target_scenes: editedProposal?.bloques?.length || parseInt(scenesCountSelect.value),
+          propuesta: editedProposal
         })
       });
 
       const data = await res.json();
       if (data.success && data.scenes) {
         state.scenes = data.scenes;
-        storyboardTitle.textContent = `Storyboard: ${title}`;
+        storyboardTitle.textContent = "Escenas";
         renderStoryboard();
         storyboardContainer.style.display = "block";
+        await saveCurrentChapter(true);
         storyboardContainer.scrollIntoView({ behavior: "smooth" });
         showToast(`Capítulo adaptado en ${state.scenes.length} escenas consistentes`, "success");
-        setSystemStatus("success", `¡Storyboard generado!`, `${state.scenes.length} escenas desglosadas con consistencia de personajes.`);
+        setSystemStatus("success", `¡Storyboard generado!`, `${state.scenes.length} escenas generadas según tu propuesta.`);
       } else {
         showToast(data.detail || "Error generando storyboard", "error");
         setSystemStatus("error", "Error generando storyboard", data.detail || "No se pudo generar el guión.");
@@ -2700,7 +4107,7 @@ document.addEventListener("DOMContentLoaded", () => {
       setSystemStatus("error", "Error de conexión en storyboard", e.message);
     } finally {
       btnGenerateStoryboard.disabled = false;
-      btnGenerateStoryboard.innerHTML = '<span class="btn-icon-symbol">✨</span> Desglosar Capítulo con Biblia de Personajes';
+      btnGenerateStoryboard.innerHTML = '<span class="btn-icon-symbol">✨</span> Generar Escenas desde la Propuesta';
     }
   });
 
@@ -2732,13 +4139,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     return `
-      Escena #${index + 1}
+      Escena ${index + 1}
       <span class="scene-badge-pill" id="dur-badge-${index}">
         ${sc.duracion_real ? sc.duracion_real + 's' : '~' + sc.duracion_estimada + 's'}
       </span>
-      ${sceneApprBadge}
-      ${charsInScene}
-      ${envInScene}
     `;
   }
 
@@ -2794,6 +4198,30 @@ document.addEventListener("DOMContentLoaded", () => {
     `;
   }
 
+  function buildSceneAudioBlockHtml(sc, index) {
+    const hasAudio = Boolean(sc.audio_url);
+    const durTxt = sc.duracion_real ? ` (${sc.duracion_real}s)` : "";
+    const statusBadge = hasAudio
+      ? `<span class="badge" style="background: rgba(34, 197, 94, 0.16); color: #4ade80; border: 1px solid rgba(34, 197, 94, 0.4); font-size: 0.75rem; padding: 0.2rem 0.55rem; border-radius: 6px;">✅ Voz generada${durTxt}</span>`
+      : `<span class="badge" style="background: rgba(148, 163, 184, 0.12); color: var(--text-muted); border: 1px solid rgba(148, 163, 184, 0.25); font-size: 0.75rem; padding: 0.2rem 0.55rem; border-radius: 6px;">⚪ Voz no generada</span>`;
+
+    const playerRow = hasAudio
+      ? `<div style="margin-top: 0.5rem; width: 100%;">
+           <audio controls class="audio-player-mini" style="width: 100%; height: 36px;" src="${sc.audio_url}"></audio>
+         </div>`
+      : "";
+
+    return `
+      <div style="display: flex; align-items: center; justify-content: flex-start; gap: 0.6rem; flex-wrap: wrap;">
+        <button type="button" class="btn btn-secondary btn-xs btn-gen-audio" data-idx="${index}">
+          🔊 ${hasAudio ? 'Regenerar voz' : 'Generar voz'}
+        </button>
+        ${statusBadge}
+      </div>
+      ${playerRow}
+    `;
+  }
+
   // Renderizar Storyboard Escena por Escena
   function renderStoryboard() {
     scenesGrid.innerHTML = "";
@@ -2810,10 +4238,6 @@ document.addEventListener("DOMContentLoaded", () => {
              <small>9:16 Vertical</small>
            </div>`;
 
-      const audioPlayerHtml = sc.audio_url
-        ? `<audio controls class="audio-player-mini" src="${sc.audio_url}"></audio>`
-        : `<small class="text-muted">Audio no generado aún</small>`;
-
       card.innerHTML = `
         <!-- Panel Visual (Izquierda) -->
         <div class="scene-visual-pane">
@@ -2821,24 +4245,13 @@ document.addEventListener("DOMContentLoaded", () => {
             ${imgPreviewHtml}
           </div>
           <div class="scene-image-actions">
-            <button class="btn btn-secondary btn-xs btn-gen-img" data-idx="${index}">
+            <button class="btn btn-secondary btn-xs btn-gen-img" data-idx="${index}" title="Genera la ilustración 9:16 usando el motor configurado en General (${state.currentProject?.motor_imagenes || 'flux'}) y las referencias de personaje/escenario">
               🎨 ${sc.image_url ? 'Regenerar Foto' : 'Generar Foto'}
             </button>
             <label class="btn btn-ghost btn-xs btn-upload-label">
               📁 Subir Foto
               <input type="file" class="input-upload-img" data-idx="${index}" accept="image/*" style="display:none;">
             </label>
-          </div>
-          <div class="scene-telegram-clip-bar" style="display:flex; gap:4px; margin-top:6px; justify-content:center; flex-wrap:wrap;">
-            <button type="button" class="btn btn-outline btn-xxs btn-send-scene-telegram" data-idx="${index}" title="Renderizar clip previo y enviarlo a Telegram / n8n para aprobación humana">
-              📱 Enviar Clip
-            </button>
-            <button type="button" class="btn btn-ghost btn-xxs btn-approve-scene-clip" data-idx="${index}" style="color:#4ade80;" title="Aprobar escena">
-              ✅ Aprobar
-            </button>
-            <button type="button" class="btn btn-ghost btn-xxs btn-redo-scene-clip" data-idx="${index}" style="color:#60a5fa;" title="Regenerar escena">
-              🔄 Regenerar
-            </button>
           </div>
         </div>
 
@@ -2850,58 +4263,60 @@ document.addEventListener("DOMContentLoaded", () => {
                 ${buildSceneBadgesHtml(sc, index)}
               </span>
               <div class="scene-tools">
-                <button class="btn btn-ghost btn-xs btn-inject-anchors" data-idx="${index}" title="Inyectar y reforzar rasgos canónicos inmutables de la biblia">
-                  🛡️ Consistencia
-                </button>
-                <button class="btn btn-ghost btn-xs btn-rewrite-scene" data-idx="${index}" title="Pedir cambios con IA">
-                  ✨ Reescribir
-                </button>
                 <button class="btn btn-ghost btn-xs btn-delete-scene" data-idx="${index}" title="Eliminar escena">
                   🗑️
                 </button>
               </div>
             </div>
 
-            <div class="mt-3">
-              <label class="field-label">Locución del Narrador</label>
-              <textarea class="form-textarea input-narrador" data-idx="${index}" rows="2">${sc.narrador}</textarea>
-            </div>
-
-            <div class="audio-controls-row" id="audio-row-${index}">
-              ${audioPlayerHtml}
-              <button class="btn btn-secondary btn-xs btn-gen-audio" data-idx="${index}">
-                🔊 ${sc.audio_url ? 'Regenerar Voz' : 'Generar Voz'}
-              </button>
-            </div>
-
-            <!-- Vinculación Canónica de Personajes y Escenarios de la Capa Genérica -->
-            <div class="scene-canon-binding-box">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <!-- 1. Selección de Personajes y Escenario -->
+            <div class="scene-canon-binding-box mt-3" style="margin-top: 0.75rem;">
+              <div style="margin-bottom: 6px;">
                 <span style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
                   👥 Personajes en esta escena
-                </span>
-                <span style="font-size: 0.68rem; color: var(--primary-glow); font-weight: 500;">
-                  (Vincula el modelo canónico oficial)
                 </span>
               </div>
               <div class="scene-char-selector-row">
                 ${renderSceneCharacterChips(sc, index)}
               </div>
 
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px; margin-bottom: 4px;">
+              <div style="margin-top: 8px; margin-bottom: 4px;">
                 <span style="font-size: 0.72rem; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.5px;">
-                  🏛️ Escenario clave
-                </span>
-                <span style="font-size: 0.68rem; color: var(--text-muted);">
-                  (Entorno de la biblia general)
+                  🏛️ Escenario
                 </span>
               </div>
               ${renderSceneEnvSelect(sc, index)}
             </div>
 
+            <!-- 2. Descripción de la Escena (Amplia, todo el ancho) + Botón debajo a la izquierda -->
             <div class="mt-3">
-              <label class="field-label">Prompt Visual (Inglés con rasgos del personaje)</label>
-              <textarea class="form-textarea input-prompt" data-idx="${index}" rows="2" style="font-family: var(--font-mono); font-size: 0.8rem;">${sc.prompt_imagen}</textarea>
+              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">📝 Descripción de la escena</label>
+              <div style="display:flex; justify-content:flex-start; margin-bottom:0.45rem;">
+                <button type="button" class="btn btn-secondary btn-xs btn-gen-desc-from-proposal" data-idx="${index}" title="Genera con detalle la descripción de esta escena a partir de la propuesta general de arriba, los personajes y el escenario seleccionados">
+                  ✨ Generar la descripción de la escena
+                </button>
+              </div>
+              <textarea class="form-textarea input-scene-desc" data-idx="${index}" rows="6" style="width: 100%; box-sizing: border-box; font-size: 0.88rem; line-height: 1.45; padding: 0.65rem 0.75rem; min-height: 120px;" placeholder="Describe detalladamente qué ocurre y qué aparece en esta escena (acciones de personajes, entorno, transición)...">${sc.descripcion_escena || sc.descripcion || ""}</textarea>
+            </div>
+
+            <!-- 3. Prompt Visual + Botón Generar prompt debajo a la izquierda -->
+            <div class="mt-3">
+              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">🎨 Prompt Visual (Inglés con estilo global, semillas y transición)</label>
+              <div style="display:flex; justify-content:flex-start; margin-bottom:0.45rem;">
+                <button type="button" class="btn btn-secondary btn-xs btn-gen-prompt-from-desc" data-idx="${index}" title="Genera el prompt visual en inglés usando la descripción de la escena, semillas de personajes y escenario, transición y estilo global">
+                  🪄 Generar prompt
+                </button>
+              </div>
+              <textarea class="form-textarea input-prompt" data-idx="${index}" rows="5" style="width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.4; padding: 0.65rem 0.75rem; min-height: 100px;">${sc.prompt_imagen || ""}</textarea>
+            </div>
+
+            <!-- 4. Locución del Narrador + Botón Generar voz debajo + Reproductor debajo -->
+            <div class="mt-3">
+              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">🎙️ Locución del Narrador</label>
+              <textarea class="form-textarea input-narrador" data-idx="${index}" rows="4" style="width: 100%; box-sizing: border-box; font-size: 0.88rem; padding: 0.65rem 0.75rem;">${sc.narrador || ""}</textarea>
+              <div id="audio-row-${index}" style="margin-top: 0.5rem; display: flex; flex-direction: column; align-items: flex-start; width: 100%;">
+                ${buildSceneAudioBlockHtml(sc, index)}
+              </div>
             </div>
           </div>
         </div>
@@ -2914,6 +4329,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function attachSceneEventListeners() {
+    document.querySelectorAll(".input-scene-desc").forEach(el => {
+      el.addEventListener("input", e => {
+        const idx = parseInt(e.target.dataset.idx);
+        state.scenes[idx].descripcion_escena = e.target.value;
+      });
+    });
+
+    document.querySelectorAll(".btn-gen-desc-from-proposal").forEach(el => {
+      el.addEventListener("click", async e => {
+        const idx = parseInt(e.currentTarget.dataset.idx);
+        await generateDescriptionFromProposalForScene(idx);
+      });
+    });
+
+    document.querySelectorAll(".btn-gen-prompt-from-desc").forEach(el => {
+      el.addEventListener("click", async e => {
+        const idx = parseInt(e.currentTarget.dataset.idx);
+        await generatePromptFromDescriptionForScene(idx);
+      });
+    });
+
     document.querySelectorAll(".input-narrador").forEach(el => {
       el.addEventListener("input", e => {
         const idx = parseInt(e.target.dataset.idx);
@@ -3107,6 +4543,117 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  // Generar Descripción Detallada de la Escena desde la Propuesta
+  async function generateDescriptionFromProposalForScene(idx) {
+    const sc = state.scenes[idx];
+    if (!state.currentProject || !sc) return;
+
+    const btn = document.querySelector(`.btn-gen-desc-from-proposal[data-idx="${idx}"]`);
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳ Detallando escena...";
+    }
+
+    try {
+      const editedProposal = collectEditedProposal() || state.currentProposal || null;
+      const res = await fetch("/api/storyboard/generate-description", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_id: state.currentProject.id,
+          scene_index: idx,
+          propuesta: editedProposal,
+          personajes_en_escena: sc.personajes_en_escena || [],
+          escenario_clave: sc.escenario_clave || "",
+          characters: state.currentProject.personajes || [],
+          escenarios: state.currentProject.escenarios || [],
+          narrador: sc.narrador || "",
+          chapter_text: rawChapterText ? rawChapterText.value.trim() : "",
+          audiencia: state.currentProject.audiencia || "",
+          ambiente: state.currentProject.ambiente || ""
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.descripcion_escena) {
+        sc.descripcion_escena = data.descripcion_escena;
+        const descInput = document.querySelector(`.input-scene-desc[data-idx="${idx}"]`);
+        if (descInput) {
+          descInput.value = data.descripcion_escena;
+        }
+        await saveCurrentChapter(true);
+        showToast(`Descripción detallada generada para Escena ${idx + 1}`, "success");
+      } else {
+        showToast(data.detail || "No se pudo generar la descripción de la escena", "error");
+      }
+    } catch (e) {
+      showToast(`Error generando descripción: ${e.message}`, "error");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "✨ Generar la descripción de la escena";
+      }
+    }
+  }
+
+  // Generar Prompt Visual desde la Descripción de la Escena
+  async function generatePromptFromDescriptionForScene(idx) {
+    const sc = state.scenes[idx];
+    if (!state.currentProject || !sc) return;
+
+    const desc = (sc.descripcion_escena || sc.descripcion || "").trim();
+    if (!desc) {
+      showToast("Escribe primero la descripción de la escena", "error");
+      return;
+    }
+
+    const btn = document.querySelector(`.btn-gen-prompt-from-desc[data-idx="${idx}"]`);
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳ Generando prompt...";
+    }
+
+    try {
+      const editedProposal = collectEditedProposal() || state.currentProposal || null;
+      const res = await fetch("/api/storyboard/generate-prompt", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          project_id: state.currentProject.id,
+          scene_index: idx,
+          propuesta: editedProposal,
+          descripcion_escena: desc,
+          personajes_en_escena: sc.personajes_en_escena || [],
+          escenario_clave: sc.escenario_clave || "",
+          characters: state.currentProject.personajes || [],
+          escenarios: state.currentProject.escenarios || [],
+          style_key: state.currentProject.estilo_visual || "cinematic",
+          style_details: state.currentProject.estilo_detalles || "",
+          audiencia: state.currentProject.audiencia || "",
+          ambiente: state.currentProject.ambiente || ""
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.prompt_imagen) {
+        sc.prompt_imagen = data.prompt_imagen;
+        const promptInput = document.querySelector(`.input-prompt[data-idx="${idx}"]`);
+        if (promptInput) {
+          promptInput.value = data.prompt_imagen;
+        }
+        await saveCurrentChapter(true);
+        showToast(`Prompt visual actualizado para Escena ${idx + 1}`, "success");
+      } else {
+        showToast(data.detail || "No se pudo generar el prompt", "error");
+      }
+    } catch (e) {
+      showToast(`Error generando prompt: ${e.message}`, "error");
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = "🪄 Generar prompt";
+      }
+    }
+  }
+
   // Reforzar e Inyectar Rasgos Canónicos en Escena
   async function reinforceSceneConsistency(idx, showToastNotification = true) {
     const sc = state.scenes[idx];
@@ -3179,14 +4726,13 @@ document.addEventListener("DOMContentLoaded", () => {
         sc.duracion_real = data.duration;
 
         const audioRow = document.getElementById(`audio-row-${idx}`);
-        audioRow.innerHTML = `
-          <audio controls class="audio-player-mini" src="${data.url}"></audio>
-          <button class="btn btn-secondary btn-xs btn-gen-audio" data-idx="${idx}">
-            🔊 Regenerar Voz
-          </button>
-        `;
-        document.getElementById(`dur-badge-${idx}`).textContent = `${data.duration}s`;
-        audioRow.querySelector(".btn-gen-audio").addEventListener("click", () => generateAudioForScene(idx));
+        if (audioRow) {
+          audioRow.innerHTML = buildSceneAudioBlockHtml(sc, idx);
+          audioRow.querySelector(".btn-gen-audio")?.addEventListener("click", () => generateAudioForScene(idx));
+        }
+        const durBadge = document.getElementById(`dur-badge-${idx}`);
+        if (durBadge) durBadge.textContent = `${data.duration}s`;
+        await saveCurrentChapter(true);
         showToast(`Audio escena ${idx+1} listo (${data.duration}s)`, "success");
         setSystemStatus("success", `Locución Escena #${idx + 1} lista (${data.duration}s)`, "Audio sincronizado con el narrador.");
       } else {
@@ -3209,30 +4755,35 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.textContent = "🎨 Dibujando...";
     setSystemStatus("busy", `Pintando Escena #${idx + 1}...`, "Dibujando fotograma 9:16 con estilo consistente y referencias...");
 
-    // Detectar si algún personaje de la escena tiene imagen de referencia canónica aprobada
+    // Resolver imágenes de referencia y semillas de consistencia de personajes y escenario
     let refImageUrl = null;
+    let charSeed = null;
+    let envSeed = null;
     if (state.currentProject?.personajes && sc.personajes_en_escena && sc.personajes_en_escena.length > 0) {
       for (const charName of sc.personajes_en_escena) {
         const pMatch = state.currentProject.personajes.find(p => 
           p.nombre.toLowerCase() === charName.toLowerCase() ||
           (p.id && p.id.toLowerCase() === charName.toLowerCase())
         );
-        if (pMatch && pMatch.imagen_url) {
-          refImageUrl = pMatch.imagen_url;
-          break;
+        if (pMatch) {
+          if (!refImageUrl && pMatch.imagen_url) refImageUrl = pMatch.imagen_url;
+          if (!charSeed && pMatch.seed_consistencia) charSeed = parseInt(pMatch.seed_consistencia);
         }
       }
     }
-    // Si no hay imagen de personaje pero sí de escenario clave
-    if (!refImageUrl && state.currentProject?.escenarios && sc.escenario_clave) {
+    if (state.currentProject?.escenarios && sc.escenario_clave) {
       const eMatch = state.currentProject.escenarios.find(e =>
         e.nombre.toLowerCase() === sc.escenario_clave.toLowerCase() ||
         (e.id && e.id.toLowerCase() === sc.escenario_clave.toLowerCase())
       );
-      if (eMatch && eMatch.imagen_url) {
-        refImageUrl = eMatch.imagen_url;
+      if (eMatch) {
+        if (!refImageUrl && eMatch.imagen_url) refImageUrl = eMatch.imagen_url;
+        if (eMatch.seed_consistencia) envSeed = parseInt(eMatch.seed_consistencia);
       }
     }
+    const effectiveSeed = (charSeed && envSeed)
+      ? (((charSeed + envSeed) % 900000) + 100000)
+      : (charSeed || envSeed || sc.seed_consistencia || null);
 
     try {
       const res = await fetch("/api/image/generate", {
@@ -3240,7 +4791,8 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prompt: sc.prompt_imagen,
-          provider: "flux",
+          provider: state.currentProject?.motor_imagenes || "flux",
+          seed: effectiveSeed,
           reference_image: refImageUrl
         })
       });
@@ -3251,6 +4803,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const freshUrl = data.url.includes("?") ? `${data.url}&t=${Date.now()}` : `${data.url}?t=${Date.now()}`;
         preview.innerHTML = `<img src="${freshUrl}" alt="Escena ${idx+1}">`;
         btn.textContent = "🎨 Regenerar Foto";
+        await saveCurrentChapter(true);
         showToast(`Imagen escena ${idx+1} generada en 9:16`, "success");
         setSystemStatus("success", `Fotograma Escena #${idx + 1} listo`, "Arte vertical 9:16 generado con éxito.");
       } else {
@@ -3536,6 +5089,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       renderChaptersTree(treeSearchInput ? treeSearchInput.value : "");
+      populateManuscriptSections();
+      if (state.manuscriptDoc?.chapters?.length) updateSectionPreview(state.selectedSectionIdx || 0);
 
       if (state.chapters.length > 0) {
         let targetId = selectChapterId;
@@ -3570,12 +5125,19 @@ document.addEventListener("DOMContentLoaded", () => {
     chaptersTreeList.innerHTML = "";
 
     const query = (filterQuery || "").toLowerCase().trim();
-    const filtered = state.chapters.filter(c => {
-      if (!query) return true;
-      const titleMatch = (c.titulo || "").toLowerCase().includes(query);
-      const originMatch = (c.origen_ref || "").toString().toLowerCase().includes(query);
-      return titleMatch || originMatch;
-    });
+    const filtered = state.chapters
+      .filter(c => {
+        if (!query) return true;
+        const titleMatch = (c.titulo || "").toLowerCase().includes(query);
+        const originMatch = (c.origen_ref || "").toString().toLowerCase().includes(query);
+        return titleMatch || originMatch;
+      })
+      .sort((a, b) => {
+        const ca = (a.creado_en || "").toString();
+        const cb = (b.creado_en || "").toString();
+        if (ca && cb && ca !== cb) return ca.localeCompare(cb);
+        return (a.titulo || "").localeCompare(b.titulo || "", "es", { numeric: true, sensitivity: "base" });
+      });
 
     if (filtered.length === 0) {
       if (state.chapters.length === 0) {
@@ -3585,7 +5147,7 @@ document.addEventListener("DOMContentLoaded", () => {
               No hay capítulos creados en este libro.
             </p>
             <div style="font-size:0.75rem; color:var(--text-secondary); line-height:1.4;">
-              Usa <strong>⚡ Importar</strong> para convertir el manuscrito en capítulos o pulsa <strong>➕ Nuevo</strong>.
+              Usa <strong>⚡ Importar</strong> para convertir el manuscrito en capítulos o pulsa <strong>➕ Nuevo capítulo</strong>.
             </div>
           </div>
         `;
@@ -3598,7 +5160,6 @@ document.addEventListener("DOMContentLoaded", () => {
           </div>
         `;
       }
-      return;
     }
 
     filtered.forEach(cap => {
@@ -3657,6 +5218,27 @@ document.addEventListener("DOMContentLoaded", () => {
 
       chaptersTreeList.appendChild(node);
     });
+
+    // Nodo final con el mismo tamaño para crear un nuevo capítulo
+    const newNode = document.createElement("div");
+    newNode.className = "tree-chapter-node";
+    newNode.style.borderStyle = "dashed";
+    newNode.style.opacity = "0.9";
+    newNode.innerHTML = `
+      <div class="tree-node-main">
+        <div class="tree-node-title-row">
+          <span class="tree-node-title">➕ Nuevo capítulo</span>
+        </div>
+        <div class="tree-node-meta-row">
+          <span class="tree-node-meta-badge">Crear borrador</span>
+        </div>
+      </div>
+    `;
+    newNode.addEventListener("click", () => {
+      createNewChapterDraft();
+      showToast("Nuevo borrador de capítulo listo", "info");
+    });
+    chaptersTreeList.appendChild(newNode);
   }
 
   async function loadSavedChapter(chapterId) {
@@ -3696,7 +5278,8 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       state.scenes = cap.scenes || [];
-      storyboardTitle.textContent = `Storyboard: ${cap.titulo}`;
+      renderChapterProposal(cap.propuesta || null);
+      storyboardTitle.textContent = "Escenas";
 
       if (state.scenes && state.scenes.length > 0) {
         renderStoryboard();
@@ -3735,6 +5318,7 @@ document.addEventListener("DOMContentLoaded", () => {
     state.currentChapterOriginType = initialData.origen_tipo || null;
     state.currentChapterOriginRef = initialData.origen_ref || null;
     state.currentChapterOrden = initialData.orden || (state.chapters.length + 1);
+    renderChapterProposal(null);
 
     const defaultTitle = initialData.titulo || `Capítulo ${state.chapters.length + 1}`;
     chapterTitleInput.value = defaultTitle;
@@ -3783,7 +5367,8 @@ document.addEventListener("DOMContentLoaded", () => {
       scenes: state.scenes || [],
       origen_tipo: state.currentChapterOriginType || "manual",
       origen_ref: state.currentChapterOriginRef ? String(state.currentChapterOriginRef) : "",
-      orden: state.currentChapterOrden || (state.chapters.length + 1)
+      orden: state.currentChapterOrden || (state.chapters.length + 1),
+      propuesta: collectEditedProposal()
     };
 
     try {
@@ -3850,6 +5435,10 @@ document.addEventListener("DOMContentLoaded", () => {
         if (sourceChaptersCount) sourceChaptersCount.textContent = `${totalChapters} secciones`;
         if (badgeImportPagesCount) badgeImportPagesCount.textContent = `${totalPages} páginas disponibles`;
         if (badgeImportChaptersCount) badgeImportChaptersCount.textContent = `${totalChapters} secciones disponibles`;
+        const analysisStatusEl = document.getElementById("book-chapters-analysis-status");
+        if (analysisStatusEl) {
+          analysisStatusEl.textContent = `✓ Detectados ${totalChapters} capítulos/secciones en "${doc.filename || "libro"}" (${totalPages} págs).`;
+        }
 
         // Poblar selector de páginas
         if (selectManuscriptPage && doc.pages && doc.pages.length > 0) {
@@ -3868,13 +5457,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         // Poblar selector de secciones / capítulos detectados
         if (selectManuscriptSection && doc.chapters && doc.chapters.length > 0) {
-          selectManuscriptSection.innerHTML = "";
-          doc.chapters.forEach((sec, idx) => {
-            const opt = document.createElement("option");
-            opt.value = idx;
-            opt.textContent = `${sec.title} (~${sec.word_count || 0} palabras)`;
-            selectManuscriptSection.appendChild(opt);
-          });
+          populateManuscriptSections();
 
           state.selectedSectionIdx = 0;
           selectManuscriptSection.value = 0;
@@ -3921,6 +5504,43 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
+  function shortSectionTitle(title) {
+    const raw = (title || "").trim();
+    if (!raw) return "Sección";
+    const firstSentence = raw.split(/\.\s+/)[0].trim();
+    const base = firstSentence.length >= 4 && firstSentence.length <= 55 ? firstSentence : raw;
+    return base.length > 55 ? base.slice(0, 52) + "..." : base;
+  }
+
+  function isSectionAssigned(secTitle) {
+    if (!secTitle) return false;
+    if (state.currentChapterOriginType === "section" && state.currentChapterOriginRef === secTitle) {
+      return true;
+    }
+    return (state.chapters || []).some(c => c.origen_tipo === "section" && c.origen_ref === secTitle);
+  }
+
+  function populateManuscriptSections() {
+    if (!selectManuscriptSection || !state.manuscriptDoc || !state.manuscriptDoc.chapters) return;
+    const prevVal = selectManuscriptSection.value;
+    selectManuscriptSection.innerHTML = "";
+    state.manuscriptDoc.chapters.forEach((sec, idx) => {
+      const opt = document.createElement("option");
+      opt.value = idx;
+      const assigned = isSectionAssigned(sec.title);
+      const label = shortSectionTitle(sec.title);
+      opt.textContent = `${assigned ? "✓ [Asignado] " : ""}${label} (~${sec.word_count || 0} palabras)`;
+      if (assigned) {
+        opt.style.color = "#4ade80";
+        opt.style.fontWeight = "600";
+      }
+      selectManuscriptSection.appendChild(opt);
+    });
+    if (prevVal !== "" && state.manuscriptDoc.chapters[parseInt(prevVal)]) {
+      selectManuscriptSection.value = prevVal;
+    }
+  }
+
   function updateSectionPreview(secIdx) {
     if (!state.manuscriptDoc || !state.manuscriptDoc.chapters) return;
     const idx = parseInt(secIdx);
@@ -3929,8 +5549,15 @@ document.addEventListener("DOMContentLoaded", () => {
     const sec = state.manuscriptDoc.chapters[idx];
     if (!sec) return;
 
+    const assigned = isSectionAssigned(sec.title);
     if (sectionPreviewBadge) {
-      sectionPreviewBadge.textContent = sec.title || `Sección ${idx + 1}`;
+      sectionPreviewBadge.textContent = shortSectionTitle(sec.title) || `Sección ${idx + 1}`;
+      sectionPreviewBadge.style.color = assigned ? "#4ade80" : "";
+      sectionPreviewBadge.style.borderColor = assigned ? "rgba(34,197,94,0.45)" : "";
+    }
+    const assignedBadgeEl = document.getElementById("section-assigned-badge");
+    if (assignedBadgeEl) {
+      assignedBadgeEl.style.display = assigned ? "inline-flex" : "none";
     }
     if (sectionPreviewStats) {
       const total = state.manuscriptDoc.chapters.length;
@@ -3975,6 +5602,29 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       modalBatchImport.classList.add("open");
+    });
+  }
+
+  const btnAnalyzeBookChapters = document.getElementById("btn-analyze-book-chapters");
+  if (btnAnalyzeBookChapters) {
+    btnAnalyzeBookChapters.addEventListener("click", async () => {
+      if (!state.currentProject) {
+        showToast("Selecciona un proyecto primero", "error");
+        return;
+      }
+      btnAnalyzeBookChapters.disabled = true;
+      const prevText = btnAnalyzeBookChapters.textContent;
+      btnAnalyzeBookChapters.textContent = "⏳ Analizando libro...";
+      try {
+        await loadManuscriptStructure(state.currentProject.id);
+        const total = state.manuscriptDoc?.chapters?.length || 0;
+        showToast(`Análisis completado: ${total} capítulos/secciones detectados`, "success");
+      } catch (err) {
+        showToast("Error analizando capítulos del libro", "error");
+      } finally {
+        btnAnalyzeBookChapters.disabled = false;
+        btnAnalyzeBookChapters.textContent = prevText;
+      }
     });
   }
 
@@ -4084,18 +5734,22 @@ document.addEventListener("DOMContentLoaded", () => {
       const sec = state.manuscriptDoc.chapters[state.selectedSectionIdx];
       if (!sec) return;
 
-      chapterTitleInput.value = sec.title;
+      const currentTitle = (chapterTitleInput.value || "").trim();
+      const isGenericTitle = !currentTitle || /^nuevo cap[íi]tulo$/i.test(currentTitle);
+      if (isGenericTitle) {
+        chapterTitleInput.value = shortSectionTitle(sec.title);
+      }
       rawChapterText.value = sec.text;
       state.currentChapterOriginType = "section";
       state.currentChapterOriginRef = sec.title;
       updateChapterWordsCounter();
 
-      if (currentChapterHeading) currentChapterHeading.textContent = sec.title;
-      if (currentChapterOriginPill) {
-        currentChapterOriginPill.textContent = `📑 ${sec.title}`;
-        currentChapterOriginPill.style.display = "inline-flex";
+      if (currentChapterHeading) {
+        currentChapterHeading.textContent = (chapterTitleInput.value || "").trim() || "Capítulo";
       }
-      showToast(`Sección "${sec.title}" asignada al capítulo`, "info");
+      populateManuscriptSections();
+      updateSectionPreview(state.selectedSectionIdx);
+      showToast(`Sección "${shortSectionTitle(sec.title)}" asignada al capítulo`, "info");
     });
   }
 
@@ -4405,6 +6059,7 @@ document.addEventListener("DOMContentLoaded", () => {
       renderSettingItem("OPENAI_API_KEY", "badge-status-openai", "masked-openai", settingOpenai);
       renderSettingItem("ELEVENLABS_API_KEY", "badge-status-eleven", "masked-eleven", settingEleven);
       renderSettingItem("POLLINATIONS_API_KEY", "badge-status-pollinations", "masked-pollinations", settingPollinations);
+      renderSettingItem("FAL_KEY", "badge-status-fal", "masked-fal", settingFal);
       renderSettingItem("GEMINI_API_KEY", "badge-status-gemini", "masked-gemini", settingGemini);
 
     } catch (err) {
@@ -4418,10 +6073,14 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   btnSaveSettings.addEventListener("click", async () => {
-    const payload = {};
+    const syncCentralEl = document.getElementById("setting-sync-central");
+    const payload = {
+      SYNC_CENTRAL: syncCentralEl ? syncCentralEl.checked : true
+    };
     if (settingOpenai && settingOpenai.value) payload.OPENAI_API_KEY = settingOpenai.value.trim();
     if (settingEleven && settingEleven.value) payload.ELEVENLABS_API_KEY = settingEleven.value.trim();
     if (settingPollinations && settingPollinations.value) payload.POLLINATIONS_API_KEY = settingPollinations.value.trim();
+    if (settingFal && settingFal.value) payload.FAL_KEY = settingFal.value.trim();
     if (settingGemini && settingGemini.value) payload.GEMINI_API_KEY = settingGemini.value.trim();
 
     try {

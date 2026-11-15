@@ -18,6 +18,24 @@ TARGET_WIDTH = 1080
 TARGET_HEIGHT = 1920
 LAST_POLLINATIONS_CALL = 0
 
+def crop_and_resize_to_square(input_path: Path, output_path: Path, target_size: int = 1024):
+    """Ajusta una imagen a un lienzo cuadrado 1:1 (1024x1024) sin recortar ni deformar."""
+    with Image.open(input_path) as img:
+        img = img.convert("RGB")
+        w, h = img.size
+        if w == target_size and h == target_size:
+            img.save(output_path, "JPEG", quality=92)
+            return
+        scale = min(target_size / w, target_size / h)
+        new_w = int(w * scale)
+        new_h = int(h * scale)
+        resized = img.resize((new_w, new_h), Image.Resampling.LANCZOS)
+        canvas = Image.new("RGB", (target_size, target_size), (255, 255, 255))
+        x_offset = (target_size - new_w) // 2
+        y_offset = (target_size - new_h) // 2
+        canvas.paste(resized, (x_offset, y_offset))
+        canvas.save(output_path, "JPEG", quality=92)
+
 def crop_and_resize_to_vertical(input_path: Path, output_path: Path, fit_mode: str = "crop"):
     """
     Ajusta una imagen para adaptarse exactamente al formato vertical 9:16 (1080x1920).
@@ -67,11 +85,27 @@ def crop_and_resize_to_vertical(input_path: Path, output_path: Path, fit_mode: s
 
         cropped.save(output_path, "JPEG", quality=92)
 
+def extract_seed_from_prompt(prompt: str) -> Optional[int]:
+    """Extrae una semilla determinista combinada a partir de [seed_escenario:...] y [seed_personaje:...] presentes en el prompt."""
+    if not prompt:
+        return None
+    env_seeds = [int(x) for x in re.findall(r"\[seed_escenario:(\d+)\]", prompt, flags=re.IGNORECASE)]
+    char_seeds = [int(x) for x in re.findall(r"\[seed_personaje:(\d+)\]", prompt, flags=re.IGNORECASE)]
+    if env_seeds and char_seeds:
+        return ((env_seeds[0] + char_seeds[0]) % 900000) + 100000
+    if char_seeds:
+        return char_seeds[0]
+    if env_seeds:
+        return env_seeds[0]
+    return None
+
+
 def sanitize_image_prompt(prompt: str, max_chars: int = 2000) -> str:
     """Limpia y normaliza un prompt para evitar errores en motores de difusión sin recortar detalles."""
-    # Remover directivas técnicas (--cref / --cw / <lora:...>) del texto plano enviado a APIs estándar
+    # Remover directivas técnicas (--cref / --cw / <lora:...> / etiquetas [seed_...] y [Transición...]) del texto plano enviado a APIs estándar
     cleaned_raw = re.sub(r"--cref\s+\S+(?:\s+--cw\s+\d+)?", "", prompt or "", flags=re.IGNORECASE)
     cleaned_raw = re.sub(r"<lora:[^>]+>", "", cleaned_raw, flags=re.IGNORECASE)
+    cleaned_raw = re.sub(r"\[(?:seed_personaje|seed_escenario|Transici[óo]n|Escena)[^\]]*\]", "", cleaned_raw, flags=re.IGNORECASE)
     cleaned = " ".join(cleaned_raw.strip().split())
     # Eliminar posibles citas o caracteres problemáticos
     cleaned = cleaned.replace('"', '').replace("'", "")
@@ -103,6 +137,13 @@ def resolve_reference_image_info(reference_image: Optional[str]) -> Dict[str, An
             "reference_url": f"/proyectos_data/{clean_ref[len('proyectos/'):]}",
             "local_path": str(local_candidate) if local_candidate.exists() else None,
             "exists": local_candidate.exists()
+        }
+    local_direct = Path(clean_ref)
+    if local_direct.exists() and local_direct.is_file():
+        return {
+            "reference_url": clean_ref,
+            "local_path": str(local_direct),
+            "exists": True
         }
     return {
         "reference_url": clean_ref,
@@ -146,15 +187,112 @@ def remove_image_background(input_path: Path, output_png_path: Path) -> bool:
         print(f"[REMBG] Falló la eliminación de fondo: {e}")
         return False
 
+def _build_fal_image_input(ref_info: Dict[str, Any]) -> Optional[str]:
+    """Convierte una referencia local a Data URI base64 o devuelve la URL remota para Fal.ai."""
+    if not ref_info or not ref_info.get("exists"):
+        return None
+    local_path = ref_info.get("local_path")
+    if local_path and Path(local_path).exists():
+        import base64
+        ext = Path(local_path).suffix.lower().lstrip(".")
+        mime = "image/png" if ext == "png" else "image/jpeg"
+        with open(local_path, "rb") as f:
+            b64 = base64.b64encode(f.read()).decode("utf-8")
+        return f"data:{mime};base64,{b64}"
+    ref_url = ref_info.get("reference_url") or ""
+    if ref_url.startswith("http"):
+        return ref_url
+    return None
+
+
+def _generate_image_fal_flux(
+    prompt: str,
+    final_path: Path,
+    temp_download_path: Path,
+    web_url: str,
+    ref_info: Dict[str, Any],
+    seed: Optional[int] = None,
+    fit_mode: str = "crop"
+) -> Dict[str, Any]:
+    """Genera una imagen usando Fal.ai (FLUX.1 Dev o FLUX Kontext Pro si hay imagen de referencia)."""
+    fal_key = os.getenv("FAL_KEY", "").strip()
+    if not fal_key:
+        raise ValueError("FAL_KEY no está configurada en .env. Configúrala en Ajustes (⚙️) para usar el motor FLUX.")
+
+    headers = {
+        "Authorization": f"Key {fal_key}",
+        "Content-Type": "application/json"
+    }
+
+    fal_ref_image = _build_fal_image_input(ref_info) if fit_mode in ("contain", "square") else None
+    if fal_ref_image:
+        model_id = "fal-ai/flux-pro/kontext"
+        payload: Dict[str, Any] = {
+            "prompt": prompt,
+            "image_url": fal_ref_image,
+            "output_format": "jpeg"
+        }
+        if fit_mode == "square":
+            payload["aspect_ratio"] = "1:1"
+        elif fit_mode != "contain":
+            payload["aspect_ratio"] = "9:16"
+    else:
+        model_id = "fal-ai/flux/dev"
+        image_size = {"width": 1024, "height": 1024} if fit_mode in ("contain", "square") else {"width": 768, "height": 1344}
+        payload = {
+            "prompt": prompt,
+            "image_size": image_size,
+            "num_inference_steps": 28,
+            "guidance_scale": 3.5,
+            "num_images": 1,
+            "output_format": "jpeg"
+        }
+
+    if seed is not None:
+        payload["seed"] = int(seed)
+
+    endpoint = f"https://fal.run/{model_id}"
+    resp = requests.post(endpoint, headers=headers, json=payload, timeout=120)
+    if resp.status_code != 200:
+        raise RuntimeError(f"Error en Fal.ai ({model_id}) HTTP {resp.status_code}: {resp.text[:300]}")
+
+    data = resp.json()
+    images = data.get("images") or []
+    if not images or not images[0].get("url"):
+        raise RuntimeError(f"Fal.ai ({model_id}) no devolvió URL de imagen: {data}")
+
+    img_resp = requests.get(images[0]["url"], timeout=60)
+    if img_resp.status_code != 200:
+        raise RuntimeError(f"No se pudo descargar la imagen generada por Fal.ai (HTTP {img_resp.status_code})")
+
+    with open(temp_download_path, "wb") as f:
+        f.write(img_resp.content)
+    if fit_mode == "square":
+        crop_and_resize_to_square(temp_download_path, final_path)
+    else:
+        crop_and_resize_to_vertical(temp_download_path, final_path, fit_mode=fit_mode)
+    if temp_download_path.exists():
+        temp_download_path.unlink()
+
+    provider_tag = "fal_flux_kontext" if fal_ref_image else "fal_flux_dev"
+    return {
+        "url": web_url,
+        "provider": provider_tag,
+        "file_path": str(final_path),
+        "reference_used": ref_info,
+        "seed": data.get("seed")
+    }
+
+
 def generate_image(
     prompt: str,
-    provider: str = "flux",
+    provider: str = "basic",
     seed: Optional[int] = None,
     reference_image: Optional[str] = None,
     fit_mode: str = "crop"
 ) -> Dict[str, Any]:
     """
-    Genera una imagen vertical a partir de un prompt utilizando el proveedor seleccionado.
+    Genera una imagen vertical a partir de un prompt utilizando el proveedor seleccionado ('basic' o 'flux').
     Permite opcionalmente inyectar una imagen de referencia (Image-to-Image / Control de consistencia).
     - fit_mode: 'crop' (por defecto, llena todo el cuadro 9:16) o 'contain' (para hojas de modelo sin recortes).
     """
@@ -163,8 +301,24 @@ def generate_image(
     temp_download_path = MEDIA_DIR / f"temp_{filename}"
     web_url = f"/static/media/{filename}"
 
+    if seed is None:
+        seed = extract_seed_from_prompt(prompt)
     clean_prompt = sanitize_image_prompt(prompt, max_chars=2000)
     ref_info = resolve_reference_image_info(reference_image)
+    provider_norm = (provider or "basic").strip().lower()
+
+    # 0. Motor dedicado FLUX (Fal.ai: FLUX.1 Dev / Kontext Pro)
+    if provider_norm in ("flux", "fal", "fal_flux", "fal_flux_dev", "fal_flux_kontext"):
+        return _generate_image_fal_flux(
+            prompt=clean_prompt,
+            final_path=final_path,
+            temp_download_path=temp_download_path,
+            web_url=web_url,
+            ref_info=ref_info,
+            seed=seed,
+            fit_mode=fit_mode
+        )
+
     openai_key = os.getenv("OPENAI_API_KEY")
     pollinations_key = os.getenv("POLLINATIONS_API_KEY")
 
