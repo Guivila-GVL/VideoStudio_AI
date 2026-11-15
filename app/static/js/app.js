@@ -131,10 +131,8 @@ document.addEventListener("DOMContentLoaded", () => {
   // Navegación de Capas
   const tabNavGeneric = document.getElementById("tab-nav-generic");
   const tabNavSpecific = document.getElementById("tab-nav-specific");
-  const tabNavSubtitles = document.getElementById("tab-nav-subtitles");
   const viewGeneric = document.getElementById("view-generic");
   const viewSpecific = document.getElementById("view-specific");
-  const viewSubtitles = document.getElementById("view-subtitles");
   const btnGoToChapters = document.getElementById("btn-go-to-chapters");
   const btnSwitchToGeneric = document.getElementById("btn-switch-to-generic");
 
@@ -583,27 +581,25 @@ document.addEventListener("DOMContentLoaded", () => {
   // 2. NAVEGACIÓN ENTRE CAPAS
   // ========================================================
   function switchLayer(layer) {
-    [tabNavGeneric, tabNavSpecific, tabNavSubtitles].forEach((b) => b && b.classList.remove("active"));
-    [viewGeneric, viewSpecific, viewSubtitles].forEach((v) => { if (v) v.style.display = "none"; });
-
     if (layer === "generic") {
       tabNavGeneric.classList.add("active");
+      tabNavSpecific.classList.remove("active");
       viewGeneric.style.display = "block";
-    } else if (layer === "subtitles") {
-      if (tabNavSubtitles) tabNavSubtitles.classList.add("active");
-      if (viewSubtitles) viewSubtitles.style.display = "block";
-      if (typeof updateSubtitlePreview === "function") updateSubtitlePreview();
+      viewSpecific.style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
     } else {
       tabNavSpecific.classList.add("active");
+      tabNavGeneric.classList.remove("active");
       viewSpecific.style.display = "block";
+      viewGeneric.style.display = "none";
+      window.scrollTo({ top: 0, behavior: "smooth" });
       updateMiniBanner();
+      if (typeof updateSubtitlePreview === "function") updateSubtitlePreview();
     }
-    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
   tabNavGeneric.addEventListener("click", () => switchLayer("generic"));
   tabNavSpecific.addEventListener("click", () => switchLayer("specific"));
-  if (tabNavSubtitles) tabNavSubtitles.addEventListener("click", () => switchLayer("subtitles"));
   btnGoToChapters.addEventListener("click", async () => {
     await saveUniverse(false);
     switchLayer("specific");
@@ -6178,7 +6174,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const fontCss = cfg.font_family === "serif" ? "Georgia, serif" : cfg.font_family === "mono" ? "Consolas, monospace" : "Arial, 'Segoe UI', sans-serif";
     subPreviewBox.style.fontFamily = fontCss;
-    subPreviewBox.style.fontSize = `${Math.round(cfg.font_size * 0.34)}px`;
+    subPreviewBox.style.fontSize = `${Math.round(cfg.font_size * 0.26)}px`;
 
     let textCol = cfg.text_color;
     if (cfg.bg_mode === "white" && textCol.toUpperCase() === "#FFFFFF") {
@@ -6205,7 +6201,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (cfg.position === "top") {
       subPreviewFrame.style.alignItems = "flex-start";
-      subPreviewBox.style.marginTop = "48px";
+      subPreviewBox.style.marginTop = "30px";
       subPreviewBox.style.marginBottom = "0";
     } else if (cfg.position === "center") {
       subPreviewFrame.style.alignItems = "center";
@@ -6214,7 +6210,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       subPreviewFrame.style.alignItems = "flex-end";
       subPreviewBox.style.marginTop = "0";
-      subPreviewBox.style.marginBottom = "70px";
+      subPreviewBox.style.marginBottom = "48px";
     }
 
     const sampleWords = ["Platero", "es", "pequeño,", "peludo,", "suave..."];
