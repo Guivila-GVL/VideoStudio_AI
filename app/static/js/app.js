@@ -6317,6 +6317,19 @@ document.addEventListener("DOMContentLoaded", () => {
       subPreviewBox.style.marginBottom = "48px";
     }
 
+    if (cfg.mode === "paragraph_preview") {
+      const p1 = ["Platero", "es", "pequeño,", "peludo,", "suave;", "tan", "blando", "por", "fuera", "que", "se", "diría", "todo", "de", "algodón,", "que", "no", "lleva", "huesos."];
+      const p2 = "Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro.";
+      const aIdx = wordLimit !== null ? Math.min(wordLimit, p1.length - 1) : 4;
+      const p1Html = p1.map((w, idx) => {
+        if (idx === aIdx) return `<span style="color:${cfg.highlight_color}">${w}</span>`;
+        if (idx < aIdx) return `<span style="opacity:0.72">${w}</span>`;
+        return w;
+      }).join(" ");
+      subPreviewBox.innerHTML = `${p1Html}<div style="margin-top:8px;font-size:0.84em;opacity:0.42;filter:blur(0.6px);">${p2}</div>`;
+      return;
+    }
+
     const sampleWords = ["Platero", "es", "pequeño,", "peludo,", "suave;", "tan", "blando", "por", "fuera", "que", "se", "diría", "de", "algodón."];
     const activeIdx = wordLimit !== null ? Math.min(wordLimit, sampleWords.length - 1) : 4;
     const shown = cfg.mode === "word_by_word" && wordLimit !== null

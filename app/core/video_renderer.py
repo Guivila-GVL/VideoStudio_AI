@@ -217,6 +217,29 @@ def _group_words_into_phrases(words: List[Dict[str, Any]], max_words: int = 4, m
     return phrases
 
 
+def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 28, max_chars: int = 170) -> List[List[Dict[str, Any]]]:
+    """Agrupa palabras en párrafos completos respetando pausas de puntuación cuando es posible."""
+    paragraphs: List[List[Dict[str, Any]]] = []
+    current: List[Dict[str, Any]] = []
+    cur_chars = 0
+    for w in words:
+        txt = w.get("word", "")
+        if current and (len(current) >= max_words or cur_chars + len(txt) + 1 > max_chars):
+            paragraphs.append(current)
+            current = [w]
+            cur_chars = len(txt)
+        else:
+            current.append(w)
+            cur_chars += len(txt) + (1 if len(current) > 1 else 0)
+            if len(current) >= 12 and cur_chars >= 70 and txt.endswith((".", "!", "?", ";", ":")):
+                paragraphs.append(current)
+                current = []
+                cur_chars = 0
+    if current:
+        paragraphs.append(current)
+    return paragraphs
+
+
 def _format_phrase_multiline(words: List[Dict[str, Any]], active_idx: int, hi_ass_col: str, primary_ass_tag: str, limit: Optional[int] = None, dim_past: bool = False, max_line_chars: int = 30) -> str:
     """Formatea una frase en múltiples líneas limpias resaltando la palabra activa."""
     items = words[:limit] if limit is not None else words
@@ -331,6 +354,32 @@ def create_ass_subtitles(
         wrapped = "\\N".join(textwrap.wrap(clean_text, width=32))
         fad = "{\\fad(150,220)}" if use_fade else ""
         events.append(f"Dialogue: 0,{_format_ass_time(0)},{_format_ass_time(duration)},Default,,0,0,0,,{fad}{_escape_ass_text(wrapped)}")
+    elif mode == "paragraph_preview":
+        # Párrafo completo actual + párrafo siguiente difuminado debajo (estilo teleprompter/lectura)
+        paragraphs = _group_words_into_paragraphs(words, max_words=28, max_chars=170)
+        next_font_size = max(24, int(round(font_size * 0.84)))
+        for p_idx, para in enumerate(paragraphs):
+            p_end = paragraphs[p_idx + 1][0]["start"] if p_idx + 1 < len(paragraphs) else duration
+            next_block = ""
+            if p_idx + 1 < len(paragraphs):
+                next_raw = " ".join(nw.get("word", "") for nw in paragraphs[p_idx + 1])
+                next_wrapped = "\\N".join(textwrap.wrap(next_raw, width=36))
+                next_block = (
+                    f"\\N\\N{{\\fs{next_font_size}\\alpha&H9A&\\blur1.2}}"
+                    f"{_escape_ass_text(next_wrapped)}"
+                    f"{{\\blur0\\alpha&H00&\\fs{font_size}}}"
+                )
+            for w_idx, w in enumerate(para):
+                w_start = w["start"]
+                w_end = para[w_idx + 1]["start"] if w_idx + 1 < len(para) else p_end
+                if w_end <= w_start:
+                    w_end = w_start + max(0.15, w.get("duration", 0.25))
+                cur_body = _format_phrase_multiline(
+                    para, w_idx, hi_ass_col, primary_ass_tag,
+                    dim_past=True, max_line_chars=34
+                )
+                fad = "{\\fad(120,0)}" if (use_fade and w_idx == 0) else ("{\\fad(0,180)}" if (use_fade and w_idx == len(para) - 1) else "")
+                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{cur_body}{next_block}")
     elif mode in ("scrolling_sentence", "karaoke_chunk"):
         # Frases largas (2-3 líneas completas) señalando la palabra/frase activa
         phrases = _group_words_into_phrases(words, max_words=14, max_chars=72)
@@ -430,10 +479,9 @@ def render_scene_clip(
                 "-i", str(audio_path.resolve()),
             ]
         else:
-            # Para locuciones largas (>1.85x): ida y vuelta suave (ping-pong) sin cortes bruscos
-            pp_dur = clip_dur * 2.0
-            pts_ratio = round(duration / pp_dur, 4) if duration > pp_dur else 1.0
-            vf_zoom = f"{base_scale},split[fwd][rev];[rev]reverse[r];[fwd][r]concat=n=2:v=1:a=0,setpts={pts_ratio}*PTS"
+            # Avance continuo siempre hacia adelante (nunca rebobinar/reverse para que los personajes no caminen hacia atrás)
+            pts_ratio = round(duration / clip_dur, 4)
+            vf_zoom = f"{base_scale},setpts={pts_ratio}*PTS"
             cmd = [
                 "ffmpeg", "-y",
                 "-i", str(video_clip_path.resolve()),
