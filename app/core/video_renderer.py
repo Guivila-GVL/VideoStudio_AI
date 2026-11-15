@@ -385,6 +385,7 @@ def render_scene_clip(
     enable_ken_burns: bool = True,
     subtitle_config: Optional[Dict[str, Any]] = None,
     render_config: Optional[Dict[str, Any]] = None,
+    video_clip_path: Optional[Path] = None,
 ) -> float:
     """
     Renderiza un clip individual sincronizado con su locución,
@@ -405,37 +406,47 @@ def render_scene_clip(
 
     temp_ass_path = output_clip_path.parent / f"temp_sub_{output_clip_path.stem}.ass"
 
-    # Seleccionar variación de movimiento (Ken Burns)
-    if kb_style != "fijo":
-        max_zoom = 1.22 if kb_style == "dinamico" else 1.15
-        step_z = 0.0018 if kb_style == "dinamico" else 0.0012
-        motion_idx = scene_index % (4 if kb_style == "dinamico" else 3)
-        if motion_idx == 0:
-            zoom_expr = f"min(zoom+{step_z},{max_zoom})"
-            x_expr = "iw/2-(iw/zoom/2)"
-            y_expr = "ih/2-(ih/zoom/2)"
-        elif motion_idx == 1:
-            zoom_expr = f"max({max_zoom}-{step_z}*on,1.0)"
-            x_expr = "iw/2-(iw/zoom/2)"
-            y_expr = "ih/2-(ih/zoom/2)"
-        elif motion_idx == 2:
-            zoom_expr = "1.12" if kb_style == "dinamico" else "1.10"
-            x_expr = "((iw-iw/zoom)/2)+sin(on/25)*25"
-            y_expr = "ih/2-(ih/zoom/2)"
-        else:
-            # Paneo vertical suave (solo en modo dinámico)
-            zoom_expr = "1.14"
-            x_expr = "iw/2-(iw/zoom/2)"
-            y_expr = "((ih-ih/zoom)/2)+sin(on/30)*22"
-        vf_zoom = f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d={total_frames}:s={target_w}x{target_h}:fps={FPS}"
-    else:
-        vf_zoom = f"scale={target_w}:{target_h}:force_original_aspect_ratio=increase,crop={target_w}:{target_h},fps={FPS}"
+    use_animated_clip = bool(video_clip_path and video_clip_path.exists())
 
-    cmd = [
-        "ffmpeg", "-y",
-        "-loop", "1", "-i", str(image_path.resolve()),
-        "-i", str(audio_path.resolve()),
-    ]
+    # Seleccionar fuente de vídeo: clip animado I2V o imagen estática con Ken Burns
+    if use_animated_clip:
+        vf_zoom = f"scale={target_w}:{target_h}:force_original_aspect_ratio=increase,crop={target_w}:{target_h},fps={FPS}"
+        cmd = [
+            "ffmpeg", "-y",
+            "-stream_loop", "-1", "-i", str(video_clip_path.resolve()),
+            "-i", str(audio_path.resolve()),
+        ]
+    else:
+        if kb_style != "fijo":
+            max_zoom = 1.22 if kb_style == "dinamico" else 1.15
+            step_z = 0.0018 if kb_style == "dinamico" else 0.0012
+            motion_idx = scene_index % (4 if kb_style == "dinamico" else 3)
+            if motion_idx == 0:
+                zoom_expr = f"min(zoom+{step_z},{max_zoom})"
+                x_expr = "iw/2-(iw/zoom/2)"
+                y_expr = "ih/2-(ih/zoom/2)"
+            elif motion_idx == 1:
+                zoom_expr = f"max({max_zoom}-{step_z}*on,1.0)"
+                x_expr = "iw/2-(iw/zoom/2)"
+                y_expr = "ih/2-(ih/zoom/2)"
+            elif motion_idx == 2:
+                zoom_expr = "1.12" if kb_style == "dinamico" else "1.10"
+                x_expr = "((iw-iw/zoom)/2)+sin(on/25)*25"
+                y_expr = "ih/2-(ih/zoom/2)"
+            else:
+                # Paneo vertical suave (solo en modo dinámico)
+                zoom_expr = "1.14"
+                x_expr = "iw/2-(iw/zoom/2)"
+                y_expr = "((ih-ih/zoom)/2)+sin(on/30)*22"
+            vf_zoom = f"zoompan=z='{zoom_expr}':x='{x_expr}':y='{y_expr}':d={total_frames}:s={target_w}x{target_h}:fps={FPS}"
+        else:
+            vf_zoom = f"scale={target_w}:{target_h}:force_original_aspect_ratio=increase,crop={target_w}:{target_h},fps={FPS}"
+
+        cmd = [
+            "ffmpeg", "-y",
+            "-loop", "1", "-i", str(image_path.resolve()),
+            "-i", str(audio_path.resolve()),
+        ]
 
     if enable_subtitles and narrador_text.strip():
         create_ass_subtitles(
@@ -617,6 +628,9 @@ def render_final_video(
             if not img_path.exists() or not audio_path.exists():
                 raise FileNotFoundError(f"Archivos de media no encontrados para escena {i+1} (img: {img_path}, audio: {audio_path}).")
 
+            vclip_url = sc.get("video_clip_url")
+            vclip_path = resolve_media_path(vclip_url) if vclip_url else None
+
             clip_path = temp_dir / f"clip_{i:02d}.mp4"
             dur = render_scene_clip(
                 image_path=img_path,
@@ -628,6 +642,7 @@ def render_final_video(
                 enable_ken_burns=enable_ken_burns,
                 subtitle_config=subtitle_config,
                 render_config=rcfg,
+                video_clip_path=vclip_path,
             )
             clip_durations.append(dur)
             clip_paths.append(clip_path)

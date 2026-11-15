@@ -22,6 +22,7 @@ from app.core.script_generator import (
 )
 from app.core.tts_engine import synthesize_speech, list_voices
 from app.core.image_engine import generate_image, save_uploaded_image
+from app.core.video_gen_engine import animate_scene_image
 from app.core.video_renderer import render_final_video, render_single_scene_preview_clip
 from app.core.project_manager import (
     list_all_projects,
@@ -1484,6 +1485,33 @@ async def api_upload_image(file: UploadFile = File(...)):
         return {"success": True, **res}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class AnimateSceneRequest(BaseModel):
+    prompt: str = ""
+    image_url: str
+    next_image_url: Optional[str] = None
+    transition_text: Optional[str] = ""
+    duration: str = "5"
+    aspect_ratio: str = "9:16"
+    model: str = "kling_v16"
+
+
+@app.post("/api/scene/animate")
+async def api_animate_scene(req: AnimateSceneRequest):
+    try:
+        res = animate_scene_image(
+            prompt=req.prompt,
+            image_url=req.image_url,
+            next_image_url=req.next_image_url,
+            transition_text=req.transition_text or "",
+            duration=req.duration,
+            aspect_ratio=req.aspect_ratio,
+            model_key=req.model,
+        )
+        return {"success": True, **res}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/api/video/render")
 async def api_render_video(req: RenderVideoRequest):

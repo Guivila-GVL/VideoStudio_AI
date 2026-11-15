@@ -4254,6 +4254,20 @@ document.addEventListener("DOMContentLoaded", () => {
               <input type="file" class="input-upload-img" data-idx="${index}" accept="image/*" style="display:none;">
             </label>
           </div>
+          <div style="margin-top:6px; display:flex; flex-direction:column; gap:4px;">
+            <button class="btn btn-primary btn-xs btn-animate-scene" data-idx="${index}" ${sc.image_url ? '' : 'disabled'} title="Convierte la imagen en un vídeo con movimiento real del personaje mediante Fal.ai (Image-to-Video)">
+              🎥 ${sc.video_clip_url ? 'Re-animar escena' : 'Animar escena (I2V)'}
+            </button>
+            ${index < scenes.length - 1 ? `
+              <label style="font-size:0.72rem; display:flex; align-items:center; gap:4px; opacity:0.85; cursor:pointer;">
+                <input type="checkbox" class="chk-link-next-scene" data-idx="${index}" ${scenes[index + 1]?.image_url ? 'checked' : ''}>
+                🔗 Enlazar con escena ${index + 2}
+              </label>
+            ` : ''}
+            <div id="anim-preview-${index}" style="margin-top:4px;">
+              ${sc.video_clip_url ? `<video src="${sc.video_clip_url}" controls loop muted playsinline style="width:100%; border-radius:8px; border:1px solid rgba(56,189,248,0.4);"></video>` : ''}
+            </div>
+          </div>
         </div>
 
         <!-- Panel Editorial (Derecha) -->
@@ -4427,6 +4441,13 @@ document.addEventListener("DOMContentLoaded", () => {
       el.addEventListener("click", async e => {
         const idx = parseInt(e.target.dataset.idx);
         await generateImageForScene(idx);
+      });
+    });
+
+    document.querySelectorAll(".btn-animate-scene").forEach(el => {
+      el.addEventListener("click", async e => {
+        const idx = parseInt(e.target.dataset.idx);
+        await animateSceneForScene(idx);
       });
     });
 
@@ -4747,6 +4768,69 @@ document.addEventListener("DOMContentLoaded", () => {
       setSystemStatus("error", `Error en audio Escena #${idx + 1}`, err.message);
     } finally {
       btn.disabled = false;
+    }
+  }
+
+  // Animación Image-to-Video (Fal.ai) con enlace opcional a la escena siguiente
+  async function animateSceneForScene(idx) {
+    const sc = state.scenes[idx];
+    if (!sc || !sc.image_url) {
+      showToast("Primero genera o sube una imagen para esta escena", "error");
+      return;
+    }
+    const btn = document.querySelector(`.btn-animate-scene[data-idx="${idx}"]`);
+    const linkChk = document.querySelector(`.chk-link-next-scene[data-idx="${idx}"]`);
+    const nextSc = (linkChk && linkChk.checked && state.scenes[idx + 1] && state.scenes[idx + 1].image_url)
+      ? state.scenes[idx + 1]
+      : null;
+
+    if (btn) {
+      btn.disabled = true;
+      btn.textContent = "⏳ Animando (30-90s)...";
+    }
+    setSystemStatus(
+      "busy",
+      `Animando Escena #${idx + 1} (I2V)...`,
+      nextSc ? `Generando movimiento y transición continua hacia Escena #${idx + 2}...` : "Generando movimiento del personaje en su entorno..."
+    );
+
+    const rCfg = typeof getRenderConfig === "function" ? getRenderConfig() : { aspect_ratio: "9:16" };
+    try {
+      const res = await fetch("/api/scene/animate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          prompt: sc.descripcion_escena || sc.prompt_imagen || sc.narrador || "",
+          image_url: sc.image_url,
+          next_image_url: nextSc ? nextSc.image_url : null,
+          transition_text: nextSc ? (nextSc.descripcion_escena || "").slice(0, 220) : "",
+          duration: "5",
+          aspect_ratio: rCfg.aspect_ratio || "9:16",
+          model: "kling_v16"
+        })
+      });
+      const data = await res.json();
+      if (data.success && data.video_clip_url) {
+        sc.video_clip_url = data.video_clip_url;
+        const preview = document.getElementById(`anim-preview-${idx}`);
+        if (preview) {
+          preview.innerHTML = `<video src="${sc.video_clip_url}?t=${Date.now()}" controls loop muted playsinline style="width:100%; border-radius:8px; border:1px solid rgba(56,189,248,0.4);"></video>`;
+        }
+        await saveCurrentChapter(true);
+        showToast(`Escena #${idx + 1} animada (${data.size_mb} MB)${data.linked_next ? ' 🔗 enlazada' : ''}`, "success");
+        setSystemStatus("success", `Escena #${idx + 1} animada`, "Clip de movimiento guardado y listo para el montaje final.");
+      } else {
+        showToast(data.detail || `Error animando escena ${idx + 1}`, "error");
+        setSystemStatus("error", `Error animando Escena #${idx + 1}`, data.detail || "Fallo en I2V");
+      }
+    } catch (err) {
+      showToast(`Error animando escena ${idx + 1}`, "error");
+      setSystemStatus("error", `Error animando Escena #${idx + 1}`, err.message);
+    } finally {
+      if (btn) {
+        btn.disabled = false;
+        btn.textContent = sc.video_clip_url ? "🎥 Re-animar escena" : "🎥 Animar escena (I2V)";
+      }
     }
   }
 
