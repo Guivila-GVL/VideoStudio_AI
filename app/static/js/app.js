@@ -4258,9 +4258,9 @@ document.addEventListener("DOMContentLoaded", () => {
             <button class="btn btn-primary btn-xs btn-animate-scene" data-idx="${index}" ${sc.image_url ? '' : 'disabled'} title="Convierte la imagen en un vídeo con movimiento real del personaje mediante Fal.ai (Image-to-Video)">
               🎥 ${sc.video_clip_url ? 'Re-animar escena' : 'Animar escena (I2V)'}
             </button>
-            ${index < scenes.length - 1 ? `
+            ${index < state.scenes.length - 1 ? `
               <label style="font-size:0.72rem; display:flex; align-items:center; gap:4px; opacity:0.85; cursor:pointer;">
-                <input type="checkbox" class="chk-link-next-scene" data-idx="${index}" ${scenes[index + 1]?.image_url ? 'checked' : ''}>
+                <input type="checkbox" class="chk-link-next-scene" data-idx="${index}" ${state.scenes[index + 1]?.image_url ? 'checked' : ''}>
                 🔗 Enlazar con escena ${index + 2}
               </label>
             ` : ''}
