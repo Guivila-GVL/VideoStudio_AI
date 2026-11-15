@@ -1494,6 +1494,7 @@ class AnimateSceneRequest(BaseModel):
     duration: str = "5"
     aspect_ratio: str = "9:16"
     model: str = "kling_v16"
+    target_duration_sec: Optional[float] = None
 
 
 @app.post("/api/scene/animate")
@@ -1507,6 +1508,7 @@ async def api_animate_scene(req: AnimateSceneRequest):
             duration=req.duration,
             aspect_ratio=req.aspect_ratio,
             model_key=req.model,
+            target_duration_sec=req.target_duration_sec,
         )
         return {"success": True, **res}
     except Exception as e:

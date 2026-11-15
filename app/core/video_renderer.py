@@ -409,13 +409,36 @@ def render_scene_clip(
     use_animated_clip = bool(video_clip_path and video_clip_path.exists())
 
     # Seleccionar fuente de vídeo: clip animado I2V o imagen estática con Ken Burns
+    v_filter_prefix = "[0:v]"
     if use_animated_clip:
-        vf_zoom = f"scale={target_w}:{target_h}:force_original_aspect_ratio=increase,crop={target_w}:{target_h},fps={FPS}"
-        cmd = [
-            "ffmpeg", "-y",
-            "-stream_loop", "-1", "-i", str(video_clip_path.resolve()),
-            "-i", str(audio_path.resolve()),
-        ]
+        clip_dur = max(1.0, get_audio_duration_seconds(str(video_clip_path)))
+        base_scale = f"scale={target_w}:{target_h}:force_original_aspect_ratio=increase,crop={target_w}:{target_h},fps={FPS}"
+        if clip_dur >= duration:
+            vf_zoom = base_scale
+            cmd = [
+                "ffmpeg", "-y",
+                "-i", str(video_clip_path.resolve()),
+                "-i", str(audio_path.resolve()),
+            ]
+        elif (duration / clip_dur) <= 1.85:
+            # Estirar suavemente en una sola pasada (sin repeticiones ni saltos) hasta el último frame
+            pts_ratio = round(duration / clip_dur, 4)
+            vf_zoom = f"{base_scale},setpts={pts_ratio}*PTS"
+            cmd = [
+                "ffmpeg", "-y",
+                "-i", str(video_clip_path.resolve()),
+                "-i", str(audio_path.resolve()),
+            ]
+        else:
+            # Para locuciones largas (>1.85x): ida y vuelta suave (ping-pong) sin cortes bruscos
+            pp_dur = clip_dur * 2.0
+            pts_ratio = round(duration / pp_dur, 4) if duration > pp_dur else 1.0
+            vf_zoom = f"{base_scale},split[fwd][rev];[rev]reverse[r];[fwd][r]concat=n=2:v=1:a=0,setpts={pts_ratio}*PTS"
+            cmd = [
+                "ffmpeg", "-y",
+                "-i", str(video_clip_path.resolve()),
+                "-i", str(audio_path.resolve()),
+            ]
     else:
         if kb_style != "fijo":
             max_zoom = 1.22 if kb_style == "dinamico" else 1.15

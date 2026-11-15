@@ -256,6 +256,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const scenesGrid = document.getElementById("scenes-grid");
   const btnGenerateAllAudio = document.getElementById("btn-generate-all-audio");
   const btnGenerateAllImages = document.getElementById("btn-generate-all-images");
+  const btnAnimateAllScenes = document.getElementById("btn-animate-all-scenes");
   const btnAddScene = document.getElementById("btn-add-scene");
   const btnSaveChapterDraft = document.getElementById("btn-save-chapter-draft");
   const btnRenderVideo = document.getElementById("btn-render-video");
@@ -4804,7 +4805,8 @@ document.addEventListener("DOMContentLoaded", () => {
           image_url: sc.image_url,
           next_image_url: nextSc ? nextSc.image_url : null,
           transition_text: nextSc ? (nextSc.descripcion_escena || "").slice(0, 220) : "",
-          duration: "5",
+          duration: (sc.duracion_real && sc.duracion_real > 6.5) ? "10" : "5",
+          target_duration_sec: sc.duracion_real || sc.duracion_estimada || 10,
           aspect_ratio: rCfg.aspect_ratio || "9:16",
           model: "kling_v16"
         })
@@ -5044,6 +5046,22 @@ document.addEventListener("DOMContentLoaded", () => {
       await loadSavedChapter(state.currentChapterId);
     }
   });
+
+  if (btnAnimateAllScenes) {
+    btnAnimateAllScenes.addEventListener("click", async () => {
+      if (!state.scenes || state.scenes.length === 0) return;
+      btnAnimateAllScenes.disabled = true;
+      btnAnimateAllScenes.textContent = "⏳ Animando todas...";
+      for (let i = 0; i < state.scenes.length; i++) {
+        if (state.scenes[i].image_url) {
+          await animateSceneForScene(i);
+        }
+      }
+      btnAnimateAllScenes.disabled = false;
+      btnAnimateAllScenes.textContent = "🎥 Animar Todas las Escenas";
+      showToast("Todas las escenas han sido animadas y enlazadas", "success");
+    });
+  }
 
   // Renderizar Vídeo Final con FFmpeg
   btnRenderVideo.addEventListener("click", async () => {

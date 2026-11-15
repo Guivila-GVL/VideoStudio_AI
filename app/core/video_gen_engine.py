@@ -78,6 +78,7 @@ def animate_scene_image(
     duration: str = "5",
     aspect_ratio: str = "9:16",
     model_key: str = "kling_v16",
+    target_duration_sec: Optional[float] = None,
 ) -> Dict[str, Any]:
     """
     Convierte una imagen de escena en un clip MP4 animado (Image-to-Video) mediante Fal.ai.
@@ -99,10 +100,15 @@ def animate_scene_image(
     # Limitar longitud del prompt para modelos de vídeo
     action_prompt = action_prompt[:900]
 
+    # Elegir automáticamente 10s si la locución de la escena supera 6.5s
+    chosen_dur = str(duration if str(duration) in ("5", "10") else "5")
+    if target_duration_sec is not None and float(target_duration_sec) > 6.5:
+        chosen_dur = "10"
+
     payload: Dict[str, Any] = {
         "prompt": action_prompt,
         "image_url": start_uri,
-        "duration": str(duration if str(duration) in ("5", "10") else "5"),
+        "duration": chosen_dur,
         "aspect_ratio": aspect_ratio if aspect_ratio in ("9:16", "16:9", "1:1") else "9:16",
     }
 
