@@ -332,7 +332,7 @@ class RewriteSceneRequest(BaseModel):
 
 class TTSRequest(BaseModel):
     text: str
-    voice_key: str = "eleven_george"
+    voice_key: str = "edge_alvaro"
     provider: Optional[str] = None
     custom_voice_id: Optional[str] = None
 

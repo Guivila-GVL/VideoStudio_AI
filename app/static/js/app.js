@@ -4708,9 +4708,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const btn = document.querySelector(`.btn-gen-audio[data-idx="${idx}"]`);
     btn.disabled = true;
     btn.textContent = "⏳ Generando...";
-    setSystemStatus("busy", `Locución Escena #${idx + 1}...`, "Sintetizando voz con ElevenLabs...");
+    setSystemStatus("busy", `Locución Escena #${idx + 1}...`, "Sintetizando voz natural sincronizada...");
 
-    const voiceKey = state.currentProject ? state.currentProject.voz_defecto : "eleven_george";
+    const voiceKey = (univVoiceSelect && univVoiceSelect.value)
+      || (state.currentProject && state.currentProject.voz_defecto)
+      || "edge_alvaro";
 
     try {
       const res = await fetch("/api/tts/generate", {
@@ -6108,7 +6110,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========================================================
   const SUB_STORAGE_KEY = "videostudio_subtitle_config";
   const DEFAULT_SUB_CFG = {
-    mode: "word_by_word",
+    mode: "scrolling_sentence",
     bg_mode: "transparent",
     font_family: "sans",
     font_size: 52,
@@ -6213,8 +6215,8 @@ document.addEventListener("DOMContentLoaded", () => {
       subPreviewBox.style.marginBottom = "48px";
     }
 
-    const sampleWords = ["Platero", "es", "pequeño,", "peludo,", "suave..."];
-    const activeIdx = wordLimit !== null ? Math.min(wordLimit, sampleWords.length - 1) : 2;
+    const sampleWords = ["Platero", "es", "pequeño,", "peludo,", "suave;", "tan", "blando", "por", "fuera", "que", "se", "diría", "de", "algodón."];
+    const activeIdx = wordLimit !== null ? Math.min(wordLimit, sampleWords.length - 1) : 4;
     const shown = cfg.mode === "word_by_word" && wordLimit !== null
       ? sampleWords.slice(0, activeIdx + 1)
       : sampleWords;
@@ -6223,6 +6225,9 @@ document.addEventListener("DOMContentLoaded", () => {
       if (cfg.mode !== "block" && idx === activeIdx) {
         return `<span style="color:${cfg.highlight_color}">${w}</span>`;
       }
+      if (cfg.mode === "scrolling_sentence" && idx < activeIdx) {
+        return `<span style="opacity:0.65">${w}</span>`;
+      }
       return w;
     }).join(" ");
   }
@@ -6230,7 +6235,7 @@ document.addEventListener("DOMContentLoaded", () => {
   function animateSubtitlePreview() {
     if (subAnimTimer) clearInterval(subAnimTimer);
     let step = 0;
-    const total = 5;
+    const total = 14;
     updateSubtitlePreview(step);
     subAnimTimer = setInterval(() => {
       step++;
@@ -6240,7 +6245,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
       updateSubtitlePreview(step);
-    }, 450);
+    }, 320);
   }
 
   if (subEnabledEl) {

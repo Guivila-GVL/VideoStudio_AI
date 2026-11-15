@@ -217,6 +217,33 @@ def _group_words_into_phrases(words: List[Dict[str, Any]], max_words: int = 4, m
     return phrases
 
 
+def _format_phrase_multiline(words: List[Dict[str, Any]], active_idx: int, hi_ass_col: str, primary_ass_tag: str, limit: Optional[int] = None, dim_past: bool = False, max_line_chars: int = 30) -> str:
+    """Formatea una frase en múltiples líneas limpias resaltando la palabra activa."""
+    items = words[:limit] if limit is not None else words
+    lines: List[str] = []
+    cur_line: List[str] = []
+    cur_len = 0
+    for j, pw in enumerate(items):
+        raw_w = pw.get("word", "")
+        txt = _escape_ass_text(raw_w)
+        if j == active_idx:
+            tag = f"{{\\c{hi_ass_col}}}{txt}{{\\c{primary_ass_tag}}}"
+        elif dim_past and j < active_idx:
+            tag = f"{{\\alpha&H55&}}{txt}{{\\alpha&H00&}}"
+        else:
+            tag = txt
+        if cur_line and cur_len + len(raw_w) + 1 > max_line_chars:
+            lines.append(" ".join(cur_line))
+            cur_line = [tag]
+            cur_len = len(raw_w)
+        else:
+            cur_line.append(tag)
+            cur_len += len(raw_w) + (1 if cur_line else 0)
+    if cur_line:
+        lines.append(" ".join(cur_line))
+    return "\\N".join(lines)
+
+
 def create_ass_subtitles(
     text: str,
     audio_path: Path,
@@ -301,30 +328,13 @@ def create_ass_subtitles(
     words = _load_or_estimate_word_timings(audio_path, clean_text, duration)
 
     if mode == "block" or not words:
-        wrapped = "\\N".join(textwrap.wrap(clean_text, width=30))
-        fad = "{\\fad(120,180)}" if use_fade else ""
+        wrapped = "\\N".join(textwrap.wrap(clean_text, width=32))
+        fad = "{\\fad(150,220)}" if use_fade else ""
         events.append(f"Dialogue: 0,{_format_ass_time(0)},{_format_ass_time(duration)},Default,,0,0,0,,{fad}{_escape_ass_text(wrapped)}")
-    elif mode == "karaoke_chunk":
-        phrases = _group_words_into_phrases(words, max_words=4, max_chars=24)
-        for p_idx, phrase in enumerate(phrases):
-            p_start = phrase[0]["start"]
-            p_end = phrases[p_idx + 1][0]["start"] if p_idx + 1 < len(phrases) else duration
-            for w_idx, w in enumerate(phrase):
-                w_start = w["start"]
-                w_end = phrase[w_idx + 1]["start"] if w_idx + 1 < len(phrase) else p_end
-                if w_end <= w_start:
-                    w_end = w_start + max(0.15, w.get("duration", 0.25))
-                parts = []
-                for j, pw in enumerate(phrase):
-                    txt = _escape_ass_text(pw["word"])
-                    if j == w_idx:
-                        parts.append(f"{{\\c{hi_ass_col}}}{txt}{{\\c{primary_ass_tag}}}")
-                    else:
-                        parts.append(txt)
-                fad = "{\\fad(0,120)}" if (use_fade and w_idx == len(phrase) - 1) else ""
-                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{' '.join(parts)}")
-    else:  # word_by_word: aparece palabra a palabra acumulando la frase corta
-        phrases = _group_words_into_phrases(words, max_words=4, max_chars=24)
+    elif mode in ("scrolling_sentence", "karaoke_chunk"):
+        # Frases largas (2-3 líneas completas) señalando la palabra/frase activa
+        phrases = _group_words_into_phrases(words, max_words=14, max_chars=72)
+        dim_past = mode == "scrolling_sentence"
         for p_idx, phrase in enumerate(phrases):
             p_end = phrases[p_idx + 1][0]["start"] if p_idx + 1 < len(phrases) else duration
             for w_idx, w in enumerate(phrase):
@@ -332,15 +342,27 @@ def create_ass_subtitles(
                 w_end = phrase[w_idx + 1]["start"] if w_idx + 1 < len(phrase) else p_end
                 if w_end <= w_start:
                     w_end = w_start + max(0.15, w.get("duration", 0.25))
-                parts = []
-                for j in range(w_idx + 1):
-                    txt = _escape_ass_text(phrase[j]["word"])
-                    if j == w_idx:
-                        parts.append(f"{{\\c{hi_ass_col}}}{txt}{{\\c{primary_ass_tag}}}")
-                    else:
-                        parts.append(txt)
-                fad = "{\\fad(0,140)}" if (use_fade and w_idx == len(phrase) - 1) else ""
-                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{' '.join(parts)}")
+                body = _format_phrase_multiline(
+                    phrase, w_idx, hi_ass_col, primary_ass_tag,
+                    dim_past=dim_past, max_line_chars=30
+                )
+                fad = "{\\fad(100,0)}" if (use_fade and w_idx == 0) else ("{\\fad(0,180)}" if (use_fade and w_idx == len(phrase) - 1) else "")
+                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{body}")
+    else:  # word_by_word: aparece palabra a palabra acumulando hasta 2 líneas
+        phrases = _group_words_into_phrases(words, max_words=10, max_chars=52)
+        for p_idx, phrase in enumerate(phrases):
+            p_end = phrases[p_idx + 1][0]["start"] if p_idx + 1 < len(phrases) else duration
+            for w_idx, w in enumerate(phrase):
+                w_start = w["start"]
+                w_end = phrase[w_idx + 1]["start"] if w_idx + 1 < len(phrase) else p_end
+                if w_end <= w_start:
+                    w_end = w_start + max(0.15, w.get("duration", 0.25))
+                body = _format_phrase_multiline(
+                    phrase, w_idx, hi_ass_col, primary_ass_tag,
+                    limit=w_idx + 1, max_line_chars=28
+                )
+                fad = "{\\fad(0,160)}" if (use_fade and w_idx == len(phrase) - 1) else ""
+                events.append(f"Dialogue: 0,{_format_ass_time(w_start)},{_format_ass_time(w_end)},Default,,0,0,0,,{fad}{body}")
 
     output_ass_path.write_text(header + "\n".join(events) + "\n", encoding="utf-8")
 

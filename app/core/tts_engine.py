@@ -195,9 +195,35 @@ def list_voices() -> List[Dict[str, Any]]:
             pass
     return voices
 
+def _normalize_text_for_tts(text: str) -> str:
+    """Normaliza saltos de línea de PDF/libro y guiones para una lectura fluida de audiolibro."""
+    import re
+    t = (text or "").replace("\r\n", "\n").replace("\r", "\n").strip()
+    if not t:
+        return "..."
+    # Párrafos dobles o títulos seguidos de salto -> pausa de punto si no termina en puntuación
+    lines = [ln.strip() for ln in t.split("\n")]
+    merged: List[str] = []
+    for idx, ln in enumerate(lines):
+        if not ln:
+            if merged and not merged[-1].endswith((".", "!", "?", "…", ":")):
+                merged[-1] = merged[-1] + "."
+            continue
+        # Si la primera línea es un título corto sin punto (ej. "Mariposas blancas")
+        if idx == 0 and len(ln) <= 45 and not ln.endswith((".", "!", "?", "…", ":", ",")) and len(lines) > 1:
+            merged.append(ln + ".")
+        else:
+            merged.append(ln)
+    t = " ".join(merged)
+    # Limpiar guiones de diálogo al inicio de intervención para evitar pausas bruscas
+    t = re.sub(r"\s*—\s*", ", ", t).lstrip(", ")
+    t = re.sub(r"\s{2,}", " ", t).strip()
+    return t or "..."
+
+
 def synthesize_speech(
     text: str,
-    voice_key: str = "openai_fable",
+    voice_key: str = "edge_alvaro",
     provider: Optional[str] = None,
     custom_voice_id: Optional[str] = None
 ) -> Dict[str, Any]:
@@ -205,9 +231,7 @@ def synthesize_speech(
     Sintetiza audio a partir de texto y guarda el archivo en static/media.
     Devuelve la URL web del archivo y su duración real.
     """
-    clean_text = text.strip()
-    if not clean_text:
-        clean_text = "..."
+    clean_text = _normalize_text_for_tts(text)
 
     filename = f"audio_{uuid.uuid4().hex[:10]}.mp3"
     out_path = MEDIA_DIR / filename
