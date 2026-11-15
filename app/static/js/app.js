@@ -5004,8 +5004,8 @@ document.addEventListener("DOMContentLoaded", () => {
           project_id: state.currentProject ? state.currentProject.id : null,
           chapter_id: state.currentChapterId,
           scenes: state.scenes,
-          enable_subtitles: chkSubtitles.checked,
-          enable_ken_burns: chkKenBurns.checked,
+          enable_subtitles: subEnabledEl ? subEnabledEl.checked : true,
+          enable_ken_burns: renderKbStyleEl ? renderKbStyleEl.value !== "fijo" : true,
           subtitle_config: typeof getSubtitleConfig === "function" ? getSubtitleConfig() : undefined,
           render_config: typeof getRenderConfig === "function" ? getRenderConfig() : undefined
         })
@@ -6243,14 +6243,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 450);
   }
 
-  if (subEnabledEl && chkSubtitles) {
-    subEnabledEl.checked = chkSubtitles.checked;
+  if (subEnabledEl) {
     subEnabledEl.addEventListener("change", () => {
-      chkSubtitles.checked = subEnabledEl.checked;
-      updateSubtitlePreview();
-    });
-    chkSubtitles.addEventListener("change", () => {
-      subEnabledEl.checked = chkSubtitles.checked;
       updateSubtitlePreview();
     });
   }
