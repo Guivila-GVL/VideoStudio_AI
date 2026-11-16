@@ -3028,6 +3028,165 @@ def get_env_settings() -> Dict[str, Any]:
     }
 
 
+def get_providers_billing_status() -> Dict[str, Any]:
+    """Consulta en paralelo el estado de cuenta, cuota o saldo disponible de cada proveedor configurado."""
+    import concurrent.futures
+    import shutil
+    import requests as _req
+
+    openai_key = os.getenv("OPENAI_API_KEY", "").strip()
+    eleven_key = os.getenv("ELEVENLABS_API_KEY", "").strip()
+    pollinations_key = os.getenv("POLLINATIONS_API_KEY", "").strip()
+    fal_key = os.getenv("FAL_KEY", "").strip()
+    gemini_key = os.getenv("GEMINI_API_KEY", "").strip()
+
+    def _check_openai() -> Dict[str, Any]:
+        base = {
+            "home_url": "https://platform.openai.com",
+            "billing_url": "https://platform.openai.com/settings/organization/billing/overview",
+            "keys_url": "https://platform.openai.com/api-keys",
+        }
+        if not openai_key or not openai_key.startswith("sk-"):
+            return {**base, "status": "unconfigured", "label": "Sin clave configurada"}
+        try:
+            r = _req.get(
+                "https://api.openai.com/v1/models",
+                headers={"Authorization": f"Bearer {openai_key}"},
+                timeout=4,
+            )
+            if r.status_code == 200:
+                return {**base, "status": "ok", "label": "Clave válida (ver saldo USD en Billing)"}
+            if r.status_code == 401:
+                return {**base, "status": "error", "label": "Clave inválida o revocada (401)"}
+            if r.status_code == 429:
+                return {**base, "status": "warning", "label": "Límite de cuota / sin crédito (429)"}
+            return {**base, "status": "warning", "label": f"HTTP {r.status_code}"}
+        except Exception as e:
+            return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}"}
+
+    def _check_elevenlabs() -> Dict[str, Any]:
+        base = {
+            "home_url": "https://elevenlabs.io",
+            "billing_url": "https://elevenlabs.io/app/subscription",
+            "keys_url": "https://elevenlabs.io/app/developers/api-keys",
+        }
+        if not eleven_key:
+            return {**base, "status": "unconfigured", "label": "Opcional (usando Edge TTS gratuito)"}
+        try:
+            r = _req.get(
+                "https://api.elevenlabs.io/v1/user/subscription",
+                headers={"xi-api-key": eleven_key},
+                timeout=4,
+            )
+            if r.status_code == 200:
+                d = r.json()
+                used = int(d.get("character_count", 0))
+                limit = int(d.get("character_limit", 0))
+                rem = max(0, limit - used)
+                tier = d.get("tier", "free")
+                pct_rem = round((rem / limit) * 100) if limit > 0 else 0
+                st = "error" if rem <= 0 else ("warning" if pct_rem < 15 else "ok")
+                return {
+                    **base,
+                    "status": st,
+                    "label": f"Plan {tier}: {rem:,} / {limit:,} caracteres restantes ({pct_rem}%)",
+                }
+            if r.status_code == 401:
+                return {**base, "status": "error", "label": "Clave inválida (401)"}
+            return {**base, "status": "warning", "label": f"HTTP {r.status_code}"}
+        except Exception as e:
+            return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}"}
+
+    def _check_fal() -> Dict[str, Any]:
+        base = {
+            "home_url": "https://fal.ai",
+            "billing_url": "https://fal.ai/dashboard/billing",
+            "keys_url": "https://fal.ai/dashboard/keys",
+        }
+        if not fal_key:
+            return {**base, "status": "unconfigured", "label": "Sin clave configurada"}
+        try:
+            # Comprueba estado real de autenticación/saldo en la cola sin generar nada (payload vacío controlado)
+            r = _req.post(
+                "https://queue.fal.run/fal-ai/flux/schnell",
+                headers={"Authorization": f"Key {fal_key}", "Content-Type": "application/json"},
+                json={},
+                timeout=5,
+            )
+            txt = r.text[:240]
+            if r.status_code == 403 and ("Exhausted balance" in txt or "locked" in txt.lower()):
+                return {**base, "status": "error", "label": "Saldo agotado (recargar en Billing)"}
+            if r.status_code == 401:
+                return {**base, "status": "error", "label": "Clave inválida o no autorizada (401)"}
+            if r.status_code in (200, 400, 422):
+                return {**base, "status": "ok", "label": "Cuenta activa con saldo disponible (ver USD en Billing)"}
+            return {**base, "status": "warning", "label": f"Estado HTTP {r.status_code}"}
+        except Exception as e:
+            return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}"}
+
+    def _check_pollinations() -> Dict[str, Any]:
+        base = {
+            "home_url": "https://pollinations.ai",
+            "billing_url": "https://enter.pollinations.ai",
+            "keys_url": "https://enter.pollinations.ai",
+        }
+        if not pollinations_key:
+            return {**base, "status": "free", "label": "Modo público gratuito activo (sin clave)"}
+        return {**base, "status": "ok", "label": "Clave prioritaria configurada"}
+
+    def _check_gemini() -> Dict[str, Any]:
+        base = {
+            "home_url": "https://aistudio.google.com",
+            "billing_url": "https://console.cloud.google.com/billing",
+            "keys_url": "https://aistudio.google.com/apikey",
+        }
+        if not gemini_key:
+            return {**base, "status": "unconfigured", "label": "Opcional (sin clave configurada)"}
+        try:
+            r = _req.get(
+                f"https://generativelanguage.googleapis.com/v1beta/models?key={gemini_key}",
+                timeout=4,
+            )
+            if r.status_code == 200:
+                return {**base, "status": "ok", "label": "Clave válida y operativa"}
+            if r.status_code in (400, 401, 403):
+                return {**base, "status": "error", "label": f"Clave inválida o sin permisos ({r.status_code})"}
+            if r.status_code == 429:
+                return {**base, "status": "warning", "label": "Cuota agotada temporalmente (429)"}
+            return {**base, "status": "warning", "label": f"HTTP {r.status_code}"}
+        except Exception as e:
+            return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}"}
+
+    checks = {
+        "OPENAI_API_KEY": _check_openai,
+        "ELEVENLABS_API_KEY": _check_elevenlabs,
+        "FAL_KEY": _check_fal,
+        "POLLINATIONS_API_KEY": _check_pollinations,
+        "GEMINI_API_KEY": _check_gemini,
+    }
+    results: Dict[str, Any] = {}
+    with concurrent.futures.ThreadPoolExecutor(max_workers=5) as ex:
+        futs = {ex.submit(fn): key for key, fn in checks.items()}
+        for fut in concurrent.futures.as_completed(futs):
+            k = futs[fut]
+            try:
+                results[k] = fut.result()
+            except Exception as e:
+                results[k] = {"status": "warning", "label": str(e)[:50]}
+
+    results["EDGE_TTS"] = {
+        "status": "free",
+        "label": "Gratuita e ilimitada (sin API key)",
+        "home_url": "https://speech.microsoft.com/portal/voicegallery",
+    }
+    results["FFMPEG"] = {
+        "status": "ok" if shutil.which("ffmpeg") else "error",
+        "label": "Instalado localmente (0€)" if shutil.which("ffmpeg") else "No encontrado en PATH",
+        "home_url": "https://ffmpeg.org",
+    }
+    return results
+
+
 def sync_character_reference_bank(
     project_id: str,
     auto_generate_missing: bool = False

@@ -6169,9 +6169,68 @@ document.addEventListener("DOMContentLoaded", () => {
       renderSettingItem("FAL_KEY", "badge-status-fal", "masked-fal", settingFal);
       renderSettingItem("GEMINI_API_KEY", "badge-status-gemini", "masked-gemini", settingGemini);
 
+      loadProvidersBilling();
     } catch (err) {
       console.error("Error cargando ajustes:", err);
     }
+  }
+
+  async function loadProvidersBilling() {
+    const map = [
+      ["OPENAI_API_KEY", "billing-openai"],
+      ["ELEVENLABS_API_KEY", "billing-eleven"],
+      ["POLLINATIONS_API_KEY", "billing-pollinations"],
+      ["FAL_KEY", "billing-fal"],
+      ["GEMINI_API_KEY", "billing-gemini"],
+    ];
+    map.forEach(([, elId]) => {
+      const span = document.querySelector(`#${elId} > span:first-child`);
+      if (span) {
+        span.className = "text-muted";
+        span.textContent = "⏳ Comprobando saldo / estado...";
+      }
+    });
+
+    try {
+      const res = await fetch("/api/settings/billing");
+      const billing = await res.json();
+
+      const statusStyle = {
+        ok: { icon: "✅", color: "#4ade80" },
+        free: { icon: "🆓", color: "#60a5fa" },
+        warning: { icon: "⚠️", color: "#fbbf24" },
+        error: { icon: "❌", color: "#f87171" },
+        unconfigured: { icon: "ℹ️", color: "#94a3b8" },
+      };
+
+      map.forEach(([keyName, elId]) => {
+        const info = billing[keyName];
+        const span = document.querySelector(`#${elId} > span:first-child`);
+        if (!info || !span) return;
+        const st = statusStyle[info.status] || statusStyle.unconfigured;
+        span.style.color = st.color;
+        span.textContent = `${st.icon} ${info.label}`;
+      });
+
+      const ffmpegSpan = document.getElementById("billing-ffmpeg");
+      if (ffmpegSpan && billing.FFMPEG) {
+        const st = statusStyle[billing.FFMPEG.status] || statusStyle.ok;
+        ffmpegSpan.textContent = `${st.icon} ${billing.FFMPEG.label}`;
+      }
+      const edgeSpan = document.getElementById("billing-edgetts");
+      if (edgeSpan && billing.EDGE_TTS) {
+        edgeSpan.textContent = `🆓 ${billing.EDGE_TTS.label}`;
+      }
+    } catch (err) {
+      console.error("Error consultando billing:", err);
+    }
+  }
+
+  const btnRefreshBilling = document.getElementById("btn-refresh-billing");
+  if (btnRefreshBilling) {
+    btnRefreshBilling.addEventListener("click", () => {
+      loadProvidersBilling();
+    });
   }
 
   btnOpenSettings.addEventListener("click", () => {

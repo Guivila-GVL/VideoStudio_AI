@@ -35,6 +35,7 @@ from app.core.project_manager import (
     list_video_history,
     update_env_settings,
     get_env_settings,
+    get_providers_billing_status,
     analyze_book_with_ai,
     generate_character_portrait,
     generate_character_portrait_proposals,
@@ -412,7 +413,9 @@ class SettingsRequest(BaseModel):
     GEMINI_API_KEY: Optional[str] = None
     ELEVENLABS_API_KEY: Optional[str] = None
     POLLINATIONS_API_KEY: Optional[str] = None
+    FAL_KEY: Optional[str] = None
     HUGGINGFACE_API_KEY: Optional[str] = None
+    SYNC_CENTRAL: Optional[bool] = True
 
 # 1. Rutas Principales
 @app.get("/", response_class=HTMLResponse)
@@ -1585,6 +1588,13 @@ async def api_get_settings():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/settings/billing")
+async def api_get_settings_billing():
+    try:
+        return get_providers_billing_status()
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.post("/api/settings/save")
 async def api_save_settings(req: SettingsRequest):
     settings_dict = {}
@@ -1596,11 +1606,14 @@ async def api_save_settings(req: SettingsRequest):
         settings_dict["ELEVENLABS_API_KEY"] = req.ELEVENLABS_API_KEY
     if req.POLLINATIONS_API_KEY is not None:
         settings_dict["POLLINATIONS_API_KEY"] = req.POLLINATIONS_API_KEY
+    if req.FAL_KEY is not None:
+        settings_dict["FAL_KEY"] = req.FAL_KEY
     if req.HUGGINGFACE_API_KEY is not None:
         settings_dict["HUGGINGFACE_API_KEY"] = req.HUGGINGFACE_API_KEY
 
     try:
-        res = update_env_settings(settings_dict)
+        sync = req.SYNC_CENTRAL if req.SYNC_CENTRAL is not None else True
+        res = update_env_settings(settings_dict, sync_central=sync)
         return {"success": True, "settings": res}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

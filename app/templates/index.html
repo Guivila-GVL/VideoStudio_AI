@@ -1228,6 +1228,14 @@
             <span class="badge" id="badge-status-openai" style="font-size:0.75rem;">Verificando...</span>
           </div>
           <div class="setting-masked-hint text-muted" id="masked-openai" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <div class="setting-billing-row" id="billing-openai" style="font-size:0.78rem; margin:4px 0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px;">
+            <span class="text-muted">⏳ Comprobando estado...</span>
+            <span style="display:flex; gap:8px;">
+              <a href="https://platform.openai.com" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 Web</a>
+              <a href="https://platform.openai.com/settings/organization/billing/overview" target="_blank" rel="noopener noreferrer" style="color:#fcd34d;">💳 Saldo / Billing</a>
+              <a href="https://platform.openai.com/api-keys" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🔑 Claves</a>
+            </span>
+          </div>
           <input type="password" id="setting-openai" class="form-input mt-1" placeholder="Pega aquí tu clave (sk-proj-...) para guardarla o actualizarla">
           <small class="form-hint">🧠 Análisis literario del libro, deducción de biblia de personajes y adaptación a escenas.</small>
         </div>
@@ -1239,6 +1247,14 @@
             <span class="badge" id="badge-status-eleven" style="font-size:0.75rem;">Verificando...</span>
           </div>
           <div class="setting-masked-hint text-muted" id="masked-eleven" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <div class="setting-billing-row" id="billing-eleven" style="font-size:0.78rem; margin:4px 0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px;">
+            <span class="text-muted">⏳ Comprobando cuota...</span>
+            <span style="display:flex; gap:8px;">
+              <a href="https://elevenlabs.io" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 Web</a>
+              <a href="https://elevenlabs.io/app/subscription" target="_blank" rel="noopener noreferrer" style="color:#fcd34d;">💳 Plan / Caracteres</a>
+              <a href="https://elevenlabs.io/app/developers/api-keys" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🔑 Claves</a>
+            </span>
+          </div>
           <input type="password" id="setting-eleven" class="form-input mt-1" placeholder="Pega aquí tu clave (sk_...) para guardarla o actualizarla">
           <small class="form-hint">🎙️ Locución neuronal humana de alta fidelidad. <em>Si no la tienes, el sistema conmuta automáticamente a Microsoft Edge TTS (100% gratuita y sin límite).</em></small>
         </div>
@@ -1250,6 +1266,13 @@
             <span class="badge" id="badge-status-pollinations" style="font-size:0.75rem;">Verificando...</span>
           </div>
           <div class="setting-masked-hint text-muted" id="masked-pollinations" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <div class="setting-billing-row" id="billing-pollinations" style="font-size:0.78rem; margin:4px 0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px;">
+            <span class="text-muted">⏳ Comprobando...</span>
+            <span style="display:flex; gap:8px;">
+              <a href="https://pollinations.ai" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 Web</a>
+              <a href="https://enter.pollinations.ai" target="_blank" rel="noopener noreferrer" style="color:#fcd34d;">🔑 Panel / Claves</a>
+            </span>
+          </div>
           <input type="password" id="setting-pollinations" class="form-input mt-1" placeholder="Opcional: clave de enter.pollinations.ai para cola prioritaria">
           <small class="form-hint">🎨 Generación de fotogramas verticales FLUX. <em>Por defecto funciona de forma gratuita en el servidor público.</em></small>
         </div>
@@ -1257,17 +1280,25 @@
         <!-- Fal.ai (FLUX) -->
         <div class="setting-card-item mb-3">
           <div class="setting-card-head">
-            <label class="form-label mb-0" for="setting-fal"><strong>🚀 Fal.ai API Key (Motor FLUX)</strong></label>
+            <label class="form-label mb-0" for="setting-fal"><strong>🚀 Fal.ai API Key (Motor FLUX + Vídeo I2V)</strong></label>
             <span class="badge" id="badge-status-fal">Verificando...</span>
           </div>
           <div class="setting-masked-hint text-muted" id="masked-fal"></div>
+          <div class="setting-billing-row" id="billing-fal" style="font-size:0.78rem; margin:4px 0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px;">
+            <span class="text-muted">⏳ Comprobando saldo...</span>
+            <span style="display:flex; gap:8px;">
+              <a href="https://fal.ai" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 Web</a>
+              <a href="https://fal.ai/dashboard/billing" target="_blank" rel="noopener noreferrer" style="color:#fcd34d;">💳 Saldo / Billing</a>
+              <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🔑 Claves</a>
+            </span>
+          </div>
           <input type="password" id="setting-fal" class="form-input mt-1" placeholder="Pega aquí tu clave de Fal.ai (Key ...) para generar con FLUX">
-          <small class="form-hint">Generación dedicada de personajes, escenarios y escenas consistentes con FLUX.1 Dev y FLUX Kontext Pro.</small>
+          <small class="form-hint">Generación dedicada de personajes, escenarios, escenas consistentes con FLUX.1 Dev y animación de vídeo I2V (Kling).</small>
           <details class="setting-guide-details">
             <summary>📖 ¿Cómo conseguir tu clave de Fal.ai en 2 minutos?</summary>
             <ol>
               <li>Entra en <a href="https://fal.ai" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">fal.ai</a> e inicia sesión con tu cuenta de GitHub o Google.</li>
-              <li>Ve a <b>Billing / Credits</b> y haz una recarga prepago inicial (ej. 5 $ o 10 $, sin suscripción mensual).</li>
+              <li>Ve a <a href="https://fal.ai/dashboard/billing" target="_blank" rel="noopener noreferrer" style="color:#fcd34d;">Billing / Credits</a> y haz una recarga prepago inicial (ej. 5 $ o 10 $, sin suscripción mensual).</li>
               <li>Ve a <a href="https://fal.ai/dashboard/keys" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">fal.ai/dashboard/keys</a>, pulsa <b>Add key</b>, cópiala y pégala arriba.</li>
             </ol>
           </details>
@@ -1280,17 +1311,25 @@
             <span class="badge" id="badge-status-gemini" style="font-size:0.75rem;">Verificando...</span>
           </div>
           <div class="setting-masked-hint text-muted" id="masked-gemini" style="font-size:0.78rem; font-family:var(--font-mono); margin:2px 0;"></div>
+          <div class="setting-billing-row" id="billing-gemini" style="font-size:0.78rem; margin:4px 0; display:flex; flex-wrap:wrap; align-items:center; justify-content:space-between; gap:6px;">
+            <span class="text-muted">⏳ Comprobando...</span>
+            <span style="display:flex; gap:8px;">
+              <a href="https://aistudio.google.com" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 AI Studio</a>
+              <a href="https://console.cloud.google.com/billing" target="_blank" rel="noopener noreferrer" style="color:#fcd34d;">💳 Billing</a>
+              <a href="https://aistudio.google.com/apikey" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🔑 Claves</a>
+            </span>
+          </div>
           <input type="password" id="setting-gemini" class="form-input mt-1" placeholder="Opcional: clave de Google AI Studio (AIzaSy...)">
           <small class="form-hint">✨ Proveedor secundario opcional para análisis de textos.</small>
         </div>
 
         <!-- Tarjeta Informativa -->
         <div class="mt-3 p-3" style="background: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25); border-radius: 8px; font-size: 0.82rem; line-height: 1.5;">
-          <strong style="color:var(--primary-glow);">💡 ¿Qué ocurre si no configuras alguna clave?</strong>
+          <strong style="color:var(--primary-glow);">💡 Herramientas gratuitas / locales integradas</strong>
           <ul style="margin: 0.35rem 0 0 1.2rem; padding: 0; color: var(--text-secondary);">
-            <li><strong>FFmpeg:</strong> Motor de renderizado local que une el vídeo con Ken Burns y subtítulos. <em>No requiere clave ni conexión externa (0€).</em></li>
-            <li><strong>Imágenes:</strong> El modelo FLUX de Pollinations funciona de forma 100% gratuita por defecto.</li>
-            <li><strong>Voces:</strong> Si no configuras ElevenLabs, dispones del sintetizador gratuito Edge TTS con voces profesionales en español.</li>
+            <li><strong>FFmpeg:</strong> <span id="billing-ffmpeg">Motor local de montaje, subtítulos y vídeo (0€).</span> · <a href="https://ffmpeg.org" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 Web oficial</a></li>
+            <li><strong>Microsoft Edge TTS:</strong> <span id="billing-edgetts">Sintetizador de voz gratuito e ilimitado.</span> · <a href="https://speech.microsoft.com/portal/voicegallery" target="_blank" rel="noopener noreferrer" style="color:#93c5fd;">🌐 Galería de voces</a></li>
+            <li><strong>Pollinations FLUX:</strong> Funciona de forma gratuita por defecto para el motor básico.</li>
             <li><strong>Guiones:</strong> Con OpenAI se obtienen los prompts visuales más consistentes con la biblia de personajes.</li>
           </ul>
         </div>
@@ -1304,6 +1343,7 @@
         </div>
       </div>
       <div class="modal-footer mt-3">
+        <button class="btn btn-ghost" id="btn-refresh-billing" type="button">🔄 Comprobar saldo y estado</button>
         <button class="btn btn-secondary" data-close="modal-settings">Cerrar</button>
         <button class="btn btn-primary" id="btn-save-settings">💾 Guardar Cambios en .env</button>
       </div>
@@ -1638,6 +1678,6 @@
   <!-- Toast de Notificaciones -->
   <div class="toast-container" id="toast-container"></div>
 
-  <script src="/static/js/app.js?v=6.7"></script>
+  <script src="/static/js/app.js?v=6.8"></script>
 </body>
 </html>
