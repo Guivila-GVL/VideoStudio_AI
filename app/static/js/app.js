@@ -4870,9 +4870,21 @@ document.addEventListener("DOMContentLoaded", () => {
         if (eMatch.seed_consistencia) envSeed = parseInt(eMatch.seed_consistencia);
       }
     }
-    const effectiveSeed = (charSeed && envSeed)
+    const baseSeed = (charSeed && envSeed)
       ? (((charSeed + envSeed) % 900000) + 100000)
       : (charSeed || envSeed || sc.seed_consistencia || null);
+
+    // Si la escena ya tiene imagen y el usuario pulsa "Regenerar Foto", variar el seed para obtener una composición distinta.
+    // Además, desplazar por índice de escena (idx) para que Escena 1 y Escena 2 nunca compartan la misma semilla.
+    let effectiveSeed = null;
+    if (sc.image_url) {
+      effectiveSeed = Math.floor(100000 + Math.random() * 899999);
+    } else if (baseSeed !== null) {
+      effectiveSeed = (((parseInt(baseSeed, 10) + (idx + 1) * 7919) % 900000) + 100000);
+    }
+    if (effectiveSeed !== null) {
+      sc.seed_consistencia = effectiveSeed;
+    }
 
     try {
       const res = await fetch("/api/image/generate", {
