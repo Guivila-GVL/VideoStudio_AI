@@ -871,7 +871,13 @@
                 <button type="button" class="btn btn-secondary btn-sm" id="btn-generate-all-images">
                   🎨 Generar Todas las Fotos
                 </button>
-                <button type="button" class="btn btn-primary btn-sm" id="btn-animate-all-scenes" title="Anima todas las escenas con Fal.ai (I2V) enlazando cada escena con la siguiente">
+                <select id="i2v-model-select" class="form-control form-control-sm" style="width:auto; min-width:210px; font-size:0.82rem;" title="Motor de animación de vídeo Image-to-Video">
+                  <option value="kling_v21_pro" selected>🎬 Kling 2.1 Pro (Recomendado)</option>
+                  <option value="kling_v25_pro">⚡ Kling 2.5 Turbo Pro</option>
+                  <option value="hailuo_02_pro">🎞️ MiniMax Hailuo 02 Pro</option>
+                  <option value="kling_v21">🎥 Kling 2.1 Standard</option>
+                </select>
+                <button type="button" class="btn btn-primary btn-sm" id="btn-animate-all-scenes" title="Anima todas las escenas con Fal.ai (I2V)">
                   🎥 Animar Todas las Escenas
                 </button>
               </div>
@@ -1678,6 +1684,6 @@
   <!-- Toast de Notificaciones -->
   <div class="toast-container" id="toast-container"></div>
 
-  <script src="/static/js/app.js?v=6.9"></script>
+  <script src="/static/js/app.js?v=7.0"></script>
 </body>
 </html>

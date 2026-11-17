@@ -1496,7 +1496,7 @@ class AnimateSceneRequest(BaseModel):
     transition_text: Optional[str] = ""
     duration: str = "5"
     aspect_ratio: str = "9:16"
-    model: str = "kling_v16"
+    model: str = "kling_v21_pro"
     target_duration_sec: Optional[float] = None
 
 

@@ -16,8 +16,11 @@ MEDIA_DIR = Path(__file__).resolve().parent.parent / "static" / "media"
 MEDIA_DIR.mkdir(parents=True, exist_ok=True)
 
 FAL_VIDEO_MODELS = {
-    "kling_v16": "fal-ai/kling-video/v1.6/standard/image-to-video",
+    "kling_v21_pro": "fal-ai/kling-video/v2.1/pro/image-to-video",
+    "kling_v25_pro": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
+    "hailuo_02_pro": "fal-ai/minimax/hailuo-02/pro/image-to-video",
     "kling_v21": "fal-ai/kling-video/v2.1/standard/image-to-video",
+    "kling_v16": "fal-ai/kling-video/v1.6/standard/image-to-video",
     "wan_i2v": "fal-ai/wan/v2.2-a14b/image-to-video",
 }
 
@@ -111,7 +114,7 @@ def animate_scene_image(
     transition_text: str = "",
     duration: str = "5",
     aspect_ratio: str = "9:16",
-    model_key: str = "kling_v16",
+    model_key: str = "kling_v21_pro",
     target_duration_sec: Optional[float] = None,
 ) -> Dict[str, Any]:
     """
@@ -124,7 +127,7 @@ def animate_scene_image(
     if not fal_key:
         raise ValueError("FAL_KEY no está configurada en .env. Configúrala en Ajustes (⚙️) para animar escenas.")
 
-    model_id = FAL_VIDEO_MODELS.get(model_key, FAL_VIDEO_MODELS["kling_v16"])
+    model_id = FAL_VIDEO_MODELS.get(model_key, FAL_VIDEO_MODELS["kling_v21_pro"])
     start_uri = _to_fal_data_uri(image_url)
 
     action_prompt = (prompt or "").strip()
@@ -132,7 +135,9 @@ def animate_scene_image(
         action_prompt = f"{action_prompt}. Smooth continuous transition: {transition_text.strip()}".strip(". ")
     if not action_prompt:
         action_prompt = "Gentle natural character movement, blinking, soft breeze in hair and foliage, warm cinematic storybook motion"
-    action_prompt = action_prompt[:900]
+    action_prompt = (
+        f"{action_prompt}. Anatomically accurate limbs, natural gait, smooth steady camera, no extra legs, no morphing distortion"
+    )[:900]
 
     chosen_dur = str(duration if str(duration) in ("5", "10") else "5")
     num_segments = 1

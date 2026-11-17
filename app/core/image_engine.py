@@ -224,11 +224,18 @@ def _generate_image_fal_flux(
         "Content-Type": "application/json"
     }
 
-    fal_ref_image = _build_fal_image_input(ref_info) if fit_mode in ("contain", "square") else None
+    fal_ref_image = _build_fal_image_input(ref_info)
     if fal_ref_image:
         model_id = "fal-ai/flux-pro/kontext"
+        effective_prompt = prompt
+        if fit_mode == "crop":
+            effective_prompt = (
+                "Keep the exact character design and appearance from the reference image, "
+                "placing the character naturally into this full-bleed 9:16 storybook scene "
+                f"(replace any plain white background with the described scenery): {prompt}"
+            )[:1950]
         payload: Dict[str, Any] = {
-            "prompt": prompt,
+            "prompt": effective_prompt,
             "image_url": fal_ref_image,
             "output_format": "jpeg"
         }

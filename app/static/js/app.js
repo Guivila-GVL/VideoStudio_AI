@@ -4260,8 +4260,8 @@ document.addEventListener("DOMContentLoaded", () => {
               🎥 ${sc.video_clip_url ? 'Re-animar escena' : 'Animar escena (I2V)'}
             </button>
             ${index < state.scenes.length - 1 ? `
-              <label style="font-size:0.72rem; display:flex; align-items:center; gap:4px; opacity:0.85; cursor:pointer;">
-                <input type="checkbox" class="chk-link-next-scene" data-idx="${index}" ${state.scenes[index + 1]?.image_url ? 'checked' : ''}>
+              <label style="font-size:0.72rem; display:flex; align-items:center; gap:4px; opacity:0.85; cursor:pointer;" title="Actívalo solo si la escena siguiente tiene un encuadre casi idéntico (si cambian mucho, es mejor dejarlo desmarcado para evitar deformaciones)">
+                <input type="checkbox" class="chk-link-next-scene" data-idx="${index}">
                 🔗 Enlazar con escena ${index + 2}
               </label>
             ` : ''}
@@ -4796,6 +4796,8 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     const rCfg = typeof getRenderConfig === "function" ? getRenderConfig() : { aspect_ratio: "9:16" };
+    const i2vSelect = document.getElementById("i2v-model-select");
+    const i2vModel = (i2vSelect && i2vSelect.value) ? i2vSelect.value : "kling_v21_pro";
     try {
       const res = await fetch("/api/scene/animate", {
         method: "POST",
@@ -4808,7 +4810,7 @@ document.addEventListener("DOMContentLoaded", () => {
           duration: (sc.duracion_real && sc.duracion_real > 6.5) ? "10" : "5",
           target_duration_sec: sc.duracion_real || sc.duracion_estimada || 10,
           aspect_ratio: rCfg.aspect_ratio || "9:16",
-          model: "kling_v16"
+          model: i2vModel
         })
       });
       const data = await res.json();
