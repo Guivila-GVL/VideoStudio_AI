@@ -38,7 +38,7 @@ def _to_fal_data_uri(image_url: str) -> str:
     raise FileNotFoundError(f"No se pudo cargar la imagen local para animar: {image_url}")
 
 
-def _submit_and_poll_fal_queue(model_id: str, payload: Dict[str, Any], fal_key: str, timeout_sec: int = 240) -> Dict[str, Any]:
+def _submit_and_poll_fal_queue(model_id: str, payload: Dict[str, Any], fal_key: str, timeout_sec: int = 480) -> Dict[str, Any]:
     """Envía una tarea a queue.fal.run y espera su resultado."""
     headers = {
         "Authorization": f"Key {fal_key}",

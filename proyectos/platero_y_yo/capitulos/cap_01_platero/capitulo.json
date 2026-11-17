@@ -12,7 +12,7 @@
       "escenario_clave": "Las Colinas y el Molino de Viento",
       "duracion_estimada": 5,
       "audio_url": "/static/media/audio_b9378a2506.mp3",
-      "image_url": "/static/media/img_8c9dd3d91b.jpg",
+      "image_url": "/static/media/img_5898b2ab12.jpg",
       "duracion_real": 22.8,
       "referencias_personajes": [
         {
@@ -39,7 +39,7 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "Platero [seed_personaje:363728], set in Las Colinas y el Molino de Viento [seed_escenario:204419]: Rolling hills toasted by the summer and dotted with silver olive trees and green vines. At the summit stands a traditional windmill with round whitewashed stone walls and wooden blades, standing out solitary and majestic against the immensity of the horizon, Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal), delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
       "descripcion_escena": "La escena se sitúa en Las Colinas y el Molino de Viento, bajo una atmósfera Moguer y la campiña andaluza a comienzos del siglo XX, envueltos en una luz dorada y deslumbrante que baña las fachadas encaladas y las azoteas de cal blanca. El aire está impregnado de aromas campesinos: el azahar de los naranjales, el aroma resinoso de los pinares de Mazagón, la tierra seca al mediodía y el mosto dulce de las bodegas al caer la tarde.\n\nUn universo poético donde la sencillez rústica y el aislamiento provinciano conviven con una profunda contemplación lírica de la vida. Los caminos polvorientos, los olivares plateados bajo la brisa atlántica y el silencio solemne de las siestas crean una atmósfera nostálgica, tierna y teñida de serena melancolía.. En pantalla, plano general de situación en El Establo y el Corral de Platero: se presenta a Platero en un ambiente tranquilo y cercano, situando al espectador mientras arranca la narración. Aparece en primer término Platero (Burro pequeño, peludo, suave, de pelaje gris plateado como de algodón y ojos negros como escarabajos de cristal), desplazándose con naturalidad por Las Colinas y el Molino de Viento, mostrando gestos expresivos y cercanos a cámara. El encuadre vertical 9:16 y la iluminación acompañan el tono general (Corto narrativo sobre 'Capítulo 1: Platero' pensado para Todos los públicos en El Establo y el Corral de Platero (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar) durante los 5 segundos mientras el narrador recita su tramo.",
-      "video_clip_url": "/static/media/anim_b3597b279a.mp4"
+      "video_clip_url": "/static/media/anim_9088e6f4c9.mp4"
     },
     {
       "id": 2,
@@ -83,14 +83,14 @@
     {
       "id": 3,
       "narrador": "Es tierno y mimoso igual que un niño, que una niña…; pero fuerte y seco por dentro como de piedra. Cuando paso sobre él, los domingos, por las últimas callejas del pueblo, los hombres del campo, vestidos de limpio y despaciosos, se quedan mirándolo: —Tien’ asero… Tiene acero. Acero y plata de luna, al mismo tiempo.",
-      "prompt_imagen": "Platero [seed_personaje:363728], set in Las Colinas y el Molino de Viento [seed_escenario:204419]: Rolling hills toasted by the summer and dotted with silver olive trees and green vines. At the summit stands a traditional windmill with round whitewashed stone walls and wooden blades, standing out solitary and majestic against the immensity of the horizon, Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal), delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
+      "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], walking calmly through a sunlit whitewashed Andalusian village alley in Moguer at golden twilight with silver moonlight beginning to glow, warm cobblestone path, rustic whitewashed walls and terracotta roofs, peaceful storybook atmosphere, delicate watercolor and ink illustration, soft artistic color washes, rich paper texture, no 3D CGI, no photorealism, well-proportioned anatomy, no deformed limbs, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
         "Platero"
       ],
       "escenario_clave": "Las Colinas y el Molino de Viento",
       "duracion_estimada": 5,
       "audio_url": "/static/media/audio_5fd2eae0ae.mp3",
-      "image_url": "/static/media/img_5ed30c0766.jpg",
+      "image_url": "/static/media/img_222fb678d8.jpg",
       "duracion_real": 21.77,
       "referencias_personajes": [
         {
@@ -117,18 +117,18 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "Platero [seed_personaje:363728], set in Las Colinas y el Molino de Viento [seed_escenario:204419]: Rolling hills toasted by the summer and dotted with silver olive trees and green vines. At the summit stands a traditional windmill with round whitewashed stone walls and wooden blades, standing out solitary and majestic against the immensity of the horizon, Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal), delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
       "descripcion_escena": "Continuidad desde la escena anterior: Continuando desde la escena anterior, el encuadre acompaña el movimiento de Platero hacia la luz de El Establo y el Corral de Platero. En pantalla, plano de interacción o desplazamiento dentro de El Establo y el Corral de Platero: Platero avanza o realiza un gesto cercano hacia la cámara/luz antes del cierre. Aparece en primer término Platero (Burro pequeño, peludo, suave, de pelaje gris plateado como de algodón y ojos negros como escarabajos de cristal), desplazándose con naturalidad por Las Colinas y el Molino de Viento, mostrando gestos expresivos y cercanos a cámara. El encuadre vertical 9:16 y la iluminación acompañan el tono general (Corto narrativo sobre 'Capítulo 1: Platero' pensado para Todos los públicos en El Establo y el Corral de Platero (watercolor). Mientras la voz en off lee el texto del capítulo, la imagen muestra a Platero en 3 escenas progresivas (~15s) sin cambiar de lugar) durante los 5 segundos mientras el narrador recita su tramo.",
-      "video_clip_url": "/static/media/anim_77f42b6d5a.mp4"
+      "video_clip_url": "/static/media/anim_76600abf96.mp4"
     }
   ],
   "video_url": "/proyectos_data/platero_y_yo/videos/cap_01_platero.mp4",
   "duracion": 63.58,
-  "peso_mb": 25.39,
+  "peso_mb": 31.12,
   "origen_tipo": "section",
   "origen_ref": "I Platero Platero es pequeño, peludo, suave; tan blando por fuera, que se",
   "creado_en": "2026-10-22 17:13:42",
-  "actualizado_en": "2026-11-17 19:24:01",
+  "actualizado_en": "2026-11-17 20:12:15",
   "aprobacion_clips_status": "en_revision",
-  "texto_original": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro.\n\nLo dejo suelto, y se va al prado, y acaricia tibiamente con su hocico, rozándolas apenas, las florecillas rosas, celestes y gualdas… Lo llamo dulcemente: «¿Platero?» y viene a mí con un trotecillo alegre que parece que se ríe en no sé qué cascabeleo ideal… Come cuanto le doy. Le gustan las naranjas mandarinas, las uvas moscateles, todas de ámbar; los higos morados, con su cristalina gotita de miel…\n\nEs tierno y mimoso igual que un niño, que una niña…; pero fuerte y seco por dentro como de piedra. Cuando paso sobre él, los domingos, por las últimas callejas del pueblo, los hombres del campo, vestidos de limpio y despaciosos, se quedan mirándolo: —Tien’ asero…\n\nTiene acero. Acero y plata de luna, al mismo tiempo.",
+  "texto_original": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro.\n\nLo dejo suelto, y se va al prado, y acaricia tibiamente con su hocico, rozándolas apenas, las florecillas rosas, celestes y gualdas… Lo llamo dulcemente: «¿Platero?» y viene a mí con un trotecillo alegre que parece que se ríe en no sé qué cascabeleo ideal… Come cuanto le doy. Le gustan las naranjas mandarinas, las uvas moscateles, todas de ámbar; los higos morados, con su cristalina gotita de miel…\n\nEs tierno y mimoso igual que un niño, que una niña…; pero fuerte y seco por dentro como de piedra. Cuando paso sobre él, los domingos, por las últimas callejas del pueblo, los hombres del campo, vestidos de limpio y despaciosos, se quedan mirándolo: \nTiene acero. Acero y plata de luna, al mismo tiempo.",
   "project_id": "platero_y_yo",
   "orden": 1,
   "propuesta": {
