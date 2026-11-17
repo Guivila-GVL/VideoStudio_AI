@@ -172,15 +172,59 @@ def _escape_ass_text(text: str) -> str:
     return text.replace("\\", "\\\\").replace("{", "\\{").replace("}", "\\}")
 
 
+def _norm_token(w: str) -> str:
+    return re.sub(r"[^\wáéíóúüñÁÉÍÓÚÜÑ]", "", (w or "").lower())
+
+
+def _align_timings_with_punctuation(raw_text: str, timings: List[Dict[str, Any]], duration: float) -> List[Dict[str, Any]]:
+    """
+    Edge-TTS WordBoundary devuelve palabras sin puntuación (sin puntos, comas ni signos).
+    Esta función alinea los tokens originales de raw_text (con toda su puntuación)
+    sobre los timestamps reales de timings.
+    """
+    orig_tokens = [w for w in (raw_text or "").strip().split() if w]
+    if not orig_tokens or not timings:
+        return timings
+
+    aligned: List[Dict[str, Any]] = []
+    t_idx = 0
+    n_t = len(timings)
+
+    for tok in orig_tokens:
+        norm_o = _norm_token(tok)
+        matched = None
+        if norm_o:
+            for look in range(t_idx, min(n_t, t_idx + 5)):
+                if _norm_token(timings[look].get("word", "")) == norm_o:
+                    matched = timings[look]
+                    t_idx = look + 1
+                    break
+        if matched is not None:
+            aligned.append({
+                "word": tok,
+                "start": float(matched.get("start", 0.0)),
+                "duration": float(matched.get("duration", 0.25)),
+            })
+        else:
+            # Si es puntuación suelta (ej. "—") o palabra compuesta, heredar/interpolar tiempo cercano
+            prev_end = (aligned[-1]["start"] + aligned[-1]["duration"]) if aligned else 0.0
+            next_start = float(timings[t_idx]["start"]) if t_idx < n_t else duration
+            est_start = min(prev_end, next_start)
+            est_dur = max(0.08, min(0.35, next_start - est_start))
+            aligned.append({"word": tok, "start": round(est_start, 3), "duration": round(est_dur, 3)})
+
+    return aligned
+
+
 def _load_or_estimate_word_timings(audio_path: Path, text: str, duration: float) -> List[Dict[str, Any]]:
-    """Carga marcas de tiempo exactas de Edge-TTS (.words.json) o las estima proporcionalmente."""
+    """Carga marcas de tiempo exactas de Edge-TTS (.words.json) restaurando puntuación, o las estima."""
     import json as _json
     words_file = audio_path.with_suffix(".words.json")
     if words_file.exists():
         try:
             data = _json.loads(words_file.read_text(encoding="utf-8"))
             if isinstance(data, list) and len(data) > 0:
-                return data
+                return _align_timings_with_punctuation(text, data, duration)
         except Exception:
             pass
 
@@ -217,8 +261,8 @@ def _group_words_into_phrases(words: List[Dict[str, Any]], max_words: int = 4, m
     return phrases
 
 
-def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 28, max_chars: int = 170) -> List[List[Dict[str, Any]]]:
-    """Agrupa palabras en párrafos completos respetando pausas de puntuación cuando es posible."""
+def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 22, max_chars: int = 135) -> List[List[Dict[str, Any]]]:
+    """Agrupa palabras por frases completas (cerrando siempre en punto/signo final) y acotando frases muy largas."""
     paragraphs: List[List[Dict[str, Any]]] = []
     current: List[Dict[str, Any]] = []
     cur_chars = 0
@@ -231,10 +275,16 @@ def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 2
         else:
             current.append(w)
             cur_chars += len(txt) + (1 if len(current) > 1 else 0)
-            if len(current) >= 12 and cur_chars >= 70 and txt.endswith((".", "!", "?", ";", ":")):
-                paragraphs.append(current)
-                current = []
-                cur_chars = 0
+
+        stripped_end = txt.rstrip("»\"'”)")
+        if current and stripped_end.endswith((".", "!", "?", "…")):
+            paragraphs.append(current)
+            current = []
+            cur_chars = 0
+        elif current and len(current) >= 10 and cur_chars >= 65 and stripped_end.endswith((";", ":")):
+            paragraphs.append(current)
+            current = []
+            cur_chars = 0
     if current:
         paragraphs.append(current)
     return paragraphs
@@ -355,8 +405,8 @@ def create_ass_subtitles(
         fad = "{\\fad(150,220)}" if use_fade else ""
         events.append(f"Dialogue: 0,{_format_ass_time(0)},{_format_ass_time(duration)},Default,,0,0,0,,{fad}{_escape_ass_text(wrapped)}")
     elif mode == "paragraph_preview":
-        # Párrafo completo actual + párrafo siguiente difuminado debajo (estilo teleprompter/lectura)
-        paragraphs = _group_words_into_paragraphs(words, max_words=28, max_chars=170)
+        # Frase completa actual + siguiente frase difuminada debajo (estilo teleprompter/lectura)
+        paragraphs = _group_words_into_paragraphs(words, max_words=22, max_chars=135)
         next_font_size = max(24, int(round(font_size * 0.84)))
         for p_idx, para in enumerate(paragraphs):
             p_end = paragraphs[p_idx + 1][0]["start"] if p_idx + 1 < len(paragraphs) else duration

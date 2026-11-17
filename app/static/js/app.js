@@ -6337,7 +6337,7 @@ document.addEventListener("DOMContentLoaded", () => {
   // ========================================================
   const SUB_STORAGE_KEY = "videostudio_subtitle_config";
   const DEFAULT_SUB_CFG = {
-    mode: "scrolling_sentence",
+    mode: "paragraph_preview",
     bg_mode: "transparent",
     font_family: "sans",
     font_size: 52,
