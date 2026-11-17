@@ -261,17 +261,33 @@ def _group_words_into_phrases(words: List[Dict[str, Any]], max_words: int = 4, m
     return phrases
 
 
-def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 22, max_chars: int = 135) -> List[List[Dict[str, Any]]]:
-    """Agrupa palabras por frases completas (cerrando siempre en punto/signo final) y acotando frases muy largas."""
+_DANGLING_WORDS = {
+    "el", "la", "los", "las", "un", "una", "unos", "unas",
+    "de", "del", "a", "al", "en", "con", "por", "para", "sin", "sobre", "tras",
+    "y", "e", "o", "u", "ni", "que", "cual", "como",
+    "se", "me", "te", "le", "les", "nos", "lo", "su", "sus", "mi", "mis", "tu", "tus", "no", "tan", "muy",
+}
+
+
+def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 16, max_chars: int = 105) -> List[List[Dict[str, Any]]]:
+    """Agrupa palabras por frases o cláusulas completas (cortando en punto o coma y nunca dejando partículas colgadas)."""
     paragraphs: List[List[Dict[str, Any]]] = []
     current: List[Dict[str, Any]] = []
     cur_chars = 0
     for w in words:
         txt = w.get("word", "")
         if current and (len(current) >= max_words or cur_chars + len(txt) + 1 > max_chars):
-            paragraphs.append(current)
-            current = [w]
-            cur_chars = len(txt)
+            # Evitar dejar una preposición/pronombre/artículo suelto al final del bloque
+            last_clean = _norm_token(current[-1].get("word", ""))
+            if len(current) > 3 and last_clean in _DANGLING_WORDS and not current[-1].get("word", "").endswith((",", ";", ":", ".")):
+                carry = current.pop()
+                paragraphs.append(current)
+                current = [carry, w]
+                cur_chars = len(carry.get("word", "")) + 1 + len(txt)
+            else:
+                paragraphs.append(current)
+                current = [w]
+                cur_chars = len(txt)
         else:
             current.append(w)
             cur_chars += len(txt) + (1 if len(current) > 1 else 0)
@@ -281,7 +297,7 @@ def _group_words_into_paragraphs(words: List[Dict[str, Any]], max_words: int = 2
             paragraphs.append(current)
             current = []
             cur_chars = 0
-        elif current and len(current) >= 10 and cur_chars >= 65 and stripped_end.endswith((";", ":")):
+        elif current and len(current) >= 9 and cur_chars >= 52 and stripped_end.endswith((",", ";", ":")):
             paragraphs.append(current)
             current = []
             cur_chars = 0
@@ -401,22 +417,22 @@ def create_ass_subtitles(
     words = _load_or_estimate_word_timings(audio_path, clean_text, duration)
 
     if mode == "block" or not words:
-        wrapped = "\\N".join(textwrap.wrap(clean_text, width=32))
+        wrapped = "\\N".join(_escape_ass_text(ln) for ln in textwrap.wrap(clean_text, width=32))
         fad = "{\\fad(150,220)}" if use_fade else ""
-        events.append(f"Dialogue: 0,{_format_ass_time(0)},{_format_ass_time(duration)},Default,,0,0,0,,{fad}{_escape_ass_text(wrapped)}")
+        events.append(f"Dialogue: 0,{_format_ass_time(0)},{_format_ass_time(duration)},Default,,0,0,0,,{fad}{wrapped}")
     elif mode == "paragraph_preview":
         # Frase completa actual + siguiente frase difuminada debajo (estilo teleprompter/lectura)
-        paragraphs = _group_words_into_paragraphs(words, max_words=22, max_chars=135)
+        paragraphs = _group_words_into_paragraphs(words, max_words=16, max_chars=105)
         next_font_size = max(24, int(round(font_size * 0.84)))
         for p_idx, para in enumerate(paragraphs):
             p_end = paragraphs[p_idx + 1][0]["start"] if p_idx + 1 < len(paragraphs) else duration
             next_block = ""
             if p_idx + 1 < len(paragraphs):
                 next_raw = " ".join(nw.get("word", "") for nw in paragraphs[p_idx + 1])
-                next_wrapped = "\\N".join(textwrap.wrap(next_raw, width=36))
+                next_wrapped = "\\N".join(_escape_ass_text(ln) for ln in textwrap.wrap(next_raw, width=36))
                 next_block = (
                     f"\\N\\N{{\\fs{next_font_size}\\alpha&H9A&\\blur1.2}}"
-                    f"{_escape_ass_text(next_wrapped)}"
+                    f"{next_wrapped}"
                     f"{{\\blur0\\alpha&H00&\\fs{font_size}}}"
                 )
             for w_idx, w in enumerate(para):

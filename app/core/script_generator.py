@@ -34,6 +34,79 @@ def clean_json_string(raw: str) -> str:
     return raw
 
 
+def _call_llm_chat(
+    messages: List[Dict[str, str]],
+    temperature: float = 0.4,
+    max_tokens: int = 2500,
+    api_key: Optional[str] = None,
+) -> str:
+    """
+    Ejecuta una consulta LLM en cascada garantizando disponibilidad:
+    1) OpenAI API (gpt-4o-mini) si OPENAI_API_KEY tiene crédito.
+    2) Fal.ai Any-LLM (openai/gpt-4o-mini) si FAL_KEY tiene crédito.
+    3) Pollinations Text OpenAI-compatible API (gratuita, 0€) como respaldo universal.
+    """
+    import requests as _req
+
+    openai_key = (api_key or os.getenv("OPENAI_API_KEY") or "").strip()
+    if openai_key and openai_key.startswith("sk-"):
+        try:
+            from openai import OpenAI
+            client = OpenAI(api_key=openai_key)
+            resp = client.chat.completions.create(
+                model="gpt-4o-mini",
+                messages=messages,
+                temperature=temperature,
+                max_tokens=max_tokens,
+            )
+            txt = (resp.choices[0].message.content or "").strip()
+            if txt:
+                return txt
+        except Exception as e:
+            print(f"[LLM] OpenAI no disponible ({e}), probando siguiente proveedor...")
+
+    fal_key = os.getenv("FAL_KEY", "").strip()
+    if fal_key:
+        try:
+            sys_parts = [m["content"] for m in messages if m.get("role") == "system"]
+            usr_parts = [m["content"] for m in messages if m.get("role") != "system"]
+            r = _req.post(
+                "https://fal.run/fal-ai/any-llm",
+                headers={"Authorization": f"Key {fal_key}", "Content-Type": "application/json"},
+                json={
+                    "model": "openai/gpt-4o-mini",
+                    "system_prompt": "\n\n".join(sys_parts) if sys_parts else "You are a helpful assistant.",
+                    "prompt": "\n\n".join(usr_parts),
+                },
+                timeout=35,
+            )
+            if r.status_code == 200:
+                out = (r.json().get("output") or "").strip()
+                if out:
+                    return out
+        except Exception as e:
+            print(f"[LLM] Fal any-llm no disponible ({e}), usando proveedor gratuito...")
+
+    r_free = _req.post(
+        "https://text.pollinations.ai/openai",
+        headers={"Content-Type": "application/json"},
+        json={
+            "model": "openai",
+            "messages": messages,
+            "temperature": temperature,
+        },
+        timeout=45,
+    )
+    if r_free.status_code == 200:
+        data = r_free.json()
+        choices = data.get("choices") or []
+        if choices:
+            content = (choices[0].get("message", {}).get("content") or "").strip()
+            if content:
+                return content
+    raise RuntimeError(f"No se pudo obtener respuesta de ningún proveedor LLM (HTTP {r_free.status_code})")
+
+
 def _normalize_pdf_line_breaks(text: str) -> str:
     """Normaliza ligaduras tipográficas, saltos de línea rotos de PDF y asegura frases cerradas con puntuación."""
     if not text:
@@ -156,13 +229,10 @@ def prepare_narration_text(text: str, use_ai: bool = True) -> str:
     if not base_clean:
         return ""
 
-    api_key = os.getenv("OPENAI_API_KEY", "").strip()
-    if not use_ai or not api_key or not api_key.startswith("sk-"):
+    if not use_ai:
         return base_clean
 
     try:
-        from openai import OpenAI
-        client = OpenAI(api_key=api_key)
         sys_msg = (
             "Eres un corrector editorial experto en audiolibros en español. "
             "Tu tarea es revisar el texto proporcionado para que un narrador profesional pueda leerlo en voz alta con total fluidez y naturalidad.\n"
@@ -173,8 +243,7 @@ def prepare_narration_text(text: str, use_ai: bool = True) -> str:
             "4. Separa párrafos claros con una línea en blanco.\n"
             "5. Devuelve ÚNICAMENTE el texto revisado, sin explicaciones ni comillas envolventes."
         )
-        resp = client.chat.completions.create(
-            model="gpt-4o-mini",
+        ai_text = _call_llm_chat(
             messages=[
                 {"role": "system", "content": sys_msg},
                 {"role": "user", "content": base_clean[:12000]},
@@ -182,11 +251,10 @@ def prepare_narration_text(text: str, use_ai: bool = True) -> str:
             temperature=0.15,
             max_tokens=3000,
         )
-        ai_text = (resp.choices[0].message.content or "").strip()
         if ai_text and len(ai_text) >= len(base_clean) * 0.65:
             return _normalize_pdf_line_breaks(ai_text)
     except Exception as e:
-        print(f"[PREPARE_NARRATION] Fallback local por error OpenAI: {e}")
+        print(f"[PREPARE_NARRATION] Fallback local por error LLM: {e}")
 
     return base_clean
 
@@ -581,10 +649,11 @@ def enrich_scene_prompt_with_anchors(
     """
     clean_p = scene_prompt.strip() if scene_prompt else ""
 
-    # 1. Limpiar posibles banderas técnicas previas (--cref, --cw, <lora:...>, [seed_...]) para recomponer limpio
+    # 1. Limpiar posibles banderas técnicas previas (--cref, --cw, <lora:...>, [seed_...], [Transición...]) para recomponer limpio
     clean_p = re.sub(r"--cref\s+\S+(?:\s+--cw\s+\d+)?", "", clean_p, flags=re.IGNORECASE).strip()
     clean_p = re.sub(r"<lora:[^>]+>\s*(?:chr_\w+)?", "", clean_p, flags=re.IGNORECASE).strip()
     clean_p = re.sub(r"\[seed_(?:personaje|escenario):[^\]]+\]", "", clean_p, flags=re.IGNORECASE).strip()
+    clean_p = re.sub(r"\[(?:Transici[óo]n|Escena)[^\]]+\]", "", clean_p, flags=re.IGNORECASE).strip()
 
     # 2. Limpiar de clean_p cualquier "set in [Escenario]..." previo para actualizarlo con el nuevo
     clean_p = re.sub(r"\bset in [^:]+:\s*[^,]+(?:,[^,]+)*?(?=\b(?:vertical 9:16|delicate|cinematic|whimsical|$))", "", clean_p, flags=re.IGNORECASE).strip().strip(",; ")
@@ -607,18 +676,14 @@ def enrich_scene_prompt_with_anchors(
 
     for ref in resolved_refs:
         anchor = re.sub(r",?\s*\bno humans\b", ", non-anthropomorphic animal", ref["ancla_visual"], flags=re.IGNORECASE)
-        c_seed = ref.get("seed_consistencia")
-        seed_tag = f" [seed_personaje:{c_seed}]" if c_seed else ""
         char_name_lower = ref.get("nombre", "").lower()
         char_tokens = {t.lower() for t in re.findall(r"\w+", ref.get("nombre", ""))}
         core_tokens = [w for w in re.findall(r"\w{5,}", anchor.lower()) if w not in ("standing", "character", "natural", "features") and w not in char_tokens]
         already = (char_name_lower in clean_p.lower()) and (any(tok in clean_p.lower() for tok in core_tokens[:3]) if core_tokens else True)
         if not already:
-            anchors.append(f"{anchor}{seed_tag}")
-        elif seed_tag and seed_tag.strip() not in clean_p:
-            anchors.append(f"{ref.get('nombre')}{seed_tag}")
+            anchors.append(anchor)
 
-    # 4. Ancla completa de escenario clave con su semilla y descripción arquitectónica/ambiental íntegra
+    # 4. Ancla completa de escenario clave con su descripción arquitectónica/ambiental íntegra (sin etiquetas [seed:...])
     effective_escs = list(project_escenarios) if (project_escenarios and len(project_escenarios) > 0) else []
     disk_escs = load_environment_bank_for_prompt_generator(project_id)
     if disk_escs:
@@ -650,7 +715,7 @@ def enrich_scene_prompt_with_anchors(
             env_info = extract_environment_visual_anchor(e_match, project_id=project_id or "")
             if env_info["clean_description"]:
                 anchors.append(
-                    f"set in {env_info['nombre']} [seed_escenario:{env_info['seed_consistencia']}]: {env_info['clean_description']}"
+                    f"set in {env_info['nombre']}: {env_info['clean_description']}, full-bleed painted sky and background with no white margins"
                 )
 
     # Composición final con salvaguardas anatómicas para evitar deformaciones
@@ -752,21 +817,23 @@ def propose_chapter_treatment(
     base_style = STYLE_PRESETS.get(style_key, STYLE_PRESETS["cinematic"])
     style_prompt = f"{base_style}, {style_details.strip()}" if style_details.strip() else base_style
 
-    if openai_key and openai_key.startswith("sk-"):
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=openai_key)
-            sys_msg = f"""Eres director creativo de vídeos narrativos cortos (TikTok/Shorts/Reels).
+    # Calcular número óptimo de escenas para que cada escena dure ~10-13s (~24-30 palabras, 1 solo clip I2V de 10s)
+    word_count_est = len((text or "").split())
+    auto_scenes = max(2, min(8, round(word_count_est / 26))) if word_count_est > 45 else max(1, target_scenes)
+    effective_target_scenes = max(int(target_scenes or 4), auto_scenes)
+
+    try:
+        sys_msg = f"""Eres director creativo de vídeos narrativos cortos (TikTok/Shorts/Reels).
 A partir del texto del capítulo "{chapter_title}", elabora una PROPUESTA PREVIA editable en español para aprobar antes de generar escenas:
 - Público objetivo: {audiencia or "General"}
 - Ambiente/universo: {ambiente or "Fiel al texto"}
 - Estilo visual: {style_prompt}
 - Personajes disponibles: {", ".join(char_names) or "Según texto"}
 - Escenarios disponibles: {", ".join(esc_names) or "Según texto"}
-- Número máximo de escenas orientativo: {target_scenes}
-- REGLA DE CONTINUIDAD: Por defecto, desarrolla todo el corto/capítulo en UN ÚNICO escenario principal coherente con el texto (no cambies de lugar ni metas otros escenarios salvo que el texto lo exija explícitamente) y utiliza SOLO los personajes que realmente aparecen o se mencionan en este fragmento.
-- REGLA VISUAL (MUY IMPORTANTE): NO copies ni pegues frases literales de la narración en `que_ocurre`. Describe únicamente lo que PASA visualmente en pantalla (acción, encuadre, movimiento de los personajes, gestos, ambiente), por ejemplo: "Se ve a Platero en el establo junto al niño narrador; luego se acerca hacia la puerta para que se le vea bien el rostro". Si el texto es breve y no necesita varias escenas distintas, propón menos escenas (incluso 1 sola).
-- REGLA DE LOCUCIÓN (OBLIGATORIA): En `texto_narrado`, respeta el texto íntegro del capítulo sin saltos de línea rotos, asegurando que NUNCA se parta una frase o idea a mitad entre dos escenas. Cada bloque debe contener frases completas y terminar siempre con puntuación final (`.`, `?`, `!` o `…`).
+- Número óptimo de escenas (para que cada escena dure ~10-13 segundos y muestre 1 sola acción clara): {effective_target_scenes}
+- REGLA DE CONTINUIDAD Y ESCENARIOS: Selecciona el escenario que mejor corresponda a lo que narra cada tramo y utiliza TODOS los personajes u objetos que realmente intervienen en esa frase (por ejemplo, si el narrador da fruta al burrito o pasea con él ante los aldeanos, descríbelo explícitamente en `que_ocurre`).
+- REGLA VISUAL (MUY IMPORTANTE): NO copies ni pegues frases literales de la narración en `que_ocurre`. Describe con gran riqueza visual lo que PASA en pantalla (encuadre, acción física concreta, objetos del texto como flores, frutas, mariposas, faroles, gestos e iluminación).
+- REGLA DE LOCUCIÓN (OBLIGATORIA): En `texto_narrado`, reparte el texto íntegro del capítulo en {effective_target_scenes} bloques de ~20-32 palabras (~10-13s) sin saltos de línea rotos, asegurando que NUNCA se parta una frase a mitad entre dos escenas y que cada bloque termine en puntuación final (`.`, `?`, `!` o `…`).
 
 Devuelve ÚNICAMENTE JSON válido con esta estructura:
 {{
@@ -776,41 +843,41 @@ Devuelve ÚNICAMENTE JSON válido con esta estructura:
       "id": 1,
       "titulo": "Título corto de la escena",
       "transicion_desde_anterior": "Cómo se pasa visualmente desde la escena anterior (dejar vacío en la escena 1)",
-      "que_ocurre": "Qué se ve en pantalla (acción, encuadre y movimiento) sin copiar la narración.",
-      "texto_narrado": "Fragmento exacto del texto que leerá el narrador en esta escena (de principio a fin de este tramo).",
-      "duracion_seg": 5
+      "que_ocurre": "Qué se ve en pantalla (acción física, objetos del cuento, encuadre y movimiento) sin copiar la narración.",
+      "texto_narrado": "Fragmento exacto del texto que leerá el narrador en esta escena (frases completas de principio a fin).",
+      "duracion_seg": 10
     }}
   ]
 }}"""
-            resp = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": sys_msg},
-                    {"role": "user", "content": f"Texto del capítulo:\n\n{text}"}
-                ],
-                temperature=0.6,
-                max_tokens=1200
-            )
-            data = json.loads(clean_json_string(resp.choices[0].message.content or ""))
-            bloques = data.get("bloques") or []
-            if isinstance(bloques, list) and len(bloques) > 0:
-                total = 0
-                for idx, b in enumerate(bloques):
-                    b["id"] = idx + 1
-                    b["titulo"] = (b.get("titulo") or f"Escena {idx + 1}").strip()
-                    b["transicion_desde_anterior"] = (b.get("transicion_desde_anterior") or "").strip() if idx > 0 else ""
-                    b["que_ocurre"] = (b.get("que_ocurre") or "").strip()
-                    b["texto_narrado"] = (b.get("texto_narrado") or "").strip()
-                    dur = max(3, min(30, int(b.get("duracion_seg") or 5)))
-                    b["duracion_seg"] = dur
-                    total += dur
-                return {
-                    "enfoque_general": (data.get("enfoque_general") or "").strip(),
-                    "bloques": bloques,
-                    "duracion_total_seg": total
-                }
-        except Exception as e:
-            print(f"[AI] Error generando propuesta con OpenAI: {e}. Usando propuesta heurística.")
+        raw_llm = _call_llm_chat(
+            messages=[
+                {"role": "system", "content": sys_msg},
+                {"role": "user", "content": f"Texto del capítulo:\n\n{_normalize_pdf_line_breaks(text)}"}
+            ],
+            temperature=0.5,
+            max_tokens=1800,
+            api_key=openai_key,
+        )
+        data = json.loads(clean_json_string(raw_llm))
+        bloques = data.get("bloques") or []
+        if isinstance(bloques, list) and len(bloques) > 0:
+            total = 0
+            for idx, b in enumerate(bloques):
+                b["id"] = idx + 1
+                b["titulo"] = (b.get("titulo") or f"Escena {idx + 1}").strip()
+                b["transicion_desde_anterior"] = (b.get("transicion_desde_anterior") or "").strip() if idx > 0 else ""
+                b["que_ocurre"] = (b.get("que_ocurre") or "").strip()
+                b["texto_narrado"] = (b.get("texto_narrado") or "").strip()
+                dur = max(6, min(15, int(b.get("duracion_seg") or 10)))
+                b["duracion_seg"] = dur
+                total += dur
+            return {
+                "enfoque_general": (data.get("enfoque_general") or "").strip(),
+                "bloques": bloques,
+                "duracion_total_seg": total
+            }
+    except Exception as e:
+        print(f"[AI] Error generando propuesta con LLM: {e}. Usando propuesta heurística.")
 
     # Fallback heurístico visual (describe puesta en escena sin copiar frases literales de la narración)
     word_count = len((text or "").split())
@@ -949,66 +1016,60 @@ Devuelve ÚNICAMENTE un array JSON válido con la siguiente estructura, sin text
 
     user_prompt = f"Texto del capítulo a adaptar:\n\n{text}"
 
-    # 1. Intentar con OpenAI si hay clave
-    if openai_key and openai_key.startswith("sk-"):
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=openai_key)
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[
-                    {"role": "system", "content": system_instruction},
-                    {"role": "user", "content": user_prompt}
-                ],
-                temperature=0.7,
-                max_tokens=1800
-            )
-            raw_content = response.choices[0].message.content or ""
-            cleaned = clean_json_string(raw_content)
-            scenes = json.loads(cleaned)
-            if isinstance(scenes, list) and len(scenes) > 0:
-                prop_bloques = (propuesta.get("bloques") or []) if isinstance(propuesta, dict) else []
-                for i, sc in enumerate(scenes):
-                    b_match = prop_bloques[i] if i < len(prop_bloques) else {}
-                    sc["id"] = i + 1
-                    # Construir descripción de la escena con continuidad/transición si aplica
-                    trans_text = (b_match.get("transicion_desde_anterior") or "").strip()
-                    que_text = (b_match.get("que_ocurre") or "").strip()
-                    if not (sc.get("descripcion_escena") or "").strip():
-                        if i > 0 and trans_text and que_text:
-                            sc["descripcion_escena"] = f"Transición desde la escena anterior: {trans_text}\n\nQué ocurre: {que_text}"
-                        elif que_text:
-                            sc["descripcion_escena"] = que_text
-                    if not (sc.get("narrador") or "").strip() and (b_match.get("texto_narrado") or "").strip():
-                        sc["narrador"] = b_match.get("texto_narrado").strip()
-                    sc.setdefault("narrador", "")
-                    sc.setdefault("descripcion_escena", "")
-                    sc.setdefault("prompt_imagen", "")
-                    sc.setdefault("personajes_en_escena", [])
-                    if b_match.get("duracion_seg"):
-                        try:
-                            sc["duracion_estimada"] = int(b_match.get("duracion_seg"))
-                        except (TypeError, ValueError):
-                            sc.setdefault("duracion_estimada", 5)
-                    else:
-                        sc.setdefault("duracion_estimada", 5)
-                    # Enriquecer e inyectar anclas de personajes y escenarios aprobados
-                    sc["prompt_imagen"] = enrich_scene_prompt_with_anchors(
-                        scene_prompt=sc["prompt_imagen"],
-                        characters_in_scene=sc.get("personajes_en_escena", []),
-                        project_characters=effective_chars or [],
-                        escenario_clave=sc.get("escenario_clave"),
-                        project_escenarios=escenarios or [],
-                        style_prompt=style_prompt,
-                        project_id=project_id
-                    )
-                    attach_consistency_metadata_to_scene(sc, effective_chars, project_id=project_id)
-                    sc["audio_url"] = None
-                    sc["image_url"] = None
-                    sc["duracion_real"] = None
-                return scenes
-        except Exception as e:
-            print(f"[AI] Error llamando a OpenAI: {e}. Activando fallback heurístico.")
+    # 1. Intentar con cascada LLM (OpenAI -> Fal Any-LLM -> Pollinations OpenAI-compatible)
+    try:
+        raw_content = _call_llm_chat(
+            messages=[
+                {"role": "system", "content": system_instruction},
+                {"role": "user", "content": user_prompt}
+            ],
+            temperature=0.6,
+            max_tokens=2200,
+            api_key=openai_key,
+        )
+        cleaned = clean_json_string(raw_content)
+        scenes = json.loads(cleaned)
+        if isinstance(scenes, list) and len(scenes) > 0:
+            prop_bloques = (propuesta.get("bloques") or []) if isinstance(propuesta, dict) else []
+            for i, sc in enumerate(scenes):
+                b_match = prop_bloques[i] if i < len(prop_bloques) else {}
+                sc["id"] = i + 1
+                trans_text = (b_match.get("transicion_desde_anterior") or "").strip()
+                que_text = (b_match.get("que_ocurre") or "").strip()
+                if not (sc.get("descripcion_escena") or "").strip():
+                    if i > 0 and trans_text and que_text:
+                        sc["descripcion_escena"] = f"Transición desde la escena anterior: {trans_text}\n\nQué ocurre: {que_text}"
+                    elif que_text:
+                        sc["descripcion_escena"] = que_text
+                if not (sc.get("narrador") or "").strip() and (b_match.get("texto_narrado") or "").strip():
+                    sc["narrador"] = b_match.get("texto_narrado").strip()
+                sc["narrador"] = _normalize_pdf_line_breaks(sc.get("narrador") or "").replace("\n\n", " ")
+                sc.setdefault("descripcion_escena", "")
+                sc.setdefault("prompt_imagen", "")
+                sc.setdefault("personajes_en_escena", [])
+                if b_match.get("duracion_seg"):
+                    try:
+                        sc["duracion_estimada"] = int(b_match.get("duracion_seg"))
+                    except (TypeError, ValueError):
+                        sc.setdefault("duracion_estimada", 10)
+                else:
+                    sc.setdefault("duracion_estimada", 10)
+                sc["prompt_imagen"] = enrich_scene_prompt_with_anchors(
+                    scene_prompt=sc["prompt_imagen"],
+                    characters_in_scene=sc.get("personajes_en_escena", []),
+                    project_characters=effective_chars or [],
+                    escenario_clave=sc.get("escenario_clave"),
+                    project_escenarios=escenarios or [],
+                    style_prompt=style_prompt,
+                    project_id=project_id
+                )
+                attach_consistency_metadata_to_scene(sc, effective_chars, project_id=project_id)
+                sc["audio_url"] = None
+                sc["image_url"] = None
+                sc["duracion_real"] = None
+            return scenes
+    except Exception as e:
+        print(f"[AI] Error llamando a cascada LLM en breakdown_storyboard: {e}. Activando fallback heurístico.")
 
     # 2. Fallback Heurístico
     return generate_fallback_storyboard(
@@ -1275,46 +1336,42 @@ def generate_scene_prompt_from_description(
 
     raw_desc = (descripcion_escena or "").strip()
     base_english = ""
-    if openai_key and openai_key.startswith("sk-") and raw_desc:
+    if raw_desc:
         try:
-            from openai import OpenAI
-            client = OpenAI(api_key=openai_key)
-            prompt = f"""Eres un director de arte y diseñador de prompts para generación de imágenes (FLUX / Midjourney / Stable Diffusion) en formato vertical 9:16 para una adaptación de libro.
+            prompt = f"""Eres un director de arte y diseñador de prompts cinematográficos en formato vertical 9:16 (FLUX Kontext / Midjourney).
 
 OBJETIVO:
-Crear un prompt en INGLÉS cohesivo y uniforme con toda la obra, reflejando el estilo visual del proyecto, la ambientación, la transición entre escenas y la descripción específica de esta escena (Escena {scene_index + 1}).
+Redactar en INGLÉS un prompt visual rico en detalles y dividido en 5 capas integradas en un único párrafo fluido para la Escena {scene_index + 1}.
 
-PARÁMETROS GENERALES DEL PROYECTO (MANTENER CONSISTENCIA GLOBAL EN TODAS LAS ESCENAS):
-- Estilo visual global: {style_prompt}
-- Ambiente/universo de la obra: {ambiente or 'Fiel al libro'}
-- Público objetivo y tono: {audiencia or 'General'}
-- Escenario canónico fijado: {escenario_clave or 'General'}
-- Personajes presentes en esta escena: {', '.join(selected_names) if selected_names else 'Sin personaje específico'}
-- Transición desde la escena anterior: {transicion_es if (scene_index > 0 and transicion_es) else 'Escena inicial de apertura'}
+PARÁMETROS DE LA OBRA:
+- Estilo visual obligatorio: {style_prompt}
+- Ambiente/universo: {ambiente or 'Fiel al libro'}
+- Escenario fijado: {escenario_clave or 'General'}
+- Personajes en escena: {', '.join(selected_names) if selected_names else 'Según descripción'}
+- Continuidad con escena anterior: {transicion_es if (scene_index > 0 and transicion_es) else 'Plano de apertura'}
 
 BIBLIA DE PERSONAJES Y ESCENARIOS:
 {char_clause}
 {esc_clause}
 
-DESCRIPCIÓN ESPECÍFICA DE ESTA ESCENA (QUÉ OCURRE Y QUÉ DEBE APARECER):
+DESCRIPCIÓN DE LA ESCENA EN ESPAÑOL (QUÉ OCURRE Y QUÉ OBJETOS/DETALLES APARECEN):
 "{raw_desc}"
 
-INSTRUCCIONES DE REDACCIÓN DEL PROMPT:
-1. Redacta ÚNICAMENTE un prompt visual cinematográfico y muy detallado en INGLÉS (sin comillas, sin explicaciones, sin markdown).
-2. Estructura: Continuidad con la escena previa (si aplica), formato vertical 9:16 (vertical composition), plano de cámara, acción precisa, postura y expresión de los personajes presentes según su descripción canónica (cuidando que cada animal o persona tenga anatomía perfecta y separada).
-3. Detalles del entorno ({escenario_clave or 'General'}), iluminación, paleta cromática, texturas y atmósfera respetando el estilo ({style_prompt}).
-4. NO incluyas texto escrito, marcas de agua, firmas, subtítulos ni letras en la imagen.
+ESTRUCTURA OBLIGATORIA DE LAS 5 CAPAS EN INGLÉS (en un solo párrafo sin encabezados ni corchetes):
+1. Shot & Camera: Vertical 9:16 framing, camera angle and depth of field.
+2. Characters & Action: Exact physical appearance and concrete action/pose of each character present (anatomically accurate, separate bodies).
+3. Narrative Props & Foreground Details: Every specific object, flower, fruit, lantern, insect or detail mentioned in the scene description.
+4. Environment & Full Sky: Full-bleed background of {escenario_clave or 'the setting'} with a complete painted sky (never leave blank white sky or margins).
+5. Lighting, Color Palette & Artistic Medium: Atmospheric lighting and {style_prompt}, zero text or watermarks.
 """
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
+            generated = _call_llm_chat(
                 messages=[{"role": "user", "content": prompt}],
-                temperature=0.5,
-                max_tokens=350,
-            )
-            generated = (response.choices[0].message.content or "").strip().strip('"').strip("'")
+                temperature=0.45,
+                max_tokens=420,
+                api_key=openai_key,
+            ).strip().strip('"').strip("'")
             if generated:
-                prefix_tr = f"[Transición Escena {scene_index}→{scene_index + 1}: {transicion_es}] " if (scene_index > 0 and transicion_es) else ""
-                base_english = f"{prefix_tr}{generated}"
+                base_english = generated
         except Exception as e:
             print(f"[AI] Error generando prompt desde descripción: {e}")
 
@@ -1388,22 +1445,19 @@ def generate_scene_description_from_proposal(
     esc_name = (esc_obj.get("nombre") if esc_obj else None) or escenario_clave or "el escenario principal"
     esc_desc = (esc_obj.get("descripcion") or esc_obj.get("prompt_base") or "").strip() if esc_obj else ""
 
-    if openai_key and openai_key.startswith("sk-"):
-        try:
-            from openai import OpenAI
-            client = OpenAI(api_key=openai_key)
-            char_summary = "\n".join(
-                f"- {c.get('nombre')}: {c.get('descripcion_visual') or c.get('descripcion') or 'Personaje de la obra'}"
-                for c in selected_chars
-            ) or "Según propuesta"
-            prompt = f"""Eres un director de animación y realizador audiovisual.
-Tu tarea es redactar en ESPAÑOL la DESCRIPCIÓN DETALLADA DE LA ESCENA {scene_index + 1} (duración aprox. {dur_seg}s), desarrollando con todo detalle la propuesta superior para que sirva de base directa al prompt visual.
+    try:
+        char_summary = "\n".join(
+            f"- {c.get('nombre')}: {c.get('descripcion_visual') or c.get('descripcion') or 'Personaje de la obra'}"
+            for c in selected_chars
+        ) or "Según propuesta"
+        prompt = f"""Eres un director de animación y realizador audiovisual.
+Tu tarea es redactar en ESPAÑOL la DESCRIPCIÓN DETALLADA DE LA ESCENA {scene_index + 1} (duración aprox. {dur_seg}s), desarrollando con todo detalle lo que se ve y se mueve en pantalla mientras el narrador dice su frase.
 
-PROPUESTA GENERAL DEL CAPÍTULO:
+CONTEXTO DE LA ESCENA:
 - Enfoque general: {enfoque or 'Adaptación visual fiel y cálida'}
-- Escena {scene_index + 1} en la propuesta (qué ocurre): {que_ocurre or 'Acción principal del tramo'}
+- Resumen en propuesta: {que_ocurre or 'Acción principal del tramo'}
 - Transición desde la escena anterior: {transicion if scene_index > 0 and transicion else 'Inicio del vídeo (Escena 1)'}
-- Fragmento que lee el narrador mientras ocurre la escena: "{texto_narr}"
+- Frase exacta que lee el narrador en esta escena: "{texto_narr}"
 
 ELEMENTOS SELECCIONADOS PARA ESTA ESCENA:
 - Escenario: {esc_name} {f'({esc_desc})' if esc_desc else ''}
@@ -1412,22 +1466,21 @@ ELEMENTOS SELECCIONADOS PARA ESTA ESCENA:
 - Ambiente general: {ambiente or 'Fiel al libro'} | Público: {audiencia or 'General'}
 
 INSTRUCCIONES:
-Redacta un párrafo amplio y detallado en español (4 a 6 frases, sin encabezados markdown ni comillas) que explique con claridad:
-1. Cómo arranca el plano (o cómo enlaza desde la escena anterior si es la escena 2 o superior) dentro de {esc_name}.
-2. Qué personajes aparecen ({', '.join(selected_names) or 'los protagonistas'}), dónde están situados, cómo se desplazan o se mueven de un punto a otro y cómo interactúan entre ellos o con el entorno.
-3. Sus gestos, expresiones, la iluminación y los detalles visuales clave que deben verse en pantalla mientras se escucha la narración.
+Redacta un párrafo rico y visual en español (4 a 6 frases, sin encabezados markdown ni comillas) que describa:
+1. El encuadre inicial dentro de {esc_name}, la hora del día y la iluminación.
+2. Qué personajes aparecen ({', '.join(selected_names) or 'los protagonistas'}), qué objetos concretos mencionados por el narrador están visibles (flores, frutas, mariposas, faroles, caminos...) y qué acción física realizan.
+3. Cómo se mueven los personajes y la cámara durante los {dur_seg} segundos de la escena.
 """
-            response = client.chat.completions.create(
-                model="gpt-4o-mini",
-                messages=[{"role": "user", "content": prompt}],
-                temperature=0.6,
-                max_tokens=400,
-            )
-            generated = (response.choices[0].message.content or "").strip()
-            if generated:
-                return generated
-        except Exception as e:
-            print(f"[AI] Error generando descripción detallada con OpenAI: {e}. Usando desarrollo estructurado.")
+        generated = _call_llm_chat(
+            messages=[{"role": "user", "content": prompt}],
+            temperature=0.5,
+            max_tokens=420,
+            api_key=openai_key,
+        ).strip()
+        if generated:
+            return generated
+    except Exception as e:
+        print(f"[AI] Error generando descripción detallada con LLM: {e}. Usando desarrollo estructurado.")
 
     # Desarrollo detallado estructurado en español (cuando no hay cuota de OpenAI o sin conexión)
     parts = []

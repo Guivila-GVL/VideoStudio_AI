@@ -4234,6 +4234,7 @@ document.addEventListener("DOMContentLoaded", () => {
       card.className = "scene-card";
       card.id = `scene-card-${index}`;
 
+      const hasVideo = Boolean(sc.video_clip_url);
       const imgPreviewHtml = sc.image_url 
         ? `<img src="${sc.image_url}" alt="Escena ${index+1}">`
         : `<div class="scene-image-placeholder">
@@ -4242,13 +4243,20 @@ document.addEventListener("DOMContentLoaded", () => {
            </div>`;
 
       card.innerHTML = `
-        <!-- Panel Visual (Izquierda) -->
+        <!-- Panel Visual Unificado (Izquierda) -->
         <div class="scene-visual-pane">
-          <div class="scene-image-preview" id="img-preview-${index}">
+          <div id="visual-tabs-${index}" style="display:${hasVideo ? 'flex' : 'none'}; gap:4px; margin-bottom:6px;">
+            <button type="button" class="btn btn-xs btn-scene-tab-vid" data-idx="${index}" style="flex:1; font-size:0.72rem; background:rgba(56,189,248,0.2); border:1px solid rgba(56,189,248,0.5);">🎥 Vídeo</button>
+            <button type="button" class="btn btn-ghost btn-xs btn-scene-tab-img" data-idx="${index}" style="flex:1; font-size:0.72rem;">🖼️ Foto base</button>
+          </div>
+          <div class="scene-image-preview" id="img-preview-${index}" style="display:${hasVideo ? 'none' : 'block'};">
             ${imgPreviewHtml}
           </div>
+          <div id="anim-preview-${index}" style="display:${hasVideo ? 'block' : 'none'}; margin-bottom:6px;">
+            ${hasVideo ? `<video src="${sc.video_clip_url}" controls loop muted playsinline style="width:100%; border-radius:8px; border:1px solid rgba(56,189,248,0.4);"></video>` : ''}
+          </div>
           <div class="scene-image-actions">
-            <button class="btn btn-secondary btn-xs btn-gen-img" data-idx="${index}" title="Genera la ilustración 9:16 usando el motor configurado en General (${state.currentProject?.motor_imagenes || 'flux'}) y las referencias de personaje/escenario">
+            <button class="btn btn-secondary btn-xs btn-gen-img" data-idx="${index}" title="Genera la ilustración 9:16 combinando las referencias de los personajes en escena y la foto del escenario">
               🎨 ${sc.image_url ? 'Regenerar Foto' : 'Generar Foto'}
             </button>
             <label class="btn btn-ghost btn-xs btn-upload-label">
@@ -4266,9 +4274,6 @@ document.addEventListener("DOMContentLoaded", () => {
                 🔗 Enlazar con escena ${index + 2}
               </label>
             ` : ''}
-            <div id="anim-preview-${index}" style="margin-top:4px;">
-              ${sc.video_clip_url ? `<video src="${sc.video_clip_url}" controls loop muted playsinline style="width:100%; border-radius:8px; border:1px solid rgba(56,189,248,0.4);"></video>` : ''}
-            </div>
           </div>
         </div>
 
@@ -4305,27 +4310,31 @@ document.addEventListener("DOMContentLoaded", () => {
               ${renderSceneEnvSelect(sc, index)}
             </div>
 
-            <!-- 2. Descripción de la Escena (Amplia, todo el ancho) + Botón debajo a la izquierda -->
+            <!-- 2. Descripción de la Escena (Caja única principal en español) -->
             <div class="mt-3">
-              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">📝 Descripción de la escena</label>
-              <div style="display:flex; justify-content:flex-start; margin-bottom:0.45rem;">
-                <button type="button" class="btn btn-secondary btn-xs btn-gen-desc-from-proposal" data-idx="${index}" title="Genera con detalle la descripción de esta escena a partir de la propuesta general de arriba, los personajes y el escenario seleccionados">
-                  ✨ Generar la descripción de la escena
+              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">🎬 Qué se ve y cómo se mueve en esta escena (Descripción visual)</label>
+              <div style="display:flex; justify-content:flex-start; gap:0.5rem; margin-bottom:0.45rem;">
+                <button type="button" class="btn btn-secondary btn-xs btn-gen-desc-from-proposal" data-idx="${index}" title="Redacta con todo detalle lo que se ve y se mueve en esta escena a partir de lo que lee el narrador, los personajes y el escenario">
+                  ✨ Redactar escena desde la narración
                 </button>
               </div>
-              <textarea class="form-textarea input-scene-desc" data-idx="${index}" rows="6" style="width: 100%; box-sizing: border-box; font-size: 0.88rem; line-height: 1.45; padding: 0.65rem 0.75rem; min-height: 120px;" placeholder="Describe detalladamente qué ocurre y qué aparece en esta escena (acciones de personajes, entorno, transición)...">${sc.descripcion_escena || sc.descripcion || ""}</textarea>
+              <textarea class="form-textarea input-scene-desc" data-idx="${index}" rows="5" style="width: 100%; box-sizing: border-box; font-size: 0.88rem; line-height: 1.45; padding: 0.65rem 0.75rem; min-height: 105px;" placeholder="Describe qué ocurre y qué aparece en esta escena (acciones de personajes, objetos del cuento, entorno, movimiento)...">${sc.descripcion_escena || sc.descripcion || ""}</textarea>
             </div>
 
-            <!-- 3. Prompt Visual + Botón Generar prompt debajo a la izquierda -->
-            <div class="mt-3">
-              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">🎨 Prompt Visual (Inglés con estilo global, semillas y transición)</label>
-              <div style="display:flex; justify-content:flex-start; margin-bottom:0.45rem;">
-                <button type="button" class="btn btn-secondary btn-xs btn-gen-prompt-from-desc" data-idx="${index}" title="Genera el prompt visual en inglés usando la descripción de la escena, semillas de personajes y escenario, transición y estilo global">
-                  🪄 Generar prompt
-                </button>
+            <!-- 3. Prompt Técnico en Inglés (Sincronizado automáticamente, plegable para no duplicar) -->
+            <details class="mt-2" style="background:rgba(255,255,255,0.02); border:1px solid var(--border-color); border-radius:8px; padding:0.45rem 0.65rem;">
+              <summary style="cursor:pointer; font-size:0.78rem; color:var(--text-muted); font-weight:600;">
+                🔧 Prompt técnico en inglés (se actualiza solo al generar foto/vídeo)
+              </summary>
+              <div style="margin-top:0.45rem;">
+                <div style="display:flex; justify-content:flex-start; margin-bottom:0.4rem;">
+                  <button type="button" class="btn btn-secondary btn-xs btn-gen-prompt-from-desc" data-idx="${index}">
+                    🪄 Actualizar prompt inglés ahora
+                  </button>
+                </div>
+                <textarea class="form-textarea input-prompt" data-idx="${index}" rows="4" style="width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 0.8rem; line-height: 1.38; padding: 0.55rem 0.65rem;">${sc.prompt_imagen || ""}</textarea>
               </div>
-              <textarea class="form-textarea input-prompt" data-idx="${index}" rows="5" style="width: 100%; box-sizing: border-box; font-family: var(--font-mono); font-size: 0.82rem; line-height: 1.4; padding: 0.65rem 0.75rem; min-height: 100px;">${sc.prompt_imagen || ""}</textarea>
-            </div>
+            </details>
 
             <!-- 4. Locución del Narrador + Botón Generar voz debajo + Reproductor debajo -->
             <div class="mt-3">
@@ -4346,10 +4355,29 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function attachSceneEventListeners() {
+    document.querySelectorAll(".btn-scene-tab-vid").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const idx = parseInt(e.currentTarget.dataset.idx);
+        const imgP = document.getElementById(`img-preview-${idx}`);
+        const vidP = document.getElementById(`anim-preview-${idx}`);
+        if (imgP) imgP.style.display = "none";
+        if (vidP) vidP.style.display = "block";
+      });
+    });
+    document.querySelectorAll(".btn-scene-tab-img").forEach(btn => {
+      btn.addEventListener("click", e => {
+        const idx = parseInt(e.currentTarget.dataset.idx);
+        const imgP = document.getElementById(`img-preview-${idx}`);
+        const vidP = document.getElementById(`anim-preview-${idx}`);
+        if (vidP) vidP.style.display = "none";
+        if (imgP) imgP.style.display = "block";
+      });
+    });
     document.querySelectorAll(".input-scene-desc").forEach(el => {
       el.addEventListener("input", e => {
         const idx = parseInt(e.target.dataset.idx);
         state.scenes[idx].descripcion_escena = e.target.value;
+        state.scenes[idx]._descDirty = true;
       });
     });
 
@@ -4804,7 +4832,7 @@ document.addEventListener("DOMContentLoaded", () => {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: sc.descripcion_escena || sc.prompt_imagen || sc.narrador || "",
+          prompt: sc.prompt_imagen || sc.descripcion_escena || sc.narrador || "",
           image_url: sc.image_url,
           next_image_url: nextSc ? nextSc.image_url : null,
           transition_text: nextSc ? (nextSc.descripcion_escena || "").slice(0, 220) : "",
@@ -4818,9 +4846,14 @@ document.addEventListener("DOMContentLoaded", () => {
       if (data.success && data.video_clip_url) {
         sc.video_clip_url = data.video_clip_url;
         const preview = document.getElementById(`anim-preview-${idx}`);
+        const imgPreview = document.getElementById(`img-preview-${idx}`);
+        const tabsBar = document.getElementById(`visual-tabs-${idx}`);
         if (preview) {
           preview.innerHTML = `<video src="${sc.video_clip_url}?t=${Date.now()}" controls loop muted playsinline style="width:100%; border-radius:8px; border:1px solid rgba(56,189,248,0.4);"></video>`;
+          preview.style.display = "block";
         }
+        if (imgPreview) imgPreview.style.display = "none";
+        if (tabsBar) tabsBar.style.display = "flex";
         await saveCurrentChapter(true);
         showToast(`Escena #${idx + 1} animada (${data.size_mb} MB)${data.linked_next ? ' 🔗 enlazada' : ''}`, "success");
         setSystemStatus("success", `Escena #${idx + 1} animada`, "Clip de movimiento guardado y listo para el montaje final.");
@@ -4847,8 +4880,15 @@ document.addEventListener("DOMContentLoaded", () => {
     btn.textContent = "🎨 Dibujando...";
     setSystemStatus("busy", `Pintando Escena #${idx + 1}...`, "Dibujando fotograma 9:16 con estilo consistente y referencias...");
 
-    // Resolver imágenes de referencia y semillas de consistencia de personajes y escenario
+    // Sincronizar automáticamente el prompt en inglés si el usuario editó la descripción en español o si está vacío
+    if ((sc._descDirty || !sc.prompt_imagen) && (sc.descripcion_escena || "").trim()) {
+      await generatePromptFromDescriptionForScene(idx);
+      sc._descDirty = false;
+    }
+
+    // Resolver TODAS las imágenes de referencia (personajes + escenario de fondo) para Kontext Multi
     let refImageUrl = null;
+    const refImagesList = [];
     let charSeed = null;
     let envSeed = null;
     if (state.currentProject?.personajes && sc.personajes_en_escena && sc.personajes_en_escena.length > 0) {
@@ -4858,6 +4898,9 @@ document.addEventListener("DOMContentLoaded", () => {
           (p.id && p.id.toLowerCase() === charName.toLowerCase())
         );
         if (pMatch) {
+          if (pMatch.imagen_url && !refImagesList.includes(pMatch.imagen_url)) {
+            refImagesList.push(pMatch.imagen_url);
+          }
           if (!refImageUrl && pMatch.imagen_url) refImageUrl = pMatch.imagen_url;
           if (!charSeed && pMatch.seed_consistencia) charSeed = parseInt(pMatch.seed_consistencia);
         }
@@ -4869,6 +4912,9 @@ document.addEventListener("DOMContentLoaded", () => {
         (e.id && e.id.toLowerCase() === sc.escenario_clave.toLowerCase())
       );
       if (eMatch) {
+        if (eMatch.imagen_url && !refImagesList.includes(eMatch.imagen_url)) {
+          refImagesList.push(eMatch.imagen_url);
+        }
         if (!refImageUrl && eMatch.imagen_url) refImageUrl = eMatch.imagen_url;
         if (eMatch.seed_consistencia) envSeed = parseInt(eMatch.seed_consistencia);
       }
@@ -4877,8 +4923,6 @@ document.addEventListener("DOMContentLoaded", () => {
       ? (((charSeed + envSeed) % 900000) + 100000)
       : (charSeed || envSeed || sc.seed_consistencia || null);
 
-    // Si la escena ya tiene imagen y el usuario pulsa "Regenerar Foto", variar el seed para obtener una composición distinta.
-    // Además, desplazar por índice de escena (idx) para que Escena 1 y Escena 2 nunca compartan la misma semilla.
     let effectiveSeed = null;
     if (sc.image_url) {
       effectiveSeed = Math.floor(100000 + Math.random() * 899999);
@@ -4897,15 +4941,19 @@ document.addEventListener("DOMContentLoaded", () => {
           prompt: sc.prompt_imagen,
           provider: state.currentProject?.motor_imagenes || "flux",
           seed: effectiveSeed,
-          reference_image: refImageUrl
+          reference_image: refImageUrl,
+          reference_images: refImagesList
         })
       });
       const data = await res.json();
       if (data.success) {
         sc.image_url = data.url;
         const preview = document.getElementById(`img-preview-${idx}`);
+        const vidPreview = document.getElementById(`anim-preview-${idx}`);
         const freshUrl = data.url.includes("?") ? `${data.url}&t=${Date.now()}` : `${data.url}?t=${Date.now()}`;
         preview.innerHTML = `<img src="${freshUrl}" alt="Escena ${idx+1}">`;
+        preview.style.display = "block";
+        if (vidPreview) vidPreview.style.display = "none";
         btn.textContent = "🎨 Regenerar Foto";
         await saveCurrentChapter(true);
         showToast(`Imagen escena ${idx+1} generada en 9:16`, "success");

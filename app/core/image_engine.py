@@ -212,9 +212,10 @@ def _generate_image_fal_flux(
     web_url: str,
     ref_info: Dict[str, Any],
     seed: Optional[int] = None,
-    fit_mode: str = "crop"
+    fit_mode: str = "crop",
+    extra_ref_infos: Optional[List[Dict[str, Any]]] = None,
 ) -> Dict[str, Any]:
-    """Genera una imagen usando Fal.ai (FLUX.1 Dev o FLUX Kontext Pro si hay imagen de referencia)."""
+    """Genera una imagen usando Fal.ai (FLUX.1 Dev, FLUX Kontext Pro o Kontext Multi si hay personaje + escenario)."""
     fal_key = os.getenv("FAL_KEY", "").strip()
     if not fal_key:
         raise ValueError("FAL_KEY no está configurada en .env. Configúrala en Ajustes (⚙️) para usar el motor FLUX.")
@@ -225,24 +226,46 @@ def _generate_image_fal_flux(
     }
 
     fal_ref_image = _build_fal_image_input(ref_info)
+    fal_ref_list: List[str] = []
     if fal_ref_image:
+        fal_ref_list.append(fal_ref_image)
+    for ex_info in (extra_ref_infos or []):
+        ex_uri = _build_fal_image_input(ex_info)
+        if ex_uri and ex_uri not in fal_ref_list:
+            fal_ref_list.append(ex_uri)
+
+    aspect = "1:1" if fit_mode == "square" else ("9:16" if fit_mode != "contain" else None)
+
+    if len(fal_ref_list) >= 2 and fit_mode == "crop":
+        model_id = "fal-ai/flux-pro/kontext/max/multi"
+        multi_prompt = (
+            "Combine the exact character appearance(s) from the first reference image(s) into the setting and architecture "
+            "of the last environment reference image, rendered in a unified full-bleed 9:16 storybook illustration style "
+            f"with a complete painted sky and zero white margins: {prompt}"
+        )[:1950]
+        payload: Dict[str, Any] = {
+            "prompt": multi_prompt,
+            "image_urls": fal_ref_list[:4],
+            "output_format": "jpeg",
+        }
+        if aspect:
+            payload["aspect_ratio"] = aspect
+    elif fal_ref_image:
         model_id = "fal-ai/flux-pro/kontext"
         effective_prompt = prompt
         if fit_mode == "crop":
             effective_prompt = (
                 "Keep the exact character design and appearance from the reference image, "
                 "placing the character naturally into this full-bleed 9:16 storybook scene "
-                f"(replace any plain white background with the described scenery): {prompt}"
+                f"(replace any plain white background with the described scenery and full sky): {prompt}"
             )[:1950]
-        payload: Dict[str, Any] = {
+        payload = {
             "prompt": effective_prompt,
             "image_url": fal_ref_image,
             "output_format": "jpeg"
         }
-        if fit_mode == "square":
-            payload["aspect_ratio"] = "1:1"
-        elif fit_mode != "contain":
-            payload["aspect_ratio"] = "9:16"
+        if aspect:
+            payload["aspect_ratio"] = aspect
     else:
         model_id = "fal-ai/flux/dev"
         image_size = {"width": 1024, "height": 1024} if fit_mode in ("contain", "square") else {"width": 768, "height": 1344}
@@ -260,6 +283,23 @@ def _generate_image_fal_flux(
 
     endpoint = f"https://fal.run/{model_id}"
     resp = requests.post(endpoint, headers=headers, json=payload, timeout=120)
+    if resp.status_code != 200 and model_id == "fal-ai/flux-pro/kontext/max/multi" and fal_ref_image:
+        # Fallback a kontext individual si multi no está disponible
+        model_id = "fal-ai/flux-pro/kontext"
+        fb_payload: Dict[str, Any] = {
+            "prompt": (
+                "Keep the exact character design and appearance from the reference image, "
+                f"placing the character naturally into this full-bleed 9:16 storybook scene: {prompt}"
+            )[:1950],
+            "image_url": fal_ref_image,
+            "output_format": "jpeg",
+        }
+        if aspect:
+            fb_payload["aspect_ratio"] = aspect
+        if seed is not None:
+            fb_payload["seed"] = int(seed)
+        resp = requests.post(f"https://fal.run/{model_id}", headers=headers, json=fb_payload, timeout=120)
+
     if resp.status_code != 200:
         raise RuntimeError(f"Error en Fal.ai ({model_id}) HTTP {resp.status_code}: {resp.text[:300]}")
 
@@ -281,12 +321,13 @@ def _generate_image_fal_flux(
     if temp_download_path.exists():
         temp_download_path.unlink()
 
-    provider_tag = "fal_flux_kontext" if fal_ref_image else "fal_flux_dev"
+    provider_tag = "fal_flux_kontext_multi" if "multi" in model_id else ("fal_flux_kontext" if fal_ref_image else "fal_flux_dev")
     return {
         "url": web_url,
         "provider": provider_tag,
         "file_path": str(final_path),
         "reference_used": ref_info,
+        "references_count": len(fal_ref_list),
         "seed": data.get("seed")
     }
 
@@ -296,12 +337,12 @@ def generate_image(
     provider: str = "basic",
     seed: Optional[int] = None,
     reference_image: Optional[str] = None,
-    fit_mode: str = "crop"
+    fit_mode: str = "crop",
+    reference_images: Optional[List[str]] = None,
 ) -> Dict[str, Any]:
     """
     Genera una imagen vertical a partir de un prompt utilizando el proveedor seleccionado ('basic' o 'flux').
-    Permite opcionalmente inyectar una imagen de referencia (Image-to-Image / Control de consistencia).
-    - fit_mode: 'crop' (por defecto, llena todo el cuadro 9:16) o 'contain' (para hojas de modelo sin recortes).
+    Permite inyectar una o varias imágenes de referencia (personajes + escenario de fondo).
     """
     filename = f"img_{uuid.uuid4().hex[:10]}.jpg"
     final_path = MEDIA_DIR / filename
@@ -311,10 +352,17 @@ def generate_image(
     if seed is None:
         seed = extract_seed_from_prompt(prompt)
     clean_prompt = sanitize_image_prompt(prompt, max_chars=2000)
-    ref_info = resolve_reference_image_info(reference_image)
+
+    all_refs = [r for r in (reference_images or []) if r]
+    if reference_image and reference_image not in all_refs:
+        all_refs.insert(0, reference_image)
+    primary_ref = all_refs[0] if all_refs else reference_image
+    ref_info = resolve_reference_image_info(primary_ref)
+    extra_ref_infos = [resolve_reference_image_info(r) for r in all_refs[1:]]
+
     provider_norm = (provider or "basic").strip().lower()
 
-    # 0. Motor dedicado FLUX (Fal.ai: FLUX.1 Dev / Kontext Pro)
+    # 0. Motor dedicado FLUX (Fal.ai: FLUX.1 Dev / Kontext Pro / Kontext Multi)
     if provider_norm in ("flux", "fal", "fal_flux", "fal_flux_dev", "fal_flux_kontext"):
         return _generate_image_fal_flux(
             prompt=clean_prompt,
@@ -323,7 +371,8 @@ def generate_image(
             web_url=web_url,
             ref_info=ref_info,
             seed=seed,
-            fit_mode=fit_mode
+            fit_mode=fit_mode,
+            extra_ref_infos=extra_ref_infos,
         )
 
     openai_key = os.getenv("OPENAI_API_KEY")

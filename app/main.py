@@ -345,6 +345,7 @@ class ImageRequest(BaseModel):
     provider: str = "flux"
     seed: Optional[int] = None
     reference_image: Optional[str] = None
+    reference_images: Optional[List[str]] = None
 
 class InjectAnchorsRequest(BaseModel):
     project_id: Optional[str] = None
@@ -1500,7 +1501,8 @@ async def api_generate_image(req: ImageRequest):
             prompt=req.prompt,
             provider=req.provider,
             seed=req.seed,
-            reference_image=req.reference_image
+            reference_image=req.reference_image,
+            reference_images=req.reference_images,
         )
         return {"success": True, **res}
     except Exception as e:

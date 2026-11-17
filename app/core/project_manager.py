@@ -3106,9 +3106,9 @@ def get_providers_billing_status() -> Dict[str, Any]:
         if not fal_key:
             return {**base, "status": "unconfigured", "label": "Sin clave configurada"}
         try:
-            # Comprueba estado real de autenticación/saldo en la cola sin generar nada (payload vacío controlado)
+            # Comprueba estado real de autenticación y saldo en fal.run (que verifica crédito inmediatamente)
             r = _req.post(
-                "https://queue.fal.run/fal-ai/flux/schnell",
+                "https://fal.run/fal-ai/any-llm",
                 headers={"Authorization": f"Key {fal_key}", "Content-Type": "application/json"},
                 json={},
                 timeout=5,
