@@ -33,6 +33,163 @@ def clean_json_string(raw: str) -> str:
         return match.group(1).strip()
     return raw
 
+
+def _normalize_pdf_line_breaks(text: str) -> str:
+    """Normaliza ligaduras tipográficas, saltos de línea rotos de PDF y asegura frases cerradas con puntuación."""
+    if not text:
+        return ""
+    t = text.replace("\r\n", "\n").replace("\r", "\n")
+    # Reemplazar ligaduras comunes de PDFs
+    for lig, rep in (("ﬁ", "fi"), ("ﬂ", "fl"), ("ﬀ", "ff"), ("ﬃ", "ffi"), ("ﬄ", "ffl")):
+        t = t.replace(lig, rep)
+
+    # Separar en párrafos reales (líneas en blanco) o detectar saltos de línea duros dentro de un mismo párrafo
+    raw_lines = [ln.strip() for ln in t.split("\n")]
+    paragraphs: List[str] = []
+    cur_parts: List[str] = []
+
+    for ln in raw_lines:
+        if not ln:
+            if cur_parts:
+                paragraphs.append(" ".join(cur_parts))
+                cur_parts = []
+            continue
+        # Si la línea previa terminaba en puntuación fuerte y la nueva empieza por diálogo o mayúscula tras línea corta,
+        # puede ser nuevo párrafo; si no, forma parte de la misma frase/párrafo.
+        if cur_parts and cur_parts[-1].endswith((".", "!", "?", "…")) and (ln.startswith(("—", "-", "«", "\"")) or len(cur_parts[-1]) < 48):
+            paragraphs.append(" ".join(cur_parts))
+            cur_parts = [ln]
+        else:
+            # Unir palabras partidas por guion al final de línea (ej. "al-\ngodón")
+            if cur_parts and cur_parts[-1].endswith("-") and not cur_parts[-1].endswith("—"):
+                cur_parts[-1] = cur_parts[-1][:-1] + ln
+            else:
+                cur_parts.append(ln)
+
+    if cur_parts:
+        paragraphs.append(" ".join(cur_parts))
+
+    cleaned_paragraphs: List[str] = []
+    for p in paragraphs:
+        p = re.sub(r"\s{2,}", " ", p).strip()
+        if not p:
+            continue
+        # Suavizar guiones de diálogo al inicio para lectura fluida (ej. "—Tien' asero…" -> "«Tien' asero…»" o coma)
+        p = re.sub(r"^—\s*", "", p).strip()
+        if not p.endswith((".", "!", "?", "…", ":", "»", "\"")):
+            p += "."
+        cleaned_paragraphs.append(p)
+
+    return "\n\n".join(cleaned_paragraphs)
+
+
+def _split_sentences_preserving_punctuation(text: str) -> List[str]:
+    """Divide un texto en frases completas conservando siempre su signo de puntuación final."""
+    norm = _normalize_pdf_line_breaks(text)
+    if not norm:
+        return []
+    # Separar tras ., !, ?, … (incluyendo cierres de comillas » o ") seguido de espacio o salto de línea
+    raw_sents = re.split(r'(?<=[.!?…»"])\s+(?=[A-ZÁÉÍÓÚÑ¿¡«"—0-9])', norm.replace("\n\n", " "))
+    out: List[str] = []
+    for s in raw_sents:
+        s = re.sub(r"\s{2,}", " ", s).strip()
+        if not s:
+            continue
+        if not s.endswith((".", "!", "?", "…", "»", "\"")):
+            s += "."
+        out.append(s)
+    return out
+
+
+def split_narration_into_scenes(text: str, target_scenes: int) -> List[str]:
+    """Reparte un texto en target_scenes respetando frases completas (sin partir ninguna frase)."""
+    norm = _normalize_pdf_line_breaks(text)
+    if not norm:
+        return [""] * max(1, target_scenes)
+    sentences = _split_sentences_preserving_punctuation(norm)
+    units = sentences if len(sentences) >= target_scenes else [p.strip() for p in norm.split("\n\n") if p.strip()]
+    if not units:
+        return [norm]
+
+    n = max(1, target_scenes)
+    if len(units) <= n:
+        return units
+
+    # Reparto equilibrado por longitud en caracteres manteniendo frases completas
+    total_chars = sum(len(u) for u in units)
+    ideal = total_chars / n
+    chunks: List[List[str]] = []
+    cur: List[str] = []
+    cur_len = 0
+    for idx, u in enumerate(units):
+        remaining_units = len(units) - idx
+        remaining_slots = n - len(chunks)
+        # Si ya hay contenido y añadir esta frase alejaría más del tamaño ideal que cerrar aquí, cerramos antes
+        if cur and len(chunks) < n - 1 and remaining_units >= remaining_slots:
+            if abs((cur_len + len(u)) - ideal) > abs(cur_len - ideal) and cur_len >= ideal * 0.65:
+                chunks.append(cur)
+                cur = []
+                cur_len = 0
+        cur.append(u)
+        cur_len += len(u)
+        if len(chunks) < n - 1 and (cur_len >= ideal or remaining_units - 1 == remaining_slots - 1):
+            chunks.append(cur)
+            cur = []
+            cur_len = 0
+    if cur:
+        if len(chunks) < n:
+            chunks.append(cur)
+        else:
+            chunks[-1].extend(cur)
+
+    return [" ".join(c).strip() for c in chunks]
+
+
+def prepare_narration_text(text: str, use_ai: bool = True) -> str:
+    """
+    Prepara y revisa el texto completo para locución en voz alta:
+    - Une líneas partidas de PDF y elimina ligaduras raras.
+    - Asegura frases claras, completas, bien puntuadas y terminadas en punto.
+    - Respeta fielmente el contenido literario original.
+    """
+    base_clean = _normalize_pdf_line_breaks(text)
+    if not base_clean:
+        return ""
+
+    api_key = os.getenv("OPENAI_API_KEY", "").strip()
+    if not use_ai or not api_key or not api_key.startswith("sk-"):
+        return base_clean
+
+    try:
+        from openai import OpenAI
+        client = OpenAI(api_key=api_key)
+        sys_msg = (
+            "Eres un corrector editorial experto en audiolibros en español. "
+            "Tu tarea es revisar el texto proporcionado para que un narrador profesional pueda leerlo en voz alta con total fluidez y naturalidad.\n"
+            "REGLAS ESTRICTAS:\n"
+            "1. Une todas las líneas partidas de PDF o maquetación en párrafos continuos y limpios.\n"
+            "2. Asegúrate de que TODAS las frases estén completas, bien separadas y finalizadas con su signo de puntuación (punto '.', interrogación '?', exclamación '!' o puntos suspensivos '…'). Nunca dejes frases sin punto ni pegadas entre sí.\n"
+            "3. Conserva fielmente las palabras y el estilo literario del texto original (no resumas, no inventes ni cambies el sentido; solo corrige puntuación rota, ligaduras o guiones de diálogo sueltos para que suene natural al leerlo).\n"
+            "4. Separa párrafos claros con una línea en blanco.\n"
+            "5. Devuelve ÚNICAMENTE el texto revisado, sin explicaciones ni comillas envolventes."
+        )
+        resp = client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": sys_msg},
+                {"role": "user", "content": base_clean[:12000]},
+            ],
+            temperature=0.15,
+            max_tokens=3000,
+        )
+        ai_text = (resp.choices[0].message.content or "").strip()
+        if ai_text and len(ai_text) >= len(base_clean) * 0.65:
+            return _normalize_pdf_line_breaks(ai_text)
+    except Exception as e:
+        print(f"[PREPARE_NARRATION] Fallback local por error OpenAI: {e}")
+
+    return base_clean
+
 def compute_character_seed(char_id: str, project_id: str = "") -> int:
     """Calcula una semilla determinista estable para un personaje del banco de consistencia."""
     raw_key = f"{project_id}:{char_id}".lower().strip(":")
@@ -609,6 +766,7 @@ A partir del texto del capítulo "{chapter_title}", elabora una PROPUESTA PREVIA
 - Número máximo de escenas orientativo: {target_scenes}
 - REGLA DE CONTINUIDAD: Por defecto, desarrolla todo el corto/capítulo en UN ÚNICO escenario principal coherente con el texto (no cambies de lugar ni metas otros escenarios salvo que el texto lo exija explícitamente) y utiliza SOLO los personajes que realmente aparecen o se mencionan en este fragmento.
 - REGLA VISUAL (MUY IMPORTANTE): NO copies ni pegues frases literales de la narración en `que_ocurre`. Describe únicamente lo que PASA visualmente en pantalla (acción, encuadre, movimiento de los personajes, gestos, ambiente), por ejemplo: "Se ve a Platero en el establo junto al niño narrador; luego se acerca hacia la puerta para que se le vea bien el rostro". Si el texto es breve y no necesita varias escenas distintas, propón menos escenas (incluso 1 sola).
+- REGLA DE LOCUCIÓN (OBLIGATORIA): En `texto_narrado`, respeta el texto íntegro del capítulo sin saltos de línea rotos, asegurando que NUNCA se parta una frase o idea a mitad entre dos escenas. Cada bloque debe contener frases completas y terminar siempre con puntuación final (`.`, `?`, `!` o `…`).
 
 Devuelve ÚNICAMENTE JSON válido con esta estructura:
 {{
@@ -878,16 +1036,15 @@ def generate_fallback_storyboard(
 ) -> List[Dict[str, Any]]:
     """Generador heurístico de escenas en caso de no contar con API Key activa."""
     effective_chars = characters if (characters and len(characters) > 0) else load_character_bank_for_prompt_generator(project_id)
-    sentences = [s.strip() for s in re.split(r'[.!?]+', text) if len(s.strip()) > 10]
-    if not sentences:
-        sentences = [
+    scene_chunks = split_narration_into_scenes(text, target_scenes)
+    if not scene_chunks or not any(c.strip() for c in scene_chunks):
+        scene_chunks = [
             "En un mundo donde cada segundo cuenta, una decisión puede cambiarlo todo.",
             "Los secretos guardados durante años comienzan a salir a la luz.",
             "El camino hacia la verdad nunca estuvo exento de peligros.",
             "Al final, solo aquellos que se atreven a avanzar logran cruzar el umbral."
         ]
 
-    chunk_size = max(1, len(sentences) // target_scenes)
     esc_names_fb = [e.get("nombre", "") for e in (escenarios or []) if e.get("nombre")]
     primary_esc_fb, _ = _pick_primary_scenario_and_chars(text, "", esc_names_fb, [])
     scenes = []
@@ -895,10 +1052,8 @@ def generate_fallback_storyboard(
     prop_bloques = (propuesta.get("bloques") or []) if isinstance(propuesta, dict) else []
     for i in range(target_scenes):
         b_match = prop_bloques[i] if i < len(prop_bloques) else {}
-        start = i * chunk_size
-        end = start + chunk_size if i < target_scenes - 1 else len(sentences)
-        scene_sentences = sentences[start:end] if start < len(sentences) else [sentences[-1]]
-        narrador = (b_match.get("texto_narrado") or "").strip() or " ".join(scene_sentences)
+        chunk_fb = scene_chunks[i] if i < len(scene_chunks) else scene_chunks[-1]
+        narrador = _normalize_pdf_line_breaks((b_match.get("texto_narrado") or "").strip() or chunk_fb).replace("\n\n", " ")
         trans_text_fb = (b_match.get("transicion_desde_anterior") or "").strip()
         que_text_fb = (b_match.get("que_ocurre") or "").strip()
         if i > 0 and trans_text_fb and que_text_fb:

@@ -18,6 +18,8 @@ from app.core.script_generator import (
     enrich_scene_prompt_with_anchors,
     attach_consistency_metadata_to_scene,
     resolve_scene_character_references,
+    prepare_narration_text,
+    split_narration_into_scenes,
     STYLE_PRESETS
 )
 from app.core.tts_engine import synthesize_speech, list_voices
@@ -1309,6 +1311,30 @@ async def api_propose_storyboard(req: StoryboardRequest):
         return {"success": True, "proposal": proposal}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class PrepareNarrationRequest(BaseModel):
+    text: str
+    scenes_count: Optional[int] = 0
+    use_ai: Optional[bool] = True
+
+
+@app.post("/api/storyboard/prepare-narration")
+async def api_prepare_narration(req: PrepareNarrationRequest):
+    if not req.text.strip():
+        raise HTTPException(status_code=400, detail="El texto base está vacío.")
+    try:
+        prepared = prepare_narration_text(req.text, use_ai=bool(req.use_ai))
+        scene_narrations = []
+        if req.scenes_count and req.scenes_count > 0:
+            scene_narrations = split_narration_into_scenes(prepared, int(req.scenes_count))
+        return {
+            "success": True,
+            "prepared_text": prepared,
+            "scene_narrations": scene_narrations,
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.post("/api/storyboard/generate")
 async def api_generate_storyboard(req: StoryboardRequest):

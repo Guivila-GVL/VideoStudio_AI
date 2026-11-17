@@ -792,9 +792,12 @@
                           placeholder="El texto seleccionado del manuscrito o escrito manualmente aparecerá aquí..."></textarea>
               </div>
 
-              <!-- Paso 1: Guardar Borrador -->
+              <!-- Paso 1: Preparar Locución y Guardar Borrador -->
               <div class="action-bar-split mt-3">
-                <div class="action-bar-left">
+                <div class="action-bar-left" style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+                  <button type="button" class="btn btn-primary btn-md" id="btn-prepare-narration" title="Une líneas partidas de PDF, corrige la puntuación, cierra todas las frases con punto y reparte la locución sin cortar frases entre escenas">
+                    ✍️ Revisar y Preparar Locución
+                  </button>
                   <button type="button" class="btn btn-secondary btn-md" id="btn-quick-save-chapter">
                     💾 Guardar Borrador
                   </button>
@@ -1684,6 +1687,6 @@
   <!-- Toast de Notificaciones -->
   <div class="toast-container" id="toast-container"></div>
 
-  <script src="/static/js/app.js?v=7.0"></script>
+  <script src="/static/js/app.js?v=7.1"></script>
 </body>
 </html>

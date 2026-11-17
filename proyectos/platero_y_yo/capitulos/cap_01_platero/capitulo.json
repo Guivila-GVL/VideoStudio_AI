@@ -4,16 +4,16 @@
   "scenes": [
     {
       "id": 1,
-      "narrador": "Platero es pequeño, peludo, suave; tan blando por fuera, que se\ndiría todo de algodón, que no lleva huesos Sólo los espejos de\nazabache de sus ojos son duros cual dos escarabajos de cristal\nnegro",
+      "narrador": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro. Lo dejo suelto, y se va al prado, y acaricia tibiamente con su hocico, rozándolas apenas, las florecillas rosas, celestes y gualdas…",
       "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Las Colinas y el Molino de Viento [seed_escenario:204419]: Rolling hills toasted by the summer and dotted with silver olive trees and green vines. At the summit stands a traditional windmill with round whitewashed stone walls and wooden blades, standing out solitary and majestic against the immensity of the horizon, [Escena 1: Plano inicial de apertura] Opening scene establishing the setting and characters, Warm medium close-up shot with gentle camera push-in showing Platero positioned naturally in the scene with expressive storybook posture and warm lighting, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
         "Platero"
       ],
       "escenario_clave": "Las Colinas y el Molino de Viento",
       "duracion_estimada": 5,
-      "audio_url": "/static/media/audio_fb2f879d0f.mp3",
+      "audio_url": "/static/media/audio_b9378a2506.mp3",
       "image_url": "/static/media/img_8c9dd3d91b.jpg",
-      "duracion_real": 12.17,
+      "duracion_real": 22.8,
       "referencias_personajes": [
         {
           "id": "platero",
@@ -43,16 +43,16 @@
     },
     {
       "id": 2,
-      "narrador": "Lo dejo suelto, y se va al prado, y acaricia tibiamente con su\nhocico, rozándolas apenas, las ﬂorecillas rosas, celestes y gualdas…\nLo llamo dulcemente: «¿Platero » y viene a mí con un trotecillo\nalegre que parece que se ríe en no sé qué cascabeleo ideal…\nCome cuanto le doy",
+      "narrador": "Lo llamo dulcemente: «¿Platero?» y viene a mí con un trotecillo alegre que parece que se ríe en no sé qué cascabeleo ideal… Come cuanto le doy. Le gustan las naranjas mandarinas, las uvas moscateles, todas de ámbar; los higos morados, con su cristalina gotita de miel…",
       "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal) [seed_personaje:363728], set in Las Colinas y el Molino de Viento [seed_escenario:204419]: Rolling hills toasted by the summer and dotted with silver olive trees and green vines, with a distant whitewashed windmill on the hilltop. Dynamic three-quarter wide-medium shot of Platero trotting cheerfully along a sunlit dirt path among wild poppies and olive trees, ears perked forward, warm golden Andalusian afternoon light, delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
         "Platero"
       ],
       "escenario_clave": "Las Colinas y el Molino de Viento",
       "duracion_estimada": 5,
-      "audio_url": "/static/media/audio_f862bac4d4.mp3",
+      "audio_url": "/static/media/audio_e0adb418d7.mp3",
       "image_url": "/static/media/img_ac00a6f7a6.jpg",
-      "duracion_real": 19.34,
+      "duracion_real": 18.86,
       "referencias_personajes": [
         {
           "id": "platero",
@@ -82,16 +82,16 @@
     },
     {
       "id": 3,
-      "narrador": "Le gustan las naranjas mandarinas, las uvas\nmoscateles, todas de ámbar; los higos morados, con su cristalina\ngotita de miel…\nEs tierno y mimoso igual que un niño, que una niña…; pero\nfuerte y seco por dentro como de piedra Cuando paso sobre él, los\ndomingos, por las últimas callejas del pueblo, los hombres del\ncampo, vestidos de limpio y despaciosos, se quedan mirándolo:\nTiene acero Acero y plata de luna, al mismo tiempo",
+      "narrador": "Es tierno y mimoso igual que un niño, que una niña…; pero fuerte y seco por dentro como de piedra. Cuando paso sobre él, los domingos, por las últimas callejas del pueblo, los hombres del campo, vestidos de limpio y despaciosos, se quedan mirándolo: —Tien’ asero… Tiene acero. Acero y plata de luna, al mismo tiempo.",
       "prompt_imagen": "Platero [seed_personaje:363728], set in Las Colinas y el Molino de Viento [seed_escenario:204419]: Rolling hills toasted by the summer and dotted with silver olive trees and green vines. At the summit stands a traditional windmill with round whitewashed stone walls and wooden blades, standing out solitary and majestic against the immensity of the horizon, Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal), delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
       "personajes_en_escena": [
         "Platero"
       ],
       "escenario_clave": "Las Colinas y el Molino de Viento",
       "duracion_estimada": 5,
-      "audio_url": "/static/media/audio_1e2239a044.mp3",
+      "audio_url": "/static/media/audio_5fd2eae0ae.mp3",
       "image_url": "/static/media/img_5ed30c0766.jpg",
-      "duracion_real": 28.99,
+      "duracion_real": 21.77,
       "referencias_personajes": [
         {
           "id": "platero",
@@ -121,14 +121,14 @@
     }
   ],
   "video_url": "/proyectos_data/platero_y_yo/videos/cap_01_platero.mp4",
-  "duracion": 60.65,
-  "peso_mb": 25.34,
+  "duracion": 63.58,
+  "peso_mb": 25.39,
   "origen_tipo": "section",
   "origen_ref": "I Platero Platero es pequeño, peludo, suave; tan blando por fuera, que se",
   "creado_en": "2026-10-22 17:13:42",
-  "actualizado_en": "2026-11-17 19:07:27",
+  "actualizado_en": "2026-11-17 19:24:01",
   "aprobacion_clips_status": "en_revision",
-  "texto_original": "Platero es pequeño, peludo, suave; tan blando por fuera, que se\ndiría todo de algodón, que no lleva huesos. Sólo los espejos de\nazabache de sus ojos son duros cual dos escarabajos de cristal\nnegro.\nLo dejo suelto, y se va al prado, y acaricia tibiamente con su\nhocico, rozándolas apenas, las ﬂorecillas rosas, celestes y gualdas…\nLo llamo dulcemente: «¿Platero?» y viene a mí con un trotecillo\nalegre que parece que se ríe en no sé qué cascabeleo ideal…\nCome cuanto le doy. Le gustan las naranjas mandarinas, las uvas\nmoscateles, todas de ámbar; los higos morados, con su cristalina\ngotita de miel…\nEs tierno y mimoso igual que un niño, que una niña…; pero\nfuerte y seco por dentro como de piedra. Cuando paso sobre él, los\ndomingos, por las últimas callejas del pueblo, los hombres del\ncampo, vestidos de limpio y despaciosos, se quedan mirándolo:\n—Tien’ asero…\nTiene acero. Acero y plata de luna, al mismo tiempo.",
+  "texto_original": "Platero es pequeño, peludo, suave; tan blando por fuera, que se diría todo de algodón, que no lleva huesos. Sólo los espejos de azabache de sus ojos son duros cual dos escarabajos de cristal negro.\n\nLo dejo suelto, y se va al prado, y acaricia tibiamente con su hocico, rozándolas apenas, las florecillas rosas, celestes y gualdas… Lo llamo dulcemente: «¿Platero?» y viene a mí con un trotecillo alegre que parece que se ríe en no sé qué cascabeleo ideal… Come cuanto le doy. Le gustan las naranjas mandarinas, las uvas moscateles, todas de ámbar; los higos morados, con su cristalina gotita de miel…\n\nEs tierno y mimoso igual que un niño, que una niña…; pero fuerte y seco por dentro como de piedra. Cuando paso sobre él, los domingos, por las últimas callejas del pueblo, los hombres del campo, vestidos de limpio y despaciosos, se quedan mirándolo: —Tien’ asero…\n\nTiene acero. Acero y plata de luna, al mismo tiempo.",
   "project_id": "platero_y_yo",
   "orden": 1,
   "propuesta": {

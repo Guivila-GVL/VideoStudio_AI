@@ -248,6 +248,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const scenesCountSelect = document.getElementById("scenes-count");
   const btnGenerateStoryboard = document.getElementById("btn-generate-storyboard");
   const btnQuickSaveChapter = document.getElementById("btn-quick-save-chapter");
+  const btnPrepareNarration = document.getElementById("btn-prepare-narration");
   const btnDeleteActiveChapter = document.getElementById("btn-delete-active-chapter");
 
   // Storyboard y Render
@@ -5908,6 +5909,57 @@ document.addEventListener("DOMContentLoaded", () => {
         if (treeTitleEl) {
           treeTitleEl.textContent = val;
         }
+      }
+    });
+  }
+
+  if (btnPrepareNarration) {
+    btnPrepareNarration.addEventListener("click", async () => {
+      const rawText = (rawChapterText?.value || "").trim();
+      if (!rawText) {
+        showToast("Escribe o importa primero el texto base del capítulo", "error");
+        return;
+      }
+      const origLabel = btnPrepareNarration.textContent;
+      btnPrepareNarration.disabled = true;
+      btnPrepareNarration.textContent = "⏳ Revisando locución...";
+      setSystemStatus("busy", "Revisando locución del capítulo...", "Uniendo líneas rotas, corrigiendo puntos y asegurando frases completas...");
+      try {
+        const res = await fetch("/api/storyboard/prepare-narration", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: rawText,
+            scenes_count: (state.scenes && state.scenes.length > 0) ? state.scenes.length : 0,
+            use_ai: true
+          })
+        });
+        const data = await res.json();
+        if (!data.success) {
+          throw new Error(data.detail || "No se pudo revisar la locución");
+        }
+        rawChapterText.value = data.prepared_text || rawText;
+        rawChapterText.dispatchEvent(new Event("input"));
+
+        if (state.scenes && state.scenes.length > 0 && Array.isArray(data.scene_narrations) && data.scene_narrations.length > 0) {
+          state.scenes.forEach((sc, idx) => {
+            if (data.scene_narrations[idx] !== undefined) {
+              sc.narrador = data.scene_narrations[idx];
+            }
+          });
+          renderStoryboard();
+          showToast(`Locución revisada y repartida en ${state.scenes.length} escenas sin cortar frases`, "success");
+        } else {
+          showToast("Texto de locución revisado, puntuado y listo para generar escenas", "success");
+        }
+        await saveCurrentChapter(true);
+        setSystemStatus("success", "Locución revisada y guardada", "Todas las frases están limpias, completas y finalizadas en puntuación.");
+      } catch (err) {
+        showToast(`Error revisando locución: ${err.message}`, "error");
+        setSystemStatus("error", "Error revisando locución", err.message);
+      } finally {
+        btnPrepareNarration.disabled = false;
+        btnPrepareNarration.textContent = origLabel;
       }
     });
   }
