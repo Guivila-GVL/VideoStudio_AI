@@ -9,7 +9,7 @@
       "descripcion_escena": "La escena comienza en un camino oscuro y brumoso, donde se pueden ver sombras de campanillas y la silueta del Poeta junto a Platero. Se perciben sacas de carbón a su alrededor, creando una atmósfera cargada de fragancias nocturnas suaves. El cielo se tiñe de tonos malvas y verdes, iluminando levemente la torre de la iglesia al fondo.",
       "accion_video": "Platero se muestra inquieto moviendo su cabeza, mientras el Poeta lo acaricia con calma. La cámara se desplaza lentamente hacia adelante, capturando las sombras y luces que danzan en la bruma.",
       "narrador": "La noche cae, brumosa ya y morada. Vagas claridades malvas y verdes perduran tras la torre de la iglesia. El camino sube, lleno de sombras, de campanillas, de fragancia…",
-      "prompt_imagen": "set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, Platero the small fluffy silver-grey donkey with gentle dark crystal black eyes, El Poeta the young contemplative boy in raw linen shirt and wide-brim hat caressing Platero, shadows of bellflowers and bags of coal surrounding them, the church tower in the background under a mystic purple night sky, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
+      "prompt_imagen": "Delicate watercolor and ink storybook illustration, vertical 9:16: Misty purple and mauve twilight falling over an uphill country path in Moguer with the distant church tower silhouette against a lavender and green dusk sky. Platero, a small fluffy silver-grey Andalusian donkey with big dark crystal eyes and saddlebags, walks up the shadowy path while the young boy poet in a linen shirt gently strokes his neck among bellflowers and evening mist, soft watercolor washes, no photorealism.",
       "prompt_video": "Platero nervously shakes his head while the Poet gently strokes him. The camera slowly moves forward, emphasizing the shadows and the dancing lights in the mist.",
       "personajes_en_escena": [
         "Platero",
@@ -42,22 +42,21 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, Platero the small fluffy silver-grey donkey with gentle dark crystal black eyes, El Poeta the young contemplative boy in raw linen shirt and wide-brim hat caressing Platero, shadows of bellflowers and bags of coal surrounding them, the church tower in the background under a mystic purple night sky, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100",
       "audio_url": "/static/media/audio_a7b17bc2c3.mp3",
-      "image_url": "/static/media/img_0775f66001.jpg",
+      "image_url": "/static/media/img_25d_c2_s1_226bc0.jpg",
       "duracion_real": 12.89,
       "voz": "edge_alvaro",
-      "video_clip_url": "/static/media/anim_draft_c871ca69dc.mp4"
+      "video_clip_url": "/static/media/anim_draft_a9abb932b8.mp4"
     },
     {
       "id": 2,
       "descripcion_escena": "La cámara avanza y se enmarca en el camino, donde aparece la figura del hombre oscuro con una gorra. Desciende de una casucha lamentable entre las sacas de carbón, su rostro se ilumina brevemente por la luz del cigarro, creando un ambiente de inquietud.",
       "accion_video": "Un hombre oscuro, con gorra, desciende lentamente, su rostro iluminado por el brillo del cigarro. Platero retrocede unos pasos, amedrentado, mientras el Poeta sostiene su cabeza, intentando tranquilizarlo. La cámara gira ligeramente hacia el hombre que se acerca, creando un sentido de tensión.",
       "narrador": "De pronto, un hombre oscuro, con una gorra y un pincho, roja un instante la cara fea por la luz del cigarro, baja a nosotros de una casucha miserable,…",
-      "prompt_imagen": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, the dark man wearing a cap with a sharp pin descends from a shabby house between coal sacks, illuminated briefly by his cigarette, Platero the small fluffy silver-grey donkey stepping back, El Poeta the young boy holding Platero calmly, dusk atmosphere with shadows lingering, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
+      "prompt_imagen": "Delicate watercolor and ink storybook illustration, vertical 9:16: Purple night shadows by a rustic shack surrounded by dark coal sacks on the Moguer hillside. A mysterious dark man wearing a peasant cap and holding an iron spike rod steps down towards the path, his rough face briefly lit in red-orange by the glowing tip of his cigar. Platero the small fluffy silver-grey donkey steps back startled with ears raised while the young poet boy holds his halter to calm him, soft watercolor washes.",
       "prompt_video": "The dark man with a cap slowly descends, illuminated by his cigarette. Platero retreats nervously as the Poet holds his head to calm him. The camera subtly tilts towards the man approaching, creating tension.",
       "personajes_en_escena": [
         "Platero",
-        "El Poeta / Yo lírico",
-        "Darbón"
+        "El Poeta / Yo lírico"
       ],
       "escenario_clave": "Calles Blancas y Azoteas de Moguer",
       "duracion_estimada": 12,
@@ -105,22 +104,21 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, the dark man wearing a cap with a sharp pin descends from a shabby house between coal sacks, illuminated briefly by his cigarette, Platero the small fluffy silver-grey donkey stepping back, El Poeta the young boy holding Platero calmly, dusk atmosphere with shadows lingering, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero <lora:platero_y_yo_darbon_v1:0.85> chr_darbon --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100 --cref /proyectos_data/platero_y_yo/personajes/darbon.jpg --cw 100",
       "audio_url": "/static/media/audio_d12589e2bb.mp3",
-      "image_url": "/static/media/img_30eda6609b.jpg",
+      "image_url": "/static/media/img_25d_c2_s2_8789a7.jpg",
       "duracion_real": 9.53,
       "voz": "edge_alvaro",
-      "video_clip_url": "/static/media/anim_draft_c2294001d6.mp4"
+      "video_clip_url": "/static/media/anim_draft_6b86c0ae97.mp4"
     },
     {
       "id": 3,
       "descripcion_escena": "El Poeta se vuelve hacia el hombre, preguntando con cautela. A su lado, Platero está paralizado, sintiendo la tensión de la situación mientras el hombre oscila entre la amenaza y la curiosidad.",
       "accion_video": "El Poeta, con voz cautelosa, se dirige al hombre mientras mira a Platero, quien está agachado con ansiedad. La cámara se acerca al rostro de Platero, capturando sus grandes ojos asustados que miran fijamente al hombre.",
       "narrador": "¿Va argo?… Vea usted… Mariposas blancas…",
-      "prompt_imagen": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, El Poeta the young boy curiously asking the dark man, Platero the small grey donkey hunched down showing fear, close-up of Platero's large scared eyes focused on the man, night shadows surrounding them, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
+      "prompt_imagen": "Delicate watercolor and ink storybook illustration, vertical 9:16: Close medium night scene on the shadowy Moguer road. Platero the small fluffy silver-grey donkey crouches slightly with wide expressive dark eyes looking nervously at the dark tax guard in a cap holding an iron spike, while the young poet boy stands beside Platero gesturing calmly towards the woven saddlebags under the purple twilight sky, soft watercolor and ink washes.",
       "prompt_video": "The Poet cautiously addresses the dark man while looking at Platero, who cowers anxiously. The camera zooms in on Platero’s large scared eyes fixed on the man.",
       "personajes_en_escena": [
         "Platero",
-        "El Poeta / Yo lírico",
-        "Darbón"
+        "El Poeta / Yo lírico"
       ],
       "escenario_clave": "Calles Blancas y Azoteas de Moguer",
       "duracion_estimada": 8,
@@ -168,22 +166,21 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, El Poeta the young boy curiously asking the dark man, Platero the small grey donkey hunched down showing fear, close-up of Platero's large scared eyes focused on the man, night shadows surrounding them, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero <lora:platero_y_yo_darbon_v1:0.85> chr_darbon --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100 --cref /proyectos_data/platero_y_yo/personajes/darbon.jpg --cw 100",
       "audio_url": "/static/media/audio_de2e68c61a.mp3",
-      "image_url": "/static/media/img_cd00e98550.jpg",
+      "image_url": "/static/media/img_25d_c2_s3_eb143d.jpg",
       "duracion_real": 5.45,
       "voz": "edge_alvaro",
-      "video_clip_url": "/static/media/anim_draft_1cf1f4d144.mp4"
+      "video_clip_url": "/static/media/anim_draft_7812558e86.mp4"
     },
     {
       "id": 4,
       "descripcion_escena": "El hombre oscuro dirige su atención al seroncillo de Platero, levantando su pincho con una intención oscura. El Poeta observa con angustia, buscando en la alforja mientras la tensión aumenta.",
       "accion_video": "El hombre oscuro se prepara para atacar el seroncillo de Platero, levantando su pincho en un gesto amenazante. La reacción de Platero es de alarma, mientras El Poeta busca en la alforja con ansiedad. La cámara se enfoca en las expresiones tensas de ambos personajes.",
       "narrador": "El hombre quiere clavar su pincho de hierro en el seroncillo, y no lo evito. Abro la alforja y él no ve nada.",
-      "prompt_imagen": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal), Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, the dark man raising his sharp pin over Platero’s pack, El Poeta the young boy looking anxiously at the man with a worried expression, tension in the atmosphere with shadows emphasizing the threat, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
+      "prompt_imagen": "Delicate watercolor and ink storybook illustration, vertical 9:16: Dramatic twilight moment on the Moguer path. The dark guard in a cap leans forward holding his iron spike rod near Platero's woven saddlebag basket, while the young poet boy opens the leather saddlebag with his hands showing it appears empty to the guard, and Platero the small fluffy silver-grey donkey watches attentively under purple night shadows, soft watercolor storybook art.",
       "prompt_video": "The dark man lifts his sharp pin above Platero’s pack, creating a threatening posture. The Poet anxiously searches his bag, the camera focuses on the tense expressions of both characters.",
       "personajes_en_escena": [
         "Platero",
-        "El Poeta / Yo lírico",
-        "Darbón"
+        "El Poeta / Yo lírico"
       ],
       "escenario_clave": "Calles Blancas y Azoteas de Moguer",
       "duracion_estimada": 10,
@@ -231,22 +228,21 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "Platero (small fluffy silver-grey Andalusian donkey with gentle dark crystal black eyes and soft cotton-like coat, quadruped donkey on all four legs, authentic donkey anatomy, non-anthropomorphic animal), Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, the dark man raising his sharp pin over Platero’s pack, El Poeta the young boy looking anxiously at the man with a worried expression, tension in the atmosphere with shadows emphasizing the threat, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero <lora:platero_y_yo_darbon_v1:0.85> chr_darbon --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100 --cref /proyectos_data/platero_y_yo/personajes/darbon.jpg --cw 100",
       "audio_url": "/static/media/audio_bafe1fc0d1.mp3",
-      "image_url": "/static/media/img_aaa342379d.jpg",
+      "image_url": "/static/media/img_25d_c2_s4_a551e4.jpg",
       "duracion_real": 7.58,
       "voz": "edge_alvaro",
-      "video_clip_url": "/static/media/anim_draft_b74b4f97c0.mp4"
+      "video_clip_url": "/static/media/anim_draft_cd0d314f8d.mp4"
     },
     {
       "id": 5,
       "descripcion_escena": "El Poeta, en el último momento, abre la alforja y el hombre se detiene, sintiendo la liberación de lo que estaba en juego. Se insinúa la imagen de mariposas que vuelan libremente.",
       "accion_video": "El Poeta abre la alforja lentamente y, al ver esto, el hombre oscuro se detiene repentinamente. Platero respira aliviado, mientras el Poeta sonríe y cierra la alforja. La cámara se eleva, capturando la imagen de mariposas blancas volando libres hacia la noche estrellada.",
       "narrador": "Y el alimento ideal pasa, libre y cándido, sin pagar su tributo a los Consumos…",
-      "prompt_imagen": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, El Poeta the young boy gently opens the pack, the dark man pausing in surprise, Platero the small fluffy donkey looking relieved, amidst the night sky filled with flying white butterflies, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels",
+      "prompt_imagen": "Delicate watercolor and ink storybook illustration, vertical 9:16: Magical poetic night finale on the Moguer path under a starry purple and lavender sky. From the open saddlebag on Platero the small fluffy silver-grey donkey, a glowing flock of pure white butterflies flutters freely upward into the night sky while the young poet boy smiles tenderly and Platero looks up relieved, delicate watercolor and ink washes, masterpiece.",
       "prompt_video": "The Poet gently opens the pack, causing the dark man to halt in surprise. Platero looks relieved, and the camera lifts to reveal white butterflies flying freely into the starry night.",
       "personajes_en_escena": [
         "Platero",
-        "El Poeta / Yo lírico",
-        "Darbón"
+        "El Poeta / Yo lírico"
       ],
       "escenario_clave": "Calles Blancas y Azoteas de Moguer",
       "duracion_estimada": 8,
@@ -294,10 +290,10 @@
       "seed_consistencia": 363728,
       "prompt_tecnico_cref": "Darbón (large burly elderly village veterinarian with red ruddy face, thick white beard, brown corduroy vest and leather boots), set in Calles Blancas y Azoteas de Moguer: Perspective of an Andalusian town with narrow streets paved with river pebbles, flanked by blindingly white whitewashed houses with Andalusian tile plinths. Balconies with wrought iron railings filled with red geraniums, purple bougainvilleas and pots of basil, under a cobalt blue sky without a shadow, full-bleed painted sky and background with no white margins, 9:16 aspect ratio, El Poeta the young boy gently opens the pack, the dark man pausing in surprise, Platero the small fluffy donkey looking relieved, amidst the night sky filled with flying white butterflies, ., delicate watercolor and ink illustration, soft artistic color washes, storybook illustration, rich paper texture, no 3D CGI, no photorealism, no hard digital edges, well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels <lora:platero_y_yo_platero_v1:0.85> chr_platero <lora:platero_y_yo_darbon_v1:0.85> chr_darbon --cref /proyectos_data/platero_y_yo/personajes/platero.jpg --cw 100 --cref /proyectos_data/platero_y_yo/personajes/darbon.jpg --cw 100",
       "audio_url": "/static/media/audio_fbca7d1cd6.mp3",
-      "image_url": "/static/media/img_029cb499bb.jpg",
+      "image_url": "/static/media/img_25d_c2_s5_d35607.jpg",
       "duracion_real": 5.78,
       "voz": "edge_alvaro",
-      "video_clip_url": "/static/media/anim_draft_da9a955004.mp4"
+      "video_clip_url": "/static/media/anim_draft_fd25552bc1.mp4"
     }
   ],
   "video_url": "/proyectos_data/platero_y_yo/videos/capitulo_2.mp4",
@@ -307,7 +303,7 @@
   "orden": 2,
   "id": "capitulo_2",
   "creado_en": "2026-11-14 18:24:32",
-  "actualizado_en": "2026-11-19 11:43:06",
+  "actualizado_en": "2026-11-19 12:21:35",
   "propuesta": {
     "enfoque_general": "En este capítulo, la noche imprime un sentido de misterio al camino, donde un encuentro inesperado con un hombre enigmático desencadena una serie de emociones contrastantes: el amor por la libertad y la preocupación. La escena oscura y brumosa se ilumina con la fragancia de la vida y la tensión de un posible conflicto se desata en un entorno suave y nostálgico como la campiña andaluza.",
     "bloques": [
@@ -388,7 +384,7 @@
     ],
     "duracion_total_seg": 50
   },
-  "peso_mb": 7.49,
+  "peso_mb": 4.65,
   "subtitle_config": {
     "mode": "paragraph_preview",
     "bg_mode": "transparent",

@@ -713,20 +713,33 @@ def enrich_scene_prompt_with_anchors(
         )
         if e_match:
             env_info = extract_environment_visual_anchor(e_match, project_id=project_id or "")
-            if env_info["clean_description"]:
-                anchors.append(
-                    f"set in {env_info['nombre']}: {env_info['clean_description']}, full-bleed painted sky and background with no white margins"
+            env_desc = env_info.get("clean_description") or ""
+            if env_desc:
+                # Si la escena ocurre de noche/atardecer/sombra, eliminar referencias de sol de mediodía del escenario fijo
+                is_night_or_dusk = any(
+                    w in clean_p.lower()
+                    for w in ("night", "twilight", "dusk", "evening", "purple", "dark", "moon", "star", "mist", "shadow", "noche", "morad")
                 )
+                if is_night_or_dusk:
+                    env_desc = re.sub(
+                        r",?\s*(?:under a cobalt blue sky without a shadow|blindingly white|toasted by the summer|bright daylight|sunny\s+\w+)",
+                        "",
+                        env_desc,
+                        flags=re.IGNORECASE,
+                    ).strip(",. ")
+                # Mantener la descripción del escenario concisa (~140 chars) para no desplazar la acción principal
+                env_short = env_desc.split(".")[0].strip()
+                anchors.append(f"in {env_info['nombre']} ({env_short})")
 
-    # Composición final con salvaguardas anatómicas para evitar deformaciones
+    # Composición final: 1º Estilo artístico, 2º Acción y objetos de la escena, 3º Personajes y Escenario
     parts = []
-    if anchors:
-        parts.append(", ".join(anchors))
+    if style_prompt:
+        parts.append(style_prompt)
     if clean_p:
         parts.append(clean_p)
-    if style_prompt and style_prompt.lower()[:25] not in clean_p.lower():
-        parts.append(style_prompt)
-    parts.append("well-proportioned anatomy, distinct separate characters, no deformed limbs, no fused bodies, vertical 9:16 portrait composition, masterpiece, no text, no words, no labels")
+    if anchors:
+        parts.append(", ".join(anchors))
+    parts.append("vertical 9:16 storybook illustration, full-bleed painted background, well-proportioned anatomy, no text, no watermarks")
 
     final_result = ", ".join([p.strip().strip(",;") for p in parts if p.strip()])
     final_result = re.sub(r"\s*,\s*", ", ", final_result)
@@ -874,7 +887,19 @@ Devuelve ÚNICAMENTE JSON válido con esta estructura:
                 b["id"] = idx + 1
                 b["titulo"] = (b.get("titulo") or f"Escena {idx + 1}").strip()
                 b["escenario_clave"] = (b.get("escenario_clave") or (esc_names[0] if esc_names else "")).strip()
-                b["personajes_en_escena"] = b.get("personajes_en_escena") if isinstance(b.get("personajes_en_escena"), list) else (char_names[:1] if char_names else ["Platero"])
+                raw_b_chars = b.get("personajes_en_escena") if isinstance(b.get("personajes_en_escena"), list) else ["Platero"]
+                # Filtrar personajes del banco que no se mencionan en absoluto en el capítulo (ej. Darbón, Diana, Lord)
+                text_low = (text or "").lower()
+                filtered_b_chars = []
+                for cn in raw_b_chars:
+                    cn_low = str(cn).lower()
+                    if "platero" in cn_low or "poeta" in cn_low or "narrador" in cn_low:
+                        filtered_b_chars.append(cn)
+                    else:
+                        first_tok = cn_low.split("(")[0].strip().split()[0] if cn_low.strip() else ""
+                        if first_tok and first_tok in text_low:
+                            filtered_b_chars.append(cn)
+                b["personajes_en_escena"] = filtered_b_chars or ["Platero", "El Poeta / Yo lírico"]
                 b["transicion_desde_anterior"] = (b.get("transicion_desde_anterior") or "").strip() if idx > 0 else ""
                 b["que_ocurre"] = (b.get("que_ocurre") or "").strip()
                 b["accion_video"] = (b.get("accion_video") or "").strip()
@@ -1069,6 +1094,18 @@ Devuelve ÚNICAMENTE un array JSON válido con la siguiente estructura, sin text
                     sc["escenario_clave"] = b_match.get("escenario_clave").strip()
                 if not sc.get("personajes_en_escena") and b_match.get("personajes_en_escena"):
                     sc["personajes_en_escena"] = b_match.get("personajes_en_escena")
+                # Filtrar personajes del banco que no aparecen en el texto del capítulo (evitar colar Darbón/Diana por error)
+                text_low_sb = (text or "").lower()
+                valid_sc_chars = []
+                for cn in (sc.get("personajes_en_escena") or []):
+                    cn_low = str(cn).lower()
+                    if "platero" in cn_low or "poeta" in cn_low or "narrador" in cn_low:
+                        valid_sc_chars.append(cn)
+                    else:
+                        first_tok = cn_low.split("(")[0].strip().split()[0] if cn_low.strip() else ""
+                        if first_tok and first_tok in text_low_sb:
+                            valid_sc_chars.append(cn)
+                sc["personajes_en_escena"] = valid_sc_chars or ["Platero", "El Poeta / Yo lírico"]
                 sc.setdefault("descripcion_escena", "")
                 sc.setdefault("accion_video", "")
                 sc.setdefault("prompt_imagen", "")

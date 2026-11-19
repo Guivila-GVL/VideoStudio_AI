@@ -375,7 +375,17 @@ def generate_image(
             extra_ref_infos=extra_ref_infos,
         )
 
-    is_free_draft = provider_norm in ("draft", "free", "free_flux", "pollinations")
+    # 0b. Modo Borrador 2.5D con los Personajes y Escenarios Reales aprobados del proyecto (0€)
+    if provider_norm in ("draft", "free", "free_flux", "draft_25d"):
+        from app.core.draft_25d_engine import generate_25d_draft_image
+        return generate_25d_draft_image(
+            prompt=clean_prompt,
+            final_path=final_path,
+            web_url=web_url,
+            project_id="platero_y_yo",
+        )
+
+    is_free_draft = provider_norm in ("pollinations",)
     openai_key = None if is_free_draft else os.getenv("OPENAI_API_KEY")
     pollinations_key = os.getenv("POLLINATIONS_API_KEY")
 
@@ -434,7 +444,7 @@ def generate_image(
 
     for model_name in models_to_try:
         try:
-            encoded_prompt = urllib.parse.quote(clean_prompt[:680])
+            encoded_prompt = urllib.parse.quote(clean_prompt[:1100])
             seed_param = f"&seed={seed}" if seed is not None else ""
             key_param = f"&key={pollinations_key.strip()}" if pollinations_key and pollinations_key.strip() else ""
             nologo_param = "&nologo=true"

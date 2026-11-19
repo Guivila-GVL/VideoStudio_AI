@@ -17,12 +17,13 @@ MEDIA_DIR.mkdir(parents=True, exist_ok=True)
 
 FAL_VIDEO_MODELS = {
     "draft_free": "local/ffmpeg-directed-motion",
+    "ltx_video": "fal-ai/ltx-video/image-to-video",
+    "wan_i2v": "fal-ai/wan/v2.2-a14b/image-to-video",
     "kling_v21_pro": "fal-ai/kling-video/v2.1/pro/image-to-video",
     "kling_v25_pro": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
     "hailuo_02_pro": "fal-ai/minimax/hailuo-02/pro/image-to-video",
     "kling_v21": "fal-ai/kling-video/v2.1/standard/image-to-video",
     "kling_v16": "fal-ai/kling-video/v1.6/standard/image-to-video",
-    "wan_i2v": "fal-ai/wan/v2.2-a14b/image-to-video",
 }
 
 
@@ -191,10 +192,11 @@ def animate_scene_image(
     Si se proporciona next_image_url, enlaza el último segmento con el fotograma inicial de la escena siguiente.
     """
     if model_key in ("draft_free", "draft", "free"):
-        return _generate_draft_motion_clip(
-            image_url=image_url,
+        from app.core.draft_25d_engine import generate_25d_draft_video
+        return generate_25d_draft_video(
             prompt=prompt,
-            target_duration_sec=target_duration_sec,
+            target_duration_sec=float(target_duration_sec or 10.0),
+            project_id="platero_y_yo",
         )
 
     fal_key = os.getenv("FAL_KEY", "").strip()

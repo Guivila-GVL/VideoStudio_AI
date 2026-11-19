@@ -3215,6 +3215,8 @@ def evaluate_chapter_feasibility(
 
     i2v_rates = {
         "draft_free": ("Movimiento Dirigido Local (Borrador 0€)", 0.0),
+        "ltx_video": ("LTX-Video I2V (Borrador IA Ultra-Económico ~$0.02/clip)", 0.004),
+        "wan_i2v": ("Wan 2.2 I2V (Borrador IA Económico ~$0.05/clip)", 0.010),
         "kling_v21_pro": ("Kling 2.1 Pro (Máxima calidad)", 0.098),
         "kling_v25_pro": ("Kling 2.5 Turbo Pro (Fluido / -29% coste)", 0.070),
         "hailuo_02_pro": ("MiniMax Hailuo 02 Pro", 0.080),
