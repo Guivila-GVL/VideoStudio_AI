@@ -3937,26 +3937,43 @@ document.addEventListener("DOMContentLoaded", () => {
           <input type="text" class="form-input proposal-block-trans" value="${escapeHtml(b.transicion_desde_anterior || "")}" placeholder="Cómo se pasa desde la escena anterior..." style="font-size:0.8rem; padding:0.25rem 0.45rem; flex:1;" />
         </div>
       ` : "";
+      const charsVal = Array.isArray(b.personajes_en_escena) ? b.personajes_en_escena.join(", ") : (b.personajes_en_escena || "");
       row.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:center; gap:0.5rem;">
           <input type="text" class="form-input proposal-block-title" value="${escapeHtml(b.titulo || `Escena ${idx + 1}`)}" style="font-weight:600; font-size:0.86rem; padding:0.3rem 0.5rem; flex:1;" />
           <label style="display:flex; align-items:center; gap:0.3rem; font-size:0.8rem; color:#cbd5e1; white-space:nowrap;">
-            ⏱️ <input type="number" min="2" max="30" class="form-input proposal-block-dur" value="${parseInt(b.duracion_seg) || 5}" style="width:62px; padding:0.25rem 0.4rem; text-align:center;" /> s
+            ⏱️ <input type="number" min="2" max="30" class="form-input proposal-block-dur" value="${parseInt(b.duracion_seg) || 10}" style="width:62px; padding:0.25rem 0.4rem; text-align:center;" /> s
           </label>
           <button type="button" class="btn btn-ghost btn-xxs btn-del-proposal-block" title="Quitar esta escena de la propuesta" style="color:#f87171;">🗑️</button>
+        </div>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:0.45rem; margin-top:0.2rem;">
+          <div>
+            <label style="display:block; font-size:0.74rem; color:#93c5fd; margin-bottom:2px; font-weight:600;">🏛️ Escenario de esta escena:</label>
+            <input type="text" class="form-input proposal-block-esc" value="${escapeHtml(b.escenario_clave || "")}" placeholder="Escenario donde transcurre..." style="font-size:0.8rem; padding:0.25rem 0.45rem;" />
+          </div>
+          <div>
+            <label style="display:block; font-size:0.74rem; color:#93c5fd; margin-bottom:2px; font-weight:600;">👥 Personajes en escena:</label>
+            <input type="text" class="form-input proposal-block-chars" value="${escapeHtml(charsVal)}" placeholder="Ej: Platero, El Poeta..." style="font-size:0.8rem; padding:0.25rem 0.45rem;" />
+          </div>
         </div>
         ${transHtml}
         <div style="margin-top:0.25rem;">
           <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:0.25rem; font-weight:600;">
-            🎬 Qué ocurre visualmente en esta escena:
+            🎬 Puesta en escena y relación con el entorno (Foto inicial):
           </label>
-          <textarea class="form-textarea proposal-block-desc" rows="3" style="width:100%; box-sizing:border-box; font-size:0.86rem; padding:0.5rem 0.65rem;">${escapeHtml(b.que_ocurre || "")}</textarea>
+          <textarea class="form-textarea proposal-block-desc" rows="2" style="width:100%; box-sizing:border-box; font-size:0.84rem; padding:0.45rem 0.6rem;">${escapeHtml(b.que_ocurre || "")}</textarea>
+        </div>
+        <div style="margin-top:0.25rem;">
+          <label style="display:block; font-size:0.78rem; color:#38bdf8; margin-bottom:0.25rem; font-weight:600;">
+            🎥 Qué hacen los personajes en el vídeo (Movimiento de 10s):
+          </label>
+          <textarea class="form-textarea proposal-block-action" rows="2" style="width:100%; box-sizing:border-box; font-size:0.84rem; padding:0.45rem 0.6rem; border-color:rgba(56,189,248,0.35);" placeholder="Qué hace el burrito / personajes durante los 10s y cómo acompaña la cámara...">${escapeHtml(b.accion_video || "")}</textarea>
         </div>
         <div style="margin-top:0.25rem;">
           <label style="display:block; font-size:0.78rem; color:#94a3b8; margin-bottom:0.25rem; font-weight:600;">
             🎙️ En esta escena el narrador leerá:
           </label>
-          <textarea class="form-textarea proposal-block-narr" rows="3" style="width:100%; box-sizing:border-box; font-size:0.86rem; padding:0.5rem 0.65rem; color:#e2e8f0; background:rgba(30,41,59,0.55);" placeholder="Fragmento de texto que leerá el narrador en esta escena...">${escapeHtml(b.texto_narrado || "")}</textarea>
+          <textarea class="form-textarea proposal-block-narr" rows="2" style="width:100%; box-sizing:border-box; font-size:0.84rem; padding:0.45rem 0.6rem; color:#e2e8f0; background:rgba(30,41,59,0.55);" placeholder="Fragmento de texto que leerá el narrador en esta escena...">${escapeHtml(b.texto_narrado || "")}</textarea>
         </div>
       `;
       row.querySelector(".proposal-block-dur")?.addEventListener("input", recalcTotal);
@@ -3984,12 +4001,26 @@ document.addEventListener("DOMContentLoaded", () => {
     let total = 0;
     blocksEl.querySelectorAll(".proposal-block-row").forEach((row, idx) => {
       const titulo = row.querySelector(".proposal-block-title")?.value.trim() || `Escena ${idx + 1}`;
+      const escenario_clave = row.querySelector(".proposal-block-esc")?.value.trim() || "";
+      const charsRaw = row.querySelector(".proposal-block-chars")?.value.trim() || "";
+      const personajes_en_escena = charsRaw ? charsRaw.split(",").map(s => s.trim()).filter(Boolean) : [];
       const transicion_desde_anterior = row.querySelector(".proposal-block-trans")?.value.trim() || "";
       const que_ocurre = row.querySelector(".proposal-block-desc")?.value.trim() || "";
+      const accion_video = row.querySelector(".proposal-block-action")?.value.trim() || "";
       const texto_narrado = row.querySelector(".proposal-block-narr")?.value.trim() || "";
-      const duracion_seg = Math.max(2, parseInt(row.querySelector(".proposal-block-dur")?.value) || 5);
+      const duracion_seg = Math.max(2, parseInt(row.querySelector(".proposal-block-dur")?.value) || 10);
       total += duracion_seg;
-      bloques.push({ id: idx + 1, titulo, transicion_desde_anterior, que_ocurre, texto_narrado, duracion_seg });
+      bloques.push({
+        id: idx + 1,
+        titulo,
+        escenario_clave,
+        personajes_en_escena,
+        transicion_desde_anterior,
+        que_ocurre,
+        accion_video,
+        texto_narrado,
+        duracion_seg
+      });
     });
 
     if (bloques.length === 0) return null;
@@ -4312,15 +4343,20 @@ document.addEventListener("DOMContentLoaded", () => {
               ${renderSceneEnvSelect(sc, index)}
             </div>
 
-            <!-- 2. Descripción de la Escena (Caja única principal en español) -->
+            <!-- 2. Descripción de la Escena (Foto) y Acción del Vídeo (Movimiento 10s) -->
             <div class="mt-3">
-              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">🎬 Qué se ve y cómo se mueve en esta escena (Descripción visual)</label>
+              <label class="field-label" style="display:block; margin-bottom:0.35rem; font-weight: 600; font-size: 0.85rem;">🎬 Puesta en escena y relación con el entorno (Foto inicial)</label>
               <div style="display:flex; justify-content:flex-start; gap:0.5rem; margin-bottom:0.45rem;">
                 <button type="button" class="btn btn-secondary btn-xs btn-gen-desc-from-proposal" data-idx="${index}" title="Redacta con todo detalle lo que se ve y se mueve en esta escena a partir de lo que lee el narrador, los personajes y el escenario">
                   ✨ Redactar escena desde la narración
                 </button>
               </div>
-              <textarea class="form-textarea input-scene-desc" data-idx="${index}" rows="5" style="width: 100%; box-sizing: border-box; font-size: 0.88rem; line-height: 1.45; padding: 0.65rem 0.75rem; min-height: 105px;" placeholder="Describe qué ocurre y qué aparece en esta escena (acciones de personajes, objetos del cuento, entorno, movimiento)...">${sc.descripcion_escena || sc.descripcion || ""}</textarea>
+              <textarea class="form-textarea input-scene-desc" data-idx="${index}" rows="4" style="width: 100%; box-sizing: border-box; font-size: 0.86rem; line-height: 1.42; padding: 0.55rem 0.7rem;" placeholder="Describe dónde están los personajes en el escenario, su relación con el entorno y qué objetos del cuento aparecen...">${sc.descripcion_escena || sc.descripcion || ""}</textarea>
+            </div>
+
+            <div class="mt-2">
+              <label class="field-label" style="display:block; margin-bottom:0.3rem; font-weight: 600; font-size: 0.83rem; color:#38bdf8;">🎥 Qué hacen los personajes en el vídeo (Movimiento de 10s)</label>
+              <textarea class="form-textarea input-scene-action" data-idx="${index}" rows="2" style="width: 100%; box-sizing: border-box; font-size: 0.84rem; line-height: 1.4; padding: 0.5rem 0.65rem; border-color:rgba(56,189,248,0.35);" placeholder="Describe qué movimiento físico hacen el burrito y los personajes en ese entorno durante los 10s mientras habla el narrador...">${sc.accion_video || ""}</textarea>
             </div>
 
             <!-- 3. Prompt Técnico en Inglés (Sincronizado automáticamente, plegable para no duplicar) -->
@@ -4380,6 +4416,12 @@ document.addEventListener("DOMContentLoaded", () => {
         const idx = parseInt(e.target.dataset.idx);
         state.scenes[idx].descripcion_escena = e.target.value;
         state.scenes[idx]._descDirty = true;
+      });
+    });
+    document.querySelectorAll(".input-scene-action").forEach(el => {
+      el.addEventListener("input", e => {
+        const idx = parseInt(e.target.dataset.idx);
+        state.scenes[idx].accion_video = e.target.value;
       });
     });
 
@@ -4827,14 +4869,17 @@ document.addEventListener("DOMContentLoaded", () => {
     );
 
     const rCfg = typeof getRenderConfig === "function" ? getRenderConfig() : { aspect_ratio: "9:16" };
+    const prodModeEl = document.getElementById("chapter-production-mode");
+    const isDraftMode = !prodModeEl || prodModeEl.value === "draft";
     const i2vSelect = document.getElementById("i2v-model-select");
-    const i2vModel = (i2vSelect && i2vSelect.value) ? i2vSelect.value : "kling_v21_pro";
+    const i2vModel = isDraftMode ? "draft_free" : ((i2vSelect && i2vSelect.value && i2vSelect.value !== "draft_free") ? i2vSelect.value : "kling_v25_pro");
+    const motionPrompt = sc.prompt_video || sc.accion_video || sc.prompt_imagen || sc.descripcion_escena || sc.narrador || "";
     try {
       const res = await fetch("/api/scene/animate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt: sc.prompt_imagen || sc.descripcion_escena || sc.narrador || "",
+          prompt: motionPrompt,
           image_url: sc.image_url,
           next_image_url: nextSc ? nextSc.image_url : null,
           transition_text: nextSc ? (nextSc.descripcion_escena || "").slice(0, 220) : "",
@@ -4935,13 +4980,17 @@ document.addEventListener("DOMContentLoaded", () => {
       sc.seed_consistencia = effectiveSeed;
     }
 
+    const prodModeEl = document.getElementById("chapter-production-mode");
+    const isDraftMode = !prodModeEl || prodModeEl.value === "draft";
+    const chosenProvider = isDraftMode ? "draft" : (state.currentProject?.motor_imagenes || "flux");
+
     try {
       const res = await fetch("/api/image/generate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           prompt: sc.prompt_imagen,
-          provider: state.currentProject?.motor_imagenes || "flux",
+          provider: chosenProvider,
           seed: effectiveSeed,
           reference_image: refImageUrl,
           reference_images: refImagesList
@@ -5963,6 +6012,79 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  const prodModeSelect = document.getElementById("chapter-production-mode");
+  if (prodModeSelect) {
+    prodModeSelect.addEventListener("change", () => {
+      const i2vSelect = document.getElementById("i2v-model-select");
+      if (prodModeSelect.value === "draft") {
+        if (i2vSelect) i2vSelect.value = "draft_free";
+        showToast("Modo Borrador Gratuito (0,00 €) activado", "info");
+      } else {
+        if (i2vSelect && i2vSelect.value === "draft_free") i2vSelect.value = "kling_v25_pro";
+        showToast("Modo Definitivo Pro (Kontext Multi + Kling) activado", "info");
+      }
+    });
+  }
+
+  const btnUpgradeToFinalPro = document.getElementById("btn-upgrade-to-final-pro");
+  if (btnUpgradeToFinalPro) {
+    btnUpgradeToFinalPro.addEventListener("click", async () => {
+      if (!state.scenes || state.scenes.length === 0) {
+        showToast("Genera primero las escenas en modo borrador", "error");
+        return;
+      }
+      const finalI2vSelect = document.getElementById("final-pro-i2v-select");
+      const finalI2vModel = (finalI2vSelect && finalI2vSelect.value) ? finalI2vSelect.value : "kling_v25_pro";
+      const origLabel = btnUpgradeToFinalPro.textContent;
+      btnUpgradeToFinalPro.disabled = true;
+      btnUpgradeToFinalPro.textContent = "⏳ Verificando saldo Pro...";
+
+      try {
+        const feasRes = await fetch("/api/chapter/feasibility", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: (rawChapterText?.value || "").trim(),
+            voice: state.currentProject?.voz_defecto || "edge_alvaro",
+            image_engine: "flux",
+            i2v_model: finalI2vModel,
+            enable_i2v: true,
+            scenes_count: state.scenes.length
+          })
+        });
+        const feas = await feasRes.json();
+        if (feas.overall_status !== "ready") {
+          if (btnCheckFeasibility) {
+            if (prodModeSelect) prodModeSelect.value = "final";
+            btnCheckFeasibility.click();
+          }
+          showToast(feas.blockers?.[0] || "Recarga saldo en Fal.ai Billing antes de pasar a la versión Definitiva Pro", "error");
+          return;
+        }
+
+        if (prodModeSelect) prodModeSelect.value = "final";
+        const i2vSelect = document.getElementById("i2v-model-select");
+        if (i2vSelect) i2vSelect.value = finalI2vModel;
+
+        for (let i = 0; i < state.scenes.length; i++) {
+          btnUpgradeToFinalPro.textContent = `🎨 Foto Pro ${i + 1}/${state.scenes.length}...`;
+          await generateImageForScene(i);
+        }
+        for (let i = 0; i < state.scenes.length; i++) {
+          btnUpgradeToFinalPro.textContent = `🎬 Vídeo Pro ${i + 1}/${state.scenes.length}...`;
+          await animateSceneForScene(i);
+        }
+        const btnRender = document.getElementById("btn-render-video");
+        if (btnRender) btnRender.click();
+      } catch (err) {
+        showToast(`Error en producción definitiva: ${err.message}`, "error");
+      } finally {
+        btnUpgradeToFinalPro.disabled = false;
+        btnUpgradeToFinalPro.textContent = origLabel;
+      }
+    });
+  }
+
   if (btnCheckFeasibility && feasibilityPanel) {
     btnCheckFeasibility.addEventListener("click", async () => {
       const origLabel = btnCheckFeasibility.textContent;
@@ -5972,8 +6094,11 @@ document.addEventListener("DOMContentLoaded", () => {
       feasibilityPanel.innerHTML = `<div style="color:var(--text-muted);">⏳ Consultando estado real de OpenAI, Fal.ai, ElevenLabs/Edge TTS y FFmpeg para este capítulo...</div>`;
 
       const rawText = (rawChapterText?.value || "").trim();
+      const prodModeEl = document.getElementById("chapter-production-mode");
+      const isDraftMode = !prodModeEl || prodModeEl.value === "draft";
       const i2vSelect = document.getElementById("i2v-model-select");
-      const i2vModel = (i2vSelect && i2vSelect.value) ? i2vSelect.value : "kling_v21_pro";
+      const i2vModel = isDraftMode ? "draft_free" : ((i2vSelect && i2vSelect.value && i2vSelect.value !== "draft_free") ? i2vSelect.value : "kling_v25_pro");
+      const imgEngine = isDraftMode ? "draft" : (state.currentProject?.motor_imagenes || "flux");
       const scenesCountVal = (state.scenes && state.scenes.length > 0) ? state.scenes.length : null;
 
       try {
@@ -5983,7 +6108,7 @@ document.addEventListener("DOMContentLoaded", () => {
           body: JSON.stringify({
             text: rawText,
             voice: state.currentProject?.voz_defecto || "edge_alvaro",
-            image_engine: state.currentProject?.motor_imagenes || "flux",
+            image_engine: imgEngine,
             i2v_model: i2vModel,
             enable_i2v: true,
             scenes_count: scenesCountVal

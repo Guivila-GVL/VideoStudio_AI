@@ -375,7 +375,8 @@ def generate_image(
             extra_ref_infos=extra_ref_infos,
         )
 
-    openai_key = os.getenv("OPENAI_API_KEY")
+    is_free_draft = provider_norm in ("draft", "free", "free_flux", "pollinations")
+    openai_key = None if is_free_draft else os.getenv("OPENAI_API_KEY")
     pollinations_key = os.getenv("POLLINATIONS_API_KEY")
 
     # 1. OpenAI Image Generation (gpt-image-1-mini / chatgpt-image-latest)
@@ -433,7 +434,7 @@ def generate_image(
 
     for model_name in models_to_try:
         try:
-            encoded_prompt = urllib.parse.quote(clean_prompt)
+            encoded_prompt = urllib.parse.quote(clean_prompt[:680])
             seed_param = f"&seed={seed}" if seed is not None else ""
             key_param = f"&key={pollinations_key.strip()}" if pollinations_key and pollinations_key.strip() else ""
             nologo_param = "&nologo=true"

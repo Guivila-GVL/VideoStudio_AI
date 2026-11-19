@@ -823,28 +823,36 @@ def propose_chapter_treatment(
     effective_target_scenes = max(int(target_scenes or 4), auto_scenes)
 
     try:
-        sys_msg = f"""Eres director creativo de vídeos narrativos cortos (TikTok/Shorts/Reels).
-A partir del texto del capítulo "{chapter_title}", elabora una PROPUESTA PREVIA editable en español para aprobar antes de generar escenas:
+        sys_msg = f"""Eres director de cine de animación y narrador literario.
+A partir del texto del capítulo "{chapter_title}", elabora el PLAN NARRATIVO Y DE PUESTA EN ESCENA en español antes de generar las escenas:
 - Público objetivo: {audiencia or "General"}
 - Ambiente/universo: {ambiente or "Fiel al texto"}
 - Estilo visual: {style_prompt}
-- Personajes disponibles: {", ".join(char_names) or "Según texto"}
-- Escenarios disponibles: {", ".join(esc_names) or "Según texto"}
-- Número óptimo de escenas (para que cada escena dure ~10-13 segundos y muestre 1 sola acción clara): {effective_target_scenes}
-- REGLA DE CONTINUIDAD Y ESCENARIOS: Selecciona el escenario que mejor corresponda a lo que narra cada tramo y utiliza TODOS los personajes u objetos que realmente intervienen en esa frase (por ejemplo, si el narrador da fruta al burrito o pasea con él ante los aldeanos, descríbelo explícitamente en `que_ocurre`).
-- REGLA VISUAL (MUY IMPORTANTE): NO copies ni pegues frases literales de la narración en `que_ocurre`. Describe con gran riqueza visual lo que PASA en pantalla (encuadre, acción física concreta, objetos del texto como flores, frutas, mariposas, faroles, gestos e iluminación).
-- REGLA DE LOCUCIÓN (OBLIGATORIA): En `texto_narrado`, reparte el texto íntegro del capítulo en {effective_target_scenes} bloques de ~20-32 palabras (~10-13s) sin saltos de línea rotos, asegurando que NUNCA se parta una frase a mitad entre dos escenas y que cada bloque termine en puntuación final (`.`, `?`, `!` o `…`).
+- Personajes disponibles en el banco: {", ".join(char_names) or "Según texto"}
+- Escenarios disponibles en el banco: {", ".join(esc_names) or "Según texto"}
+- Número óptimo de escenas (~10-13 segundos por escena, 1 acción visual clara por escena): {effective_target_scenes}
+
+REGLAS NARRATIVAS ESTRICTAS:
+1. `enfoque_general` (HISTORIA GENERAL DEL CAPÍTULO): Explica en 3-4 frases qué historia concreta cuenta este capítulo de principio a fin (inicio/planteamiento, encuentro o acción central y desenlace poético), cuál es su emoción y cómo evoluciona por los escenarios. Prohibido usar frases genéricas vacías.
+2. `escenario_clave` y relación con el entorno: Elige para cada escena el escenario de la lista ({", ".join(esc_names) or "del universo"}) que mejor encaje con lo que ocurre en ese fragmento (puedes cambiar de escenario entre escenas si el relato se desplaza del campo a las callejas o a una casucha).
+3. `personajes_en_escena`: Incluye TODOS los personajes del banco que intervienen en esa escena (ej. ["Platero", "El Poeta / Yo lírico"] si el narrador va con Platero o habla en primera persona interactuando con él).
+4. `que_ocurre` (PUESTA EN ESCENA Y ENTORNO PARA LA FOTO): Describe con todo detalle cómo están situados los personajes dentro del escenario al arrancar la escena, cómo se relacionan con el entorno y qué objetos concretos mencionados en la narración aparecen (flores, frutas, sacas de carbón, farol, cigarro, alforjas, mariposas blancas...).
+5. `accion_video` (COREOGRAFÍA FÍSICA EN EL VÍDEO DE 10s): Describe específicamente QUÉ HACEN Y CÓMO SE MUEVEN los personajes (por ejemplo, qué hace el burrito Platero, cómo reacciona al entorno o al otro personaje) y cómo se mueve la cámara durante esos 10 segundos para que el vídeo cuente literalmente lo que dice la voz.
+6. `texto_narrado`: Reparte el texto íntegro del capítulo en {effective_target_scenes} bloques de ~20-32 palabras (~10-13s) sin saltos de línea rotos, sin partir ninguna frase a mitad entre escenas y terminando siempre en puntuación final (`.`, `?`, `!` o `…`).
 
 Devuelve ÚNICAMENTE JSON válido con esta estructura:
 {{
-  "enfoque_general": "Explicación clara en 2-4 frases de en qué va a consistir el vídeo, qué historia cuenta, qué ritmo de narración tendrá y cómo encaja con la audiencia.",
+  "enfoque_general": "Historia general del capítulo: planteamiento, nudo/acción central, desenlace poético y evolución visual por los escenarios.",
   "bloques": [
     {{
       "id": 1,
-      "titulo": "Título corto de la escena",
-      "transicion_desde_anterior": "Cómo se pasa visualmente desde la escena anterior (dejar vacío en la escena 1)",
-      "que_ocurre": "Qué se ve en pantalla (acción física, objetos del cuento, encuadre y movimiento) sin copiar la narración.",
-      "texto_narrado": "Fragmento exacto del texto que leerá el narrador en esta escena (frases completas de principio a fin).",
+      "titulo": "Título narrativo de la escena",
+      "escenario_clave": "Nombre exacto del escenario de esta escena",
+      "personajes_en_escena": ["Platero", "El Poeta / Yo lírico"],
+      "transicion_desde_anterior": "Cómo enlaza la acción y el espacio desde la escena anterior (dejar vacío en la escena 1)",
+      "que_ocurre": "Puesta en escena detallada: relación de los personajes con el escenario y objetos concretos visibles en la foto inicial.",
+      "accion_video": "Movimiento físico exacto durante los 10s de vídeo: qué hacen Platero y los personajes y cómo acompaña la cámara.",
+      "texto_narrado": "Fragmento exacto del texto que leerá el narrador en esta escena (frases completas cerradas en punto).",
       "duracion_seg": 10
     }}
   ]
@@ -854,8 +862,8 @@ Devuelve ÚNICAMENTE JSON válido con esta estructura:
                 {"role": "system", "content": sys_msg},
                 {"role": "user", "content": f"Texto del capítulo:\n\n{_normalize_pdf_line_breaks(text)}"}
             ],
-            temperature=0.5,
-            max_tokens=1800,
+            temperature=0.45,
+            max_tokens=2200,
             api_key=openai_key,
         )
         data = json.loads(clean_json_string(raw_llm))
@@ -865,19 +873,23 @@ Devuelve ÚNICAMENTE JSON válido con esta estructura:
             for idx, b in enumerate(bloques):
                 b["id"] = idx + 1
                 b["titulo"] = (b.get("titulo") or f"Escena {idx + 1}").strip()
+                b["escenario_clave"] = (b.get("escenario_clave") or (esc_names[0] if esc_names else "")).strip()
+                b["personajes_en_escena"] = b.get("personajes_en_escena") if isinstance(b.get("personajes_en_escena"), list) else (char_names[:1] if char_names else ["Platero"])
                 b["transicion_desde_anterior"] = (b.get("transicion_desde_anterior") or "").strip() if idx > 0 else ""
                 b["que_ocurre"] = (b.get("que_ocurre") or "").strip()
-                b["texto_narrado"] = (b.get("texto_narrado") or "").strip()
-                dur = max(6, min(15, int(b.get("duracion_seg") or 10)))
-                b["duracion_seg"] = dur
-                total += dur
+                b["accion_video"] = (b.get("accion_video") or "").strip()
+                b["texto_narrado"] = _normalize_pdf_line_breaks(b.get("texto_narrado") or "").replace("\n\n", " ")
+                words_b = len(b["texto_narrado"].split())
+                est_dur = max(8, min(15, round(words_b / 2.35))) if words_b > 0 else int(b.get("duracion_seg") or 10)
+                b["duracion_seg"] = est_dur
+                total += est_dur
             return {
                 "enfoque_general": (data.get("enfoque_general") or "").strip(),
                 "bloques": bloques,
                 "duracion_total_seg": total
             }
     except Exception as e:
-        print(f"[AI] Error generando propuesta con LLM: {e}. Usando propuesta heurística.")
+        print(f"[AI] Error generando propuesta con LLM: {e}. Usando propuesta estructurada.")
 
     # Fallback heurístico visual (describe puesta en escena sin copiar frases literales de la narración)
     word_count = len((text or "").split())
@@ -976,13 +988,16 @@ def breakdown_storyboard(
                 trans_txt = f" [Paso desde la anterior: {trans}]" if (idx > 0 and trans) else ""
                 narr_txt = (b.get("texto_narrado") or "").strip()
                 narr_note = f" [Texto que leerá el narrador: \"{narr_txt}\"]" if narr_txt else ""
-                lines.append(f"- Escena {idx+1} ({b.get('duracion_seg', 5)}s) [{b.get('titulo', '')}]{trans_txt}{narr_note}: {b.get('que_ocurre', '')}")
+                esc_note = f" [Escenario: {b.get('escenario_clave')}]" if b.get("escenario_clave") else ""
+                chars_note = f" [Personajes: {', '.join(b.get('personajes_en_escena', []))}]" if b.get("personajes_en_escena") else ""
+                acc_note = f" [Acción en el vídeo 10s: {b.get('accion_video')}]" if b.get("accion_video") else ""
+                lines.append(f"- Escena {idx+1} ({b.get('duracion_seg', 10)}s) [{b.get('titulo', '')}]{esc_note}{chars_note}{trans_txt}{narr_note}: {b.get('que_ocurre', '')}{acc_note}")
             prop_clause = "\n" + "\n".join(lines) + "\n"
             if len(bloques) > 0:
                 target_scenes = len(bloques)
 
     system_instruction = f"""Eres un director audiovisual y guionista de vídeos cortos para TikTok, Reels y YouTube Shorts.
-Tu trabajo es adaptar el texto del capítulo en exactamente {target_scenes} escenas dinámicas pensadas para formato vertical (9:16).
+Tu trabajo es adaptar el texto del capítulo en exactamente {target_scenes} escenas dinámicas pensadas para formato vertical (9:16), asegurando que la imagen y el movimiento cuenten exactamente la historia de la narración.
 
 {aud_clause}
 {amb_clause}
@@ -993,23 +1008,27 @@ Tu trabajo es adaptar el texto del capítulo en exactamente {target_scenes} esce
 Estilo visual global de toda la serie: {style_prompt}.
 
 Reglas de producción:
-1. 'descripcion_escena': Descripción detallada y ampliada en ESPAÑOL de todo lo que aparece y sucede en esta escena (acciones concretas de los personajes, posturas, encuadre, luz, entorno y cómo continúa desde la escena anterior si aplica), desarrollando fielmente la propuesta.
-2. 'narrador': Texto exacto que dirá la voz en off en español para esta escena. Si la propuesta incluye un [Texto que leerá el narrador] para esta escena, respétalo fielmente sin recortarlo ni cambiar su sentido; si no, redáctalo acorde al público objetivo.
-3. 'prompt_imagen': Prompt en INGLÉS detallado para generar la imagen vertical 9:16 de esta escena, coherente con 'descripcion_escena'. Debe describir la composición vertical, la acción, la iluminación, el escenario recurrente según la Biblia de Escenarios y los rasgos físicos EXACTOS de los personajes que aparezcan (según el Banco de Consistencia de Personajes), rematando con el estilo global ({style_prompt}). No pongas textos escritos dentro de la imagen.
-4. 'personajes_en_escena': Lista de nombres de los personajes que aparecen en esta escena (ej: ["Platero"]).
-5. 'escenario_clave': Nombre del escenario recurrente del universo donde ocurre la escena si corresponde, o 'Escenario específico'.
-6. 'duracion_estimada': Duración estimada en segundos (respeta la duración indicada en la propuesta si existe).
+1. 'descripcion_escena': Descripción detallada en ESPAÑOL de la puesta en escena (cómo están situados los personajes en el escenario, relación con el entorno, objetos concretos del relato que aparecen y cómo continúa desde la escena anterior).
+2. 'accion_video': Guion específico en ESPAÑOL de lo que sucede en movimiento durante los ~10 segundos del clip de vídeo (qué hacen físicamente Platero y los personajes en ese entorno mientras habla el narrador y cómo se mueve la cámara).
+3. 'narrador': Texto exacto que dirá la voz en off en español para esta escena (frases completas cerradas en punto, respetando fielmente el tramo asignado en la propuesta).
+4. 'prompt_imagen': Prompt en INGLÉS en 5 capas (1. Encuadre 9:16, 2. Personajes y postura exacta, 3. Objetos y detalles narrativos del texto, 4. Escenario recurrente con cielo completo sin márgenes blancos, 5. Iluminación y {style_prompt}). Sin textos escritos en la imagen.
+5. 'prompt_video': Prompt conciso en INGLÉS (2-3 frases) enfocado EXCLUSIVAMENTE en la acción física de los personajes y el movimiento de cámara para el motor Image-to-Video (Kling), traduciendo 'accion_video'.
+6. 'personajes_en_escena': Lista de nombres de los personajes que aparecen en esta escena (ej: ["Platero", "El Poeta / Yo lírico"]).
+7. 'escenario_clave': Nombre exacto del escenario recurrente del universo donde ocurre esta escena.
+8. 'duracion_estimada': Duración estimada en segundos (~10-13s).
 
 Devuelve ÚNICAMENTE un array JSON válido con la siguiente estructura, sin texto adicional ni markdown:
 [
   {{
     "id": 1,
     "descripcion_escena": "...",
+    "accion_video": "...",
     "narrador": "...",
     "prompt_imagen": "...",
+    "prompt_video": "...",
     "personajes_en_escena": ["..."],
     "escenario_clave": "...",
-    "duracion_estimada": 5
+    "duracion_estimada": 10
   }}
 ]
 """
@@ -1044,8 +1063,16 @@ Devuelve ÚNICAMENTE un array JSON válido con la siguiente estructura, sin text
                 if not (sc.get("narrador") or "").strip() and (b_match.get("texto_narrado") or "").strip():
                     sc["narrador"] = b_match.get("texto_narrado").strip()
                 sc["narrador"] = _normalize_pdf_line_breaks(sc.get("narrador") or "").replace("\n\n", " ")
+                if not (sc.get("accion_video") or "").strip() and (b_match.get("accion_video") or "").strip():
+                    sc["accion_video"] = b_match.get("accion_video").strip()
+                if not (sc.get("escenario_clave") or "").strip() and (b_match.get("escenario_clave") or "").strip():
+                    sc["escenario_clave"] = b_match.get("escenario_clave").strip()
+                if not sc.get("personajes_en_escena") and b_match.get("personajes_en_escena"):
+                    sc["personajes_en_escena"] = b_match.get("personajes_en_escena")
                 sc.setdefault("descripcion_escena", "")
+                sc.setdefault("accion_video", "")
                 sc.setdefault("prompt_imagen", "")
+                sc.setdefault("prompt_video", "")
                 sc.setdefault("personajes_en_escena", [])
                 if b_match.get("duracion_seg"):
                     try:

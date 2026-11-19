@@ -3214,6 +3214,7 @@ def evaluate_chapter_feasibility(
     total_i2v_sec = optimal_scenes * clip_sec_per_scene if enable_i2v else 0
 
     i2v_rates = {
+        "draft_free": ("Movimiento Dirigido Local (Borrador 0€)", 0.0),
         "kling_v21_pro": ("Kling 2.1 Pro (Máxima calidad)", 0.098),
         "kling_v25_pro": ("Kling 2.5 Turbo Pro (Fluido / -29% coste)", 0.070),
         "hailuo_02_pro": ("MiniMax Hailuo 02 Pro", 0.080),
@@ -3325,7 +3326,17 @@ def evaluate_chapter_feasibility(
 
     # 4. Animación de Vídeo I2V
     if enable_i2v:
-        if fal_st.get("status") == "ok":
+        if i2v_model in ("draft_free", "draft", "free"):
+            stages.append({
+                "phase": "4. Animación de Vídeo (Borrador)",
+                "tool": i2v_label,
+                "status": "ok",
+                "needed": f"{optimal_scenes} clips dirigidos (~{est_audio_sec}s)",
+                "available": "100% Gratuito y Local (0€)",
+                "cost_usd": 0.0,
+                "billing_url": None,
+            })
+        elif fal_st.get("status") == "ok":
             stages.append({
                 "phase": "4. Animación de Vídeo (I2V)",
                 "tool": f"Fal.ai · {i2v_label}",

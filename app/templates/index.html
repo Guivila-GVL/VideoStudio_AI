@@ -771,13 +771,19 @@
 
             <!-- Panel 3: Editor de Texto del Capítulo Activo -->
             <div class="chapter-content-editor mt-3">
-              <!-- Encabezado, Viabilidad de Herramientas y Título del Capítulo (Al principio) -->
+              <!-- Encabezado, Modo Borrador/Definitivo, Viabilidad de Herramientas y Título del Capítulo (Al principio) -->
               <div class="chapter-title-header-card p-3 mb-3" style="background: rgba(255,255,255,0.025); border: 1px solid var(--border-color); border-radius: 10px;">
-                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem;">
-                  <span style="font-size:0.82rem; color:var(--text-muted);">
-                    🔎 Antes de empezar, comprueba si tus herramientas y créditos actuales cubren este capítulo con la calidad elegida:
-                  </span>
-                  <button type="button" class="btn btn-secondary btn-sm" id="btn-check-feasibility" title="Analiza si los créditos, tokens y estado de las herramientas (OpenAI, Fal.ai, ElevenLabs/Edge TTS, FFmpeg) permiten realizar este capítulo con la calidad deseada">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.6rem; margin-bottom:0.65rem; padding-bottom:0.6rem; border-bottom:1px solid rgba(255,255,255,0.07);">
+                  <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                    <label for="chapter-production-mode" style="font-size:0.82rem; font-weight:700; color:#e2e8f0; margin:0;">
+                      ⚙️ Fase de Trabajo:
+                    </label>
+                    <select id="chapter-production-mode" class="form-control form-control-sm" style="width:auto; min-width:300px; font-weight:600; font-size:0.82rem; border-color:rgba(74,222,128,0.5);">
+                      <option value="draft" selected>🆓 Fase 1: Modo Borrador (100% Gratuito — 0,00 €)</option>
+                      <option value="final">💎 Fase 2: Modo Definitivo Pro (Kontext Multi + Kling Pro)</option>
+                    </select>
+                  </div>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-check-feasibility" title="Analiza si los créditos, tokens y estado de las herramientas permiten realizar este capítulo en la fase seleccionada">
                     🚦 Viabilidad y Estado de Herramientas
                   </button>
                 </div>
@@ -887,9 +893,10 @@
                 <button type="button" class="btn btn-secondary btn-sm" id="btn-generate-all-images">
                   🎨 Generar Todas las Fotos
                 </button>
-                <select id="i2v-model-select" class="form-control form-control-sm" style="width:auto; min-width:210px; font-size:0.82rem;" title="Motor de animación de vídeo Image-to-Video">
-                  <option value="kling_v21_pro" selected>🎬 Kling 2.1 Pro (Recomendado)</option>
-                  <option value="kling_v25_pro">⚡ Kling 2.5 Turbo Pro</option>
+                <select id="i2v-model-select" class="form-control form-control-sm" style="width:auto; min-width:230px; font-size:0.82rem;" title="Motor de animación de vídeo Image-to-Video">
+                  <option value="draft_free" selected>🆓 Movimiento Dirigido Borrador (0,00 €)</option>
+                  <option value="kling_v21_pro">🎬 Kling 2.1 Pro (Máxima calidad)</option>
+                  <option value="kling_v25_pro">⚡ Kling 2.5 Turbo Pro (-29% coste)</option>
                   <option value="hailuo_02_pro">🎞️ MiniMax Hailuo 02 Pro</option>
                   <option value="kling_v21">🎥 Kling 2.1 Standard</option>
                 </select>
@@ -1058,7 +1065,7 @@
               </div>
             </div>
 
-            <!-- Barra inferior de Render -->
+            <!-- Barra inferior de Render (Borrador o Actual) -->
             <div class="render-banner mt-4" style="justify-content:flex-start;">
               <div class="render-cta-group" style="justify-content:flex-start;">
                 <button type="button" class="btn btn-accent btn-lg" id="btn-render-video">
@@ -1067,6 +1074,31 @@
                 <button type="button" class="btn btn-secondary btn-lg" id="btn-save-chapter-draft">
                   💾 Guardar el vídeo
                 </button>
+              </div>
+            </div>
+
+            <!-- Fase 2: Producción Definitiva Pro (usando exactamente los prompts validados en el borrador) -->
+            <div class="mt-4 p-3" id="final-pro-upgrade-box" style="background:linear-gradient(135deg, rgba(16,185,129,0.08) 0%, rgba(59,130,246,0.10) 100%); border:1px solid rgba(56,189,248,0.35); border-radius:12px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+                <div style="flex:1; min-width:260px;">
+                  <h4 style="margin:0 0 4px 0; font-size:0.96rem; color:#38bdf8;">
+                    💎 Fase 2: Producción Definitiva Pro (Una vez validado el Borrador 0,00 €)
+                  </h4>
+                  <p style="margin:0; font-size:0.8rem; color:var(--text-secondary); line-height:1.4;">
+                    Cuando hayas revisado el vídeo en modo borrador y te encajen la historia, los tiempos, la locución y las escenas, pulsa aquí para regenerar las fotos con <b>FLUX Kontext Multi (Personajes + Fondo real)</b> y animar los vídeos con <b>Kling Pro</b> usando exactamente estos mismos prompts.
+                  </p>
+                </div>
+                <div style="display:flex; align-items:center; gap:0.5rem; flex-wrap:wrap;">
+                  <select id="final-pro-i2v-select" class="form-control form-control-sm" style="width:auto; min-width:210px; font-size:0.82rem;">
+                    <option value="kling_v25_pro" selected>⚡ Kling 2.5 Turbo Pro ($0.07/s)</option>
+                    <option value="kling_v21_pro">🎬 Kling 2.1 Pro ($0.098/s)</option>
+                    <option value="hailuo_02_pro">🎞️ MiniMax Hailuo 02 Pro ($0.08/s)</option>
+                    <option value="kling_v21">🎥 Kling 2.1 Standard ($0.05/s)</option>
+                  </select>
+                  <button type="button" class="btn btn-primary btn-md" id="btn-upgrade-to-final-pro" title="Reemplaza las fotos y vídeos de borrador por la versión definitiva Pro (Kontext Multi + Kling) y renderiza el capítulo final">
+                    🚀 Generar Versión Definitiva Pro
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -1700,6 +1732,6 @@
   <!-- Toast de Notificaciones -->
   <div class="toast-container" id="toast-container"></div>
 
-  <script src="/static/js/app.js?v=7.3"></script>
+  <script src="/static/js/app.js?v=7.4"></script>
 </body>
 </html>

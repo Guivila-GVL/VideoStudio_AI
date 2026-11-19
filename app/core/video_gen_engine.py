@@ -16,6 +16,7 @@ MEDIA_DIR = Path(__file__).resolve().parent.parent / "static" / "media"
 MEDIA_DIR.mkdir(parents=True, exist_ok=True)
 
 FAL_VIDEO_MODELS = {
+    "draft_free": "local/ffmpeg-directed-motion",
     "kling_v21_pro": "fal-ai/kling-video/v2.1/pro/image-to-video",
     "kling_v25_pro": "fal-ai/kling-video/v2.5-turbo/pro/image-to-video",
     "hailuo_02_pro": "fal-ai/minimax/hailuo-02/pro/image-to-video",
@@ -23,6 +24,72 @@ FAL_VIDEO_MODELS = {
     "kling_v16": "fal-ai/kling-video/v1.6/standard/image-to-video",
     "wan_i2v": "fal-ai/wan/v2.2-a14b/image-to-video",
 }
+
+
+def _generate_draft_motion_clip(
+    image_url: str,
+    prompt: str,
+    target_duration_sec: Optional[float] = None,
+) -> Dict[str, Any]:
+    """
+    Genera un clip MP4 animado de borrador (100% gratuito, 0€) mediante FFmpeg local,
+    dirigiendo el movimiento de cámara y encuadre según la acción física descrita en la escena.
+    """
+    local_img = resolve_media_path(image_url)
+    if not local_img.exists():
+        raise FileNotFoundError(f"No se encontró la imagen de la escena para animar en borrador: {image_url}")
+
+    dur = max(5.0, min(28.0, float(target_duration_sec or 10.0)))
+    fps = 25
+    total_frames = max(125, int(round(dur * fps)))
+    p_low = (prompt or "").lower()
+
+    # Seleccionar coreografía de cámara según la acción descrita en la escena
+    if any(k in p_low for k in ("sube", "asciend", "vuelan", "mariposa", "cielo", "torre", "ascend", "butterfl", "sky", "upward")):
+        # Travelling vertical ascendente acompañando el vuelo o subida por el camino
+        z_expr = "min(1.04+0.0005*on,1.18)"
+        x_expr = "iw/2-(iw/zoom/2)+sin(on/28)*14"
+        y_expr = f"(ih-ih/zoom)*(1-on/{total_frames})"
+    elif any(k in p_low for k in ("baja", "amedrenta", "retrocede", "pincho", "casucha", "guarda", "steps back", "down")):
+        # Acercamiento dramático con leve tensión lateral
+        z_expr = "min(1.0+0.0007*on,1.22)"
+        x_expr = "iw/2-(iw/zoom/2)+sin(on/15)*18"
+        y_expr = "ih/2-(ih/zoom/2)"
+    elif any(k in p_low for k in ("camina", "avanza", "trote", "paseo", "sendero", "calleja", "walk", "trot", "path")):
+        # Travelling lateral de seguimiento de caminata
+        z_expr = "1.15"
+        x_expr = f"(iw-iw/zoom)*(on/{total_frames})"
+        y_expr = "ih/2-(ih/zoom/2)+sin(on/12)*10"
+    else:
+        # Push-in cinematográfico suave de cuento
+        z_expr = "min(1.0+0.0006*on,1.18)"
+        x_expr = "iw/2-(iw/zoom/2)"
+        y_expr = "ih/2-(ih/zoom/2)"
+
+    filename = f"anim_draft_{uuid.uuid4().hex[:10]}.mp4"
+    out_path = MEDIA_DIR / filename
+    vf = (
+        f"scale=1080:1920:force_original_aspect_ratio=increase,crop=1080:1920,"
+        f"zoompan=z='{z_expr}':x='{x_expr}':y='{y_expr}':d={total_frames}:s=1080x1920:fps={fps}"
+    )
+    cmd = [
+        "ffmpeg", "-y",
+        "-loop", "1", "-i", str(local_img.resolve()),
+        "-vf", vf,
+        "-t", f"{dur:.2f}",
+        "-c:v", "libx264", "-pix_fmt", "yuv420p", "-preset", "ultrafast", "-crf", "20",
+        str(out_path.resolve()),
+    ]
+    subprocess.run(cmd, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL, check=True)
+    size_mb = round(out_path.stat().st_size / (1024 * 1024), 2)
+    return {
+        "video_clip_url": f"/static/media/{filename}",
+        "provider": "local/ffmpeg-directed-motion (Borrador 0€)",
+        "duration": round(dur, 1),
+        "segments": 1,
+        "linked_next": False,
+        "size_mb": size_mb,
+    }
 
 
 def _to_fal_data_uri(image_url: str) -> str:
@@ -123,6 +190,13 @@ def animate_scene_image(
     extrayendo el último fotograma de cada segmento para evitar rebobinados (ping-pong).
     Si se proporciona next_image_url, enlaza el último segmento con el fotograma inicial de la escena siguiente.
     """
+    if model_key in ("draft_free", "draft", "free"):
+        return _generate_draft_motion_clip(
+            image_url=image_url,
+            prompt=prompt,
+            target_duration_sec=target_duration_sec,
+        )
+
     fal_key = os.getenv("FAL_KEY", "").strip()
     if not fal_key:
         raise ValueError("FAL_KEY no está configurada en .env. Configúrala en Ajustes (⚙️) para animar escenas.")
