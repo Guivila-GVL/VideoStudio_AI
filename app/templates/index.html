@@ -771,8 +771,21 @@
 
             <!-- Panel 3: Editor de Texto del Capítulo Activo -->
             <div class="chapter-content-editor mt-3">
-              <!-- Encabezado y Título del Capítulo (Al principio) -->
+              <!-- Encabezado, Viabilidad de Herramientas y Título del Capítulo (Al principio) -->
               <div class="chapter-title-header-card p-3 mb-3" style="background: rgba(255,255,255,0.025); border: 1px solid var(--border-color); border-radius: 10px;">
+                <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.5rem; margin-bottom:0.65rem;">
+                  <span style="font-size:0.82rem; color:var(--text-muted);">
+                    🔎 Antes de empezar, comprueba si tus herramientas y créditos actuales cubren este capítulo con la calidad elegida:
+                  </span>
+                  <button type="button" class="btn btn-secondary btn-sm" id="btn-check-feasibility" title="Analiza si los créditos, tokens y estado de las herramientas (OpenAI, Fal.ai, ElevenLabs/Edge TTS, FFmpeg) permiten realizar este capítulo con la calidad deseada">
+                    🚦 Viabilidad y Estado de Herramientas
+                  </button>
+                </div>
+
+                <!-- Panel desplegable de resultado de viabilidad -->
+                <div id="chapter-feasibility-panel" style="display:none; margin-bottom:0.85rem; padding:0.75rem 0.9rem; border-radius:8px; background:rgba(15,23,42,0.75); border:1px solid rgba(56,189,248,0.35); font-size:0.82rem;">
+                </div>
+
                 <div class="form-group mb-0">
                   <label for="chapter-title-input" class="form-label d-flex align-items-center justify-content-between" style="font-weight: 600; color: var(--text-highlight);">
                     <span>🏷️ Nombre / Título del Capítulo o Episodio</span>
@@ -1687,6 +1700,6 @@
   <!-- Toast de Notificaciones -->
   <div class="toast-container" id="toast-container"></div>
 
-  <script src="/static/js/app.js?v=7.2"></script>
+  <script src="/static/js/app.js?v=7.3"></script>
 </body>
 </html>

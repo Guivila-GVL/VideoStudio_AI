@@ -3047,19 +3047,20 @@ def get_providers_billing_status() -> Dict[str, Any]:
             "keys_url": "https://platform.openai.com/api-keys",
         }
         if not openai_key or not openai_key.startswith("sk-"):
-            return {**base, "status": "unconfigured", "label": "Sin clave configurada"}
+            return {**base, "status": "unconfigured", "label": "Sin clave configurada (activo respaldo LLM gratuito)"}
         try:
-            r = _req.get(
-                "https://api.openai.com/v1/models",
-                headers={"Authorization": f"Bearer {openai_key}"},
-                timeout=4,
+            r = _req.post(
+                "https://api.openai.com/v1/chat/completions",
+                headers={"Authorization": f"Bearer {openai_key}", "Content-Type": "application/json"},
+                json={"model": "gpt-4o-mini", "messages": [{"role": "user", "content": "ok"}], "max_tokens": 1},
+                timeout=5,
             )
             if r.status_code == 200:
-                return {**base, "status": "ok", "label": "Clave válida (ver saldo USD en Billing)"}
+                return {**base, "status": "ok", "label": "Cuenta activa con crédito disponible"}
             if r.status_code == 401:
                 return {**base, "status": "error", "label": "Clave inválida o revocada (401)"}
             if r.status_code == 429:
-                return {**base, "status": "warning", "label": "Límite de cuota / sin crédito (429)"}
+                return {**base, "status": "error", "label": "Saldo agotado en OpenAI (activo respaldo LLM gratuito 0€)"}
             return {**base, "status": "warning", "label": f"HTTP {r.status_code}"}
         except Exception as e:
             return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}"}
@@ -3071,7 +3072,7 @@ def get_providers_billing_status() -> Dict[str, Any]:
             "keys_url": "https://elevenlabs.io/app/developers/api-keys",
         }
         if not eleven_key:
-            return {**base, "status": "unconfigured", "label": "Opcional (usando Edge TTS gratuito)"}
+            return {**base, "status": "unconfigured", "label": "Opcional (usando Edge TTS gratuito)", "remaining_chars": 0, "limit_chars": 0}
         try:
             r = _req.get(
                 "https://api.elevenlabs.io/v1/user/subscription",
@@ -3089,13 +3090,16 @@ def get_providers_billing_status() -> Dict[str, Any]:
                 return {
                     **base,
                     "status": st,
+                    "remaining_chars": rem,
+                    "limit_chars": limit,
+                    "tier": tier,
                     "label": f"Plan {tier}: {rem:,} / {limit:,} caracteres restantes ({pct_rem}%)",
                 }
             if r.status_code == 401:
-                return {**base, "status": "error", "label": "Clave inválida (401)"}
-            return {**base, "status": "warning", "label": f"HTTP {r.status_code}"}
+                return {**base, "status": "error", "label": "Clave inválida (401)", "remaining_chars": 0, "limit_chars": 0}
+            return {**base, "status": "warning", "label": f"HTTP {r.status_code}", "remaining_chars": 0, "limit_chars": 0}
         except Exception as e:
-            return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}"}
+            return {**base, "status": "warning", "label": f"Sin respuesta: {str(e)[:45]}", "remaining_chars": 0, "limit_chars": 0}
 
     def _check_fal() -> Dict[str, Any]:
         base = {
@@ -3185,6 +3189,206 @@ def get_providers_billing_status() -> Dict[str, Any]:
         "home_url": "https://ffmpeg.org",
     }
     return results
+
+
+def evaluate_chapter_feasibility(
+    text: str = "",
+    voice: str = "edge_alvaro",
+    image_engine: str = "flux",
+    i2v_model: str = "kling_v21_pro",
+    enable_i2v: bool = True,
+    scenes_count: Optional[int] = None,
+) -> Dict[str, Any]:
+    """
+    Evalúa antes de empezar un capítulo si las herramientas y créditos actuales permiten
+    completarlo con la calidad deseada, calculando recursos necesarios y coste estimado.
+    """
+    clean_t = (text or "").strip()
+    words = len(clean_t.split()) if clean_t else 130
+    chars = len(clean_t) if clean_t else 780
+    is_estimate = not bool(clean_t)
+
+    est_audio_sec = round(max(12.0, words / 2.35), 1)
+    optimal_scenes = int(scenes_count) if (scenes_count and int(scenes_count) > 0) else max(2, min(8, round(words / 26)))
+    clip_sec_per_scene = 10
+    total_i2v_sec = optimal_scenes * clip_sec_per_scene if enable_i2v else 0
+
+    i2v_rates = {
+        "kling_v21_pro": ("Kling 2.1 Pro (Máxima calidad)", 0.098),
+        "kling_v25_pro": ("Kling 2.5 Turbo Pro (Fluido / -29% coste)", 0.070),
+        "hailuo_02_pro": ("MiniMax Hailuo 02 Pro", 0.080),
+        "kling_v21": ("Kling 2.1 Standard (Económico)", 0.050),
+        "kling_v16": ("Kling 1.6 Standard", 0.045),
+    }
+    i2v_label, i2v_rate = i2v_rates.get(i2v_model, i2v_rates["kling_v21_pro"])
+
+    img_unit_cost = 0.04 if image_engine == "flux" else 0.0
+    img_cost_usd = round(optimal_scenes * img_unit_cost, 2)
+    vid_cost_usd = round(total_i2v_sec * i2v_rate, 2) if enable_i2v else 0.0
+    total_cost_usd = round(img_cost_usd + vid_cost_usd, 2)
+
+    billing = get_providers_billing_status()
+    openai_st = billing.get("OPENAI_API_KEY", {})
+    fal_st = billing.get("FAL_KEY", {})
+    eleven_st = billing.get("ELEVENLABS_API_KEY", {})
+    ffmpeg_st = billing.get("FFMPEG", {})
+
+    stages: List[Dict[str, Any]] = []
+    blockers: List[str] = []
+
+    # 1. Guion y Prompts en 5 capas
+    if openai_st.get("status") == "ok":
+        llm_detail = "OpenAI GPT-4o-mini activo con crédito"
+    elif fal_st.get("status") == "ok":
+        llm_detail = "Respaldo Fal.ai Any-LLM activo (< $0.002)"
+    else:
+        llm_detail = "Respaldo LLM gratuito Pollinations (0€) activo porque OpenAI/Fal no tienen saldo"
+    stages.append({
+        "phase": "1. Guion y Prompts (5 capas)",
+        "tool": "Cascada LLM Inteligente",
+        "status": "ok",
+        "needed": f"{words} palabras → {optimal_scenes} escenas (~{round(est_audio_sec / optimal_scenes)}s/escena)",
+        "available": llm_detail,
+        "cost_usd": 0.0,
+        "billing_url": openai_st.get("billing_url"),
+    })
+
+    # 2. Locución del Narrador
+    uses_eleven = (voice or "").lower().startswith("eleven")
+    if uses_eleven:
+        rem_c = int(eleven_st.get("remaining_chars") or 0)
+        if eleven_st.get("status") == "ok" and rem_c >= chars:
+            stages.append({
+                "phase": "2. Locución del Narrador",
+                "tool": "ElevenLabs",
+                "status": "ok",
+                "needed": f"~{chars:,} caracteres",
+                "available": f"{rem_c:,} caracteres disponibles",
+                "cost_usd": 0.0,
+                "billing_url": eleven_st.get("billing_url"),
+            })
+        else:
+            blockers.append(f"ElevenLabs requiere ~{chars:,} caracteres y tienes {rem_c:,} (o puedes cambiar a voz Edge TTS gratuita).")
+            stages.append({
+                "phase": "2. Locución del Narrador",
+                "tool": "ElevenLabs",
+                "status": "error",
+                "needed": f"~{chars:,} caracteres",
+                "available": eleven_st.get("label", "Cuota insuficiente"),
+                "cost_usd": 0.0,
+                "billing_url": eleven_st.get("billing_url"),
+            })
+    else:
+        stages.append({
+            "phase": "2. Locución del Narrador",
+            "tool": "Microsoft Edge TTS",
+            "status": "ok",
+            "needed": f"~{chars:,} caracteres (~{est_audio_sec}s)",
+            "available": "Ilimitado y 100% gratuito (0€)",
+            "cost_usd": 0.0,
+            "billing_url": None,
+        })
+
+    # 3. Imágenes de Escena (Personajes + Fondo)
+    if image_engine == "flux":
+        if fal_st.get("status") == "ok":
+            stages.append({
+                "phase": "3. Fotos 9:16 (Personaje + Fondo)",
+                "tool": "Fal.ai FLUX Kontext Multi",
+                "status": "ok",
+                "needed": f"{optimal_scenes} imágenes ($0.04/ud)",
+                "available": "Cuenta Fal.ai con saldo activo",
+                "cost_usd": img_cost_usd,
+                "billing_url": fal_st.get("billing_url"),
+            })
+        else:
+            blockers.append(f"Fal.ai tiene el saldo agotado para generar las {optimal_scenes} imágenes con FLUX Kontext Multi (${img_cost_usd:.2f} USD).")
+            stages.append({
+                "phase": "3. Fotos 9:16 (Personaje + Fondo)",
+                "tool": "Fal.ai FLUX Kontext Multi",
+                "status": "error",
+                "needed": f"{optimal_scenes} imágenes (${img_cost_usd:.2f} USD)",
+                "available": fal_st.get("label", "Saldo agotado en Fal.ai"),
+                "cost_usd": img_cost_usd,
+                "billing_url": fal_st.get("billing_url"),
+            })
+    else:
+        stages.append({
+            "phase": "3. Fotos 9:16 (Motor Básico)",
+            "tool": "Pollinations FLUX Público",
+            "status": "ok",
+            "needed": f"{optimal_scenes} imágenes",
+            "available": "Servidor público gratuito (0€)",
+            "cost_usd": 0.0,
+            "billing_url": None,
+        })
+
+    # 4. Animación de Vídeo I2V
+    if enable_i2v:
+        if fal_st.get("status") == "ok":
+            stages.append({
+                "phase": "4. Animación de Vídeo (I2V)",
+                "tool": f"Fal.ai · {i2v_label}",
+                "status": "ok",
+                "needed": f"{optimal_scenes} clips × 10s = {total_i2v_sec}s (${vid_cost_usd:.2f} USD)",
+                "available": f"Cuenta activa (verifica tener ≥ ${total_cost_usd:.2f} USD en Billing)",
+                "cost_usd": vid_cost_usd,
+                "billing_url": fal_st.get("billing_url"),
+            })
+        else:
+            blockers.append(f"Fal.ai no tiene saldo para animar {total_i2v_sec}s de vídeo con {i2v_label} (requiere recargar ≥ ${total_cost_usd:.2f} USD en Billing).")
+            stages.append({
+                "phase": "4. Animación de Vídeo (I2V)",
+                "tool": f"Fal.ai · {i2v_label}",
+                "status": "error",
+                "needed": f"{optimal_scenes} clips × 10s = {total_i2v_sec}s (${vid_cost_usd:.2f} USD)",
+                "available": fal_st.get("label", "Saldo agotado en Fal.ai"),
+                "cost_usd": vid_cost_usd,
+                "billing_url": fal_st.get("billing_url"),
+            })
+
+    # 5. Renderizado Final y Subtítulos
+    stages.append({
+        "phase": "5. Montaje y Subtítulos (.ass)",
+        "tool": "FFmpeg Local",
+        "status": ffmpeg_st.get("status", "ok"),
+        "needed": f"Vídeo final ~{est_audio_sec}s en 1080x1920",
+        "available": ffmpeg_st.get("label", "Instalado localmente (0€)"),
+        "cost_usd": 0.0,
+        "billing_url": None,
+    })
+
+    overall_status = "ready" if not blockers else "action_required"
+    if overall_status == "ready":
+        overall_summary = (
+            f"✅ Viable con la calidad seleccionada: todas las herramientas están operativas. "
+            f"Coste total estimado para este capítulo ({optimal_scenes} escenas, ~{est_audio_sec}s): ${total_cost_usd:.2f} USD."
+        )
+    else:
+        overall_summary = (
+            f"⚠️ Atención antes de empezar: necesitas recargar saldo para completar el capítulo con la calidad máxima "
+            f"(coste estimado: ${total_cost_usd:.2f} USD)."
+        )
+
+    return {
+        "success": True,
+        "overall_status": overall_status,
+        "overall_summary": overall_summary,
+        "blockers": blockers,
+        "metrics": {
+            "is_estimate": is_estimate,
+            "words": words,
+            "chars": chars,
+            "est_audio_sec": est_audio_sec,
+            "optimal_scenes": optimal_scenes,
+            "total_i2v_sec": total_i2v_sec,
+            "img_cost_usd": img_cost_usd,
+            "vid_cost_usd": vid_cost_usd,
+            "total_cost_usd": total_cost_usd,
+            "i2v_model_label": i2v_label,
+        },
+        "stages": stages,
+    }
 
 
 def sync_character_reference_bank(

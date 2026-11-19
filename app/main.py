@@ -38,6 +38,7 @@ from app.core.project_manager import (
     update_env_settings,
     get_env_settings,
     get_providers_billing_status,
+    evaluate_chapter_feasibility,
     analyze_book_with_ai,
     generate_character_portrait,
     generate_character_portrait_proposals,
@@ -1615,6 +1616,30 @@ async def api_get_settings():
         return get_env_settings()
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+class ChapterFeasibilityRequest(BaseModel):
+    text: Optional[str] = ""
+    voice: Optional[str] = "edge_alvaro"
+    image_engine: Optional[str] = "flux"
+    i2v_model: Optional[str] = "kling_v21_pro"
+    enable_i2v: Optional[bool] = True
+    scenes_count: Optional[int] = None
+
+
+@app.post("/api/chapter/feasibility")
+async def api_chapter_feasibility(req: ChapterFeasibilityRequest):
+    try:
+        return evaluate_chapter_feasibility(
+            text=req.text or "",
+            voice=req.voice or "edge_alvaro",
+            image_engine=req.image_engine or "flux",
+            i2v_model=req.i2v_model or "kling_v21_pro",
+            enable_i2v=bool(req.enable_i2v if req.enable_i2v is not None else True),
+            scenes_count=req.scenes_count,
+        )
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
 
 @app.get("/api/settings/billing")
 async def api_get_settings_billing():

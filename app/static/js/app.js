@@ -249,6 +249,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const btnGenerateStoryboard = document.getElementById("btn-generate-storyboard");
   const btnQuickSaveChapter = document.getElementById("btn-quick-save-chapter");
   const btnPrepareNarration = document.getElementById("btn-prepare-narration");
+  const btnCheckFeasibility = document.getElementById("btn-check-feasibility");
+  const feasibilityPanel = document.getElementById("chapter-feasibility-panel");
   const btnDeleteActiveChapter = document.getElementById("btn-delete-active-chapter");
 
   // Storyboard y Render
@@ -5957,6 +5959,103 @@ document.addEventListener("DOMContentLoaded", () => {
         if (treeTitleEl) {
           treeTitleEl.textContent = val;
         }
+      }
+    });
+  }
+
+  if (btnCheckFeasibility && feasibilityPanel) {
+    btnCheckFeasibility.addEventListener("click", async () => {
+      const origLabel = btnCheckFeasibility.textContent;
+      btnCheckFeasibility.disabled = true;
+      btnCheckFeasibility.textContent = "⏳ Analizando herramientas y créditos...";
+      feasibilityPanel.style.display = "block";
+      feasibilityPanel.innerHTML = `<div style="color:var(--text-muted);">⏳ Consultando estado real de OpenAI, Fal.ai, ElevenLabs/Edge TTS y FFmpeg para este capítulo...</div>`;
+
+      const rawText = (rawChapterText?.value || "").trim();
+      const i2vSelect = document.getElementById("i2v-model-select");
+      const i2vModel = (i2vSelect && i2vSelect.value) ? i2vSelect.value : "kling_v21_pro";
+      const scenesCountVal = (state.scenes && state.scenes.length > 0) ? state.scenes.length : null;
+
+      try {
+        const res = await fetch("/api/chapter/feasibility", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            text: rawText,
+            voice: state.currentProject?.voz_defecto || "edge_alvaro",
+            image_engine: state.currentProject?.motor_imagenes || "flux",
+            i2v_model: i2vModel,
+            enable_i2v: true,
+            scenes_count: scenesCountVal
+          })
+        });
+        const data = await res.json();
+        if (!data.success) throw new Error(data.detail || "No se pudo evaluar la viabilidad");
+
+        const isReady = data.overall_status === "ready";
+        const borderCol = isReady ? "rgba(74,222,128,0.45)" : "rgba(251,191,36,0.55)";
+        const headColor = isReady ? "#4ade80" : "#fbbf24";
+        const m = data.metrics || {};
+
+        const rowsHtml = (data.stages || []).map(st => {
+          const ok = st.status === "ok" || st.status === "free";
+          const icon = ok ? "✅" : "❌";
+          const col = ok ? "#4ade80" : "#f87171";
+          const billLink = (!ok && st.billing_url)
+            ? ` <a href="${st.billing_url}" target="_blank" rel="noopener noreferrer" style="color:#fcd34d; font-weight:600; text-decoration:underline;">💳 Recargar en Billing</a>`
+            : "";
+          const costTag = st.cost_usd > 0 ? `$${st.cost_usd.toFixed(2)}` : "0,00 $";
+          return `
+            <tr style="border-bottom:1px solid rgba(255,255,255,0.06);">
+              <td style="padding:5px 6px; font-weight:600;">${st.phase}</td>
+              <td style="padding:5px 6px; color:var(--text-muted);">${st.tool}</td>
+              <td style="padding:5px 6px;">${st.needed}</td>
+              <td style="padding:5px 6px; color:${col};">${icon} ${st.available}${billLink}</td>
+              <td style="padding:5px 6px; text-align:right; font-family:var(--font-mono);">${costTag}</td>
+            </tr>
+          `;
+        }).join("");
+
+        feasibilityPanel.style.borderColor = borderCol;
+        feasibilityPanel.innerHTML = `
+          <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px; margin-bottom:8px;">
+            <div>
+              <div style="font-weight:700; font-size:0.9rem; color:${headColor};">${data.overall_summary}</div>
+              <div style="font-size:0.76rem; color:var(--text-muted); margin-top:2px;">
+                ${m.is_estimate ? "Estimación para un capítulo estándar (~130 palabras)" : `Calculado sobre el texto actual (${m.words} palabras, ${m.chars} caracteres)`}
+                · <b>${m.optimal_scenes} escenas</b> de ~10–12s · <b>${m.total_i2v_sec}s</b> de vídeo I2V · Coste total estimado: <b>$${(m.total_cost_usd || 0).toFixed(2)} USD</b>
+              </div>
+            </div>
+            <button type="button" class="btn btn-ghost btn-xs" id="btn-close-feasibility" title="Ocultar panel">✕</button>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%; border-collapse:collapse; font-size:0.78rem;">
+              <thead>
+                <tr style="border-bottom:1px solid rgba(255,255,255,0.12); color:var(--text-muted); text-align:left;">
+                  <th style="padding:4px 6px;">Fase del capítulo</th>
+                  <th style="padding:4px 6px;">Herramienta</th>
+                  <th style="padding:4px 6px;">Recursos necesarios</th>
+                  <th style="padding:4px 6px;">Estado / Créditos disponibles</th>
+                  <th style="padding:4px 6px; text-align:right;">Coste est.</th>
+                </tr>
+              </thead>
+              <tbody>
+                ${rowsHtml}
+              </tbody>
+            </table>
+          </div>
+        `;
+        const closeBtn = document.getElementById("btn-close-feasibility");
+        if (closeBtn) {
+          closeBtn.addEventListener("click", () => {
+            feasibilityPanel.style.display = "none";
+          });
+        }
+      } catch (err) {
+        feasibilityPanel.innerHTML = `<div style="color:#f87171;">❌ Error analizando viabilidad: ${err.message}</div>`;
+      } finally {
+        btnCheckFeasibility.disabled = false;
+        btnCheckFeasibility.textContent = origLabel;
       }
     });
   }
