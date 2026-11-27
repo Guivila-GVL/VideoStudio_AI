@@ -744,6 +744,13 @@ def enrich_scene_prompt_with_anchors(
     final_result = ", ".join([p.strip().strip(",;") for p in parts if p.strip()])
     final_result = re.sub(r"\s*,\s*", ", ", final_result)
 
+    # Skill #102: preservación de detalle en sombras para escenas nocturnas/poca luz
+    try:
+        from app.core.consistency_reference_skill import apply_shadow_preservation
+        final_result = apply_shadow_preservation(final_result)
+    except Exception:
+        pass
+
     if include_technical_flags and resolved_refs:
         final_result = build_technical_prompt_with_cref_and_lora(final_result, resolved_refs)
 

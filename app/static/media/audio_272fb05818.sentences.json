@@ -1,0 +1,32 @@
+[
+  {
+    "index": 1,
+    "speaker": "narrador",
+    "is_dialogue": false,
+    "voice_key": "edge_alvaro",
+    "voice_id": "es-ES-AlvaroNeural",
+    "emotion": "neutral",
+    "pitch": "+0Hz",
+    "rate": "+0%",
+    "text": "El burrito alzó las orejas.",
+    "start": 0.0,
+    "end": 2.74,
+    "duration": 2.74,
+    "words_count": 5
+  },
+  {
+    "index": 2,
+    "speaker": "personaje_1",
+    "is_dialogue": true,
+    "voice_key": "edge_elvira",
+    "voice_id": "es-ES-ElviraNeural",
+    "emotion": "urgent",
+    "pitch": "+6Hz",
+    "rate": "+10%",
+    "text": "¡Vamos a correr hacia el arroyo!",
+    "start": 3.0,
+    "end": 5.5,
+    "duration": 2.5,
+    "words_count": 6
+  }
+]

@@ -18,10 +18,10 @@
       "audio_url": "/static/media/audio_b19e2fb7c5.mp3",
       "image_url": "/static/media/img_48e73e29b6.jpg",
       "duracion_real": 6.13,
-      "estado_aprobacion": "pendiente",
-      "telegram_message_id": 527,
-      "propuesta_enviada_en": "2026-11-27T13:26:07.278620",
-      "motivo_rechazo": "",
+      "estado_aprobacion": "rechazado",
+      "telegram_message_id": 603,
+      "propuesta_enviada_en": "2026-11-27T14:02:59.239696",
+      "motivo_rechazo": "rechazar, no cuadra la expresión del rostro",
       "regeneraciones_count": 4,
       "aprobado_en": "2026-11-15T13:41:22.876124"
     },
@@ -62,7 +62,7 @@
   ],
   "video_url": "/static/media/video_short_a24d8bb8.mp4",
   "duracion": 17.51,
-  "actualizado_en": "2026-11-27 13:26:07",
+  "actualizado_en": "2026-11-27 14:03:43",
   "aprobacion_clips_status": "en_revision",
   "creado_en": "2026-11-11 13:34:59"
 }

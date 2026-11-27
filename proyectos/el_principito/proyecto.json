@@ -51,9 +51,9 @@
       "seed_consistencia": 177970,
       "estado_aprobacion": "aprobado",
       "motivo_rechazo": "",
-      "telegram_message_id": 519,
-      "aprobado_en": "2026-11-27T13:25:45.385052",
-      "propuesta_enviada_en": "2026-11-27T13:25:45.182835",
+      "telegram_message_id": 605,
+      "aprobado_en": "2026-11-27T14:03:41.737238",
+      "propuesta_enviada_en": "2026-11-27T14:03:41.398346",
       "reglas_personaje": {
         "hoja_4_vistas": false,
         "cuerpo_entero": true,
@@ -88,10 +88,10 @@
       "lora_trigger": "chr_el_zorro",
       "ancla_visual": "El Zorro (slender graceful desert fox with vibrant golden-orange fur, fluffy white chest and white-tipped bushy tail, expressive wise almond eyes, standing on all four paws)",
       "seed_consistencia": 813588,
-      "estado_aprobacion": "rechazado",
-      "motivo_rechazo": "rechazar, no cuadra la expresión del rostro",
+      "estado_aprobacion": "pendiente",
+      "motivo_rechazo": "",
       "telegram_message_id": null,
-      "aprobado_en": "2026-11-27T13:26:01.229280",
+      "aprobado_en": "2026-11-27T14:03:42.849329",
       "propuesta_enviada_en": "2026-11-11T12:00:00",
       "reglas_personaje": {
         "hoja_4_vistas": false,
@@ -168,9 +168,9 @@
       "active_version": null,
       "estado_aprobacion": "aprobado",
       "motivo_rechazo": "",
-      "telegram_message_id": 522,
-      "aprobado_en": "2026-11-27T13:25:45.925010",
-      "propuesta_enviada_en": "2026-11-27T13:25:45.735087",
+      "telegram_message_id": 609,
+      "aprobado_en": "2026-11-27T14:03:42.524325",
+      "propuesta_enviada_en": "2026-11-27T14:03:42.234237",
       "historial_imagenes": []
     },
     {
@@ -198,5 +198,5 @@
     }
   ],
   "creado_en": "2026-10-18 17:19:00",
-  "actualizado_en": "2026-11-27 13:51:03"
+  "actualizado_en": "2026-11-27 14:03:44"
 }

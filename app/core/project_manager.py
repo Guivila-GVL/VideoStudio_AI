@@ -709,6 +709,16 @@ def craft_character_portrait_prompt(
         force_refresh=force_refresh
     )
 
+    # Skill #102: hoja de referencia de 6 vistas sin bordes (opt-in: formato_vista="seis_vistas")
+    if formato_vista == "seis_vistas":
+        try:
+            from app.core.consistency_reference_skill import build_six_view_sheet_prompt
+            _dna6 = get_project_style_dna(project_data)
+            _style6 = (style_prompt_override or "").strip() or _dna6["character_art_style"]
+            return build_six_view_sheet_prompt(f"{name}: {translated_subject}", _style6)
+        except Exception:
+            formato_vista = "cuerpo_entero"
+
     lower_name = name.lower()
     lower_desc = desc.lower()
     lower_trans = translated_subject.lower()
@@ -2049,7 +2059,14 @@ def craft_environment_prompt(
 
     style_block = style_prompt_override.strip() if (style_prompt_override and style_prompt_override.strip()) else f"{prefix} {art_style}".strip()
     rules_str = ", ".join(rule_clauses)
-    return f"{style_block}, Scenic background illustration of {name}: {translated_env}, {rules_str}, masterpiece, no 3D CGI, no photorealism"
+    result = f"{style_block}, Scenic background illustration of {name}: {translated_env}, {rules_str}, masterpiece, no 3D CGI, no photorealism"
+    # Skill #102 (consistency-reference-prompt): preservar detalle en sombras en escenas nocturnas
+    try:
+        from app.core.consistency_reference_skill import apply_shadow_preservation
+        result = apply_shadow_preservation(result, f"{name} {desc}")
+    except Exception:
+        pass
+    return result
 
 
 def audit_environment_prompts_coherence(
@@ -3614,3 +3631,42 @@ def update_character_consistency_config(
     }
 
 
+
+
+def get_skill102_reference_prompts(project_id: str) -> Dict[str, Any]:
+    """
+    Skill #102 (10114514/consistency-reference-prompt) integrada en el Paso 2:
+    genera, sin alterar el banco actual (--cref / LoRA), los prompts de hoja de
+    personaje de 6 vistas (fondo #FFFFFF, sin marcos) y de escenario con
+    preservacion de sombras nocturnas para cada personaje/escenario del proyecto.
+    El estilo y formato (p. ej. 9:16) se heredan del ADN visual del proyecto.
+    """
+    from app.core.consistency_reference_skill import (
+        build_skill102_character_6view_prompt,
+        build_skill102_scene_reference_prompt,
+    )
+    project = get_project(project_id)
+    style_clause = f"{project.get('estilo_visual') or 'storybook'} style illustration, vertical 9:16 composition, no text, no watermarks"
+
+    characters = []
+    for c in project.get("personajes", []) or []:
+        characters.append({
+            "id": c.get("id"),
+            "nombre": c.get("nombre"),
+            "prompt_6_vistas": build_skill102_character_6view_prompt(c, style_clause=style_clause),
+        })
+    scenes = []
+    for e in project.get("escenarios", []) or []:
+        scenes.append({
+            "id": e.get("id"),
+            "nombre": e.get("nombre"),
+            "prompt_escenario": build_skill102_scene_reference_prompt(
+                e, characters_in_scene=[], props_in_scene=[], is_night_or_low_light=False, exclude_characters=[], style_clause=style_clause
+            ),
+        })
+    return {
+        "project_id": project_id,
+        "skill": "#102 10114514/consistency-reference-prompt",
+        "personajes": characters,
+        "escenarios": scenes,
+    }

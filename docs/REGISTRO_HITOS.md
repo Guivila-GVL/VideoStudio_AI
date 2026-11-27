@@ -1,5 +1,21 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [27/11/2026 14:02:46] ✅ Implementar definitivamente #102 10114514/consistency-reference-prompt en 2. Consistencia visual de personajes y escenarios (#P3)
+
+- **ID Tarea:** `217`
+- **Prioridad:** ALTA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Skill #102 integrada en Paso 2: helpers en consistency_reference_skill.py, regla de preservación de sombras nocturnas en craft_environment_prompt y enrich_scene_prompt_with_anchors, hoja 6 vistas opt-in (formato_vista=seis_vistas) en craft_character_portrait_prompt; defaults intactos. Tests: 5 nuevos + test_app + test_api en verde; test_telegram_approvals falla por HTTP 409 Conflict de polling Telegram (externo, ajeno al cambio). PROCESO_PROYECTO.md actualizado.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen, 02. Actividades y 03. Siguientes Pasos)
+  - [x] Arquitectura del proceso revisada y NotebookLM sincronizado
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [27/11/2026 13:53:29] ✅ Probar / Adaptar Skill #102 10114514/consistency-reference-prompt en 2. Consistencia visual de personajes y escenarios (#P3)
 
 - **ID Tarea:** `212`

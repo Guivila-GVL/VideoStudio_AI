@@ -1,0 +1,177 @@
+[
+  {
+    "word": "Platero",
+    "start": 0.1,
+    "duration": 0.582,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "es",
+    "start": 0.697,
+    "duration": 0.128,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "pequeno",
+    "start": 0.839,
+    "duration": 0.526,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "peludo",
+    "start": 1.648,
+    "duration": 0.511,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "suave",
+    "start": 2.472,
+    "duration": 0.597,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "tan",
+    "start": 4.523,
+    "duration": 0.27,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "blando",
+    "start": 4.808,
+    "duration": 0.327,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "por",
+    "start": 5.148,
+    "duration": 0.17,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "fuera",
+    "start": 5.333,
+    "duration": 0.369,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "que",
+    "start": 5.972,
+    "duration": 0.114,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "se",
+    "start": 6.1,
+    "duration": 0.142,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "diria",
+    "start": 6.256,
+    "duration": 0.355,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "todo",
+    "start": 6.626,
+    "duration": 0.27,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "de",
+    "start": 6.91,
+    "duration": 0.099,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "algodon",
+    "start": 7.023,
+    "duration": 0.682,
+    "speaker": "narrador",
+    "emotion": "tender"
+  },
+  {
+    "word": "Mira",
+    "start": 9.145,
+    "duration": 0.341,
+    "speaker": "personaje_1",
+    "emotion": "urgent"
+  },
+  {
+    "word": "Platero",
+    "start": 9.566,
+    "duration": 0.5,
+    "speaker": "personaje_1",
+    "emotion": "urgent"
+  },
+  {
+    "word": "le",
+    "start": 11.291,
+    "duration": 0.232,
+    "speaker": "narrador",
+    "emotion": "neutral"
+  },
+  {
+    "word": "dijo",
+    "start": 11.536,
+    "duration": 0.271,
+    "speaker": "narrador",
+    "emotion": "neutral"
+  },
+  {
+    "word": "la",
+    "start": 11.819,
+    "duration": 0.09,
+    "speaker": "narrador",
+    "emotion": "neutral"
+  },
+  {
+    "word": "niña",
+    "start": 11.922,
+    "duration": 0.271,
+    "speaker": "narrador",
+    "emotion": "neutral"
+  },
+  {
+    "word": "sonriendo",
+    "start": 12.206,
+    "duration": 0.799,
+    "speaker": "narrador",
+    "emotion": "neutral"
+  },
+  {
+    "word": "Ves",
+    "start": 14.262,
+    "duration": 0.326,
+    "speaker": "personaje_1",
+    "emotion": "question"
+  },
+  {
+    "word": "esas",
+    "start": 14.588,
+    "duration": 0.299,
+    "speaker": "personaje_1",
+    "emotion": "question"
+  },
+  {
+    "word": "mariposas",
+    "start": 14.887,
+    "duration": 0.703,
+    "speaker": "personaje_1",
+    "emotion": "question"
+  }
+]

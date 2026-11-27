@@ -10,8 +10,8 @@
 
 ## Paso 2: Consistencia visual de personajes y escenarios
 - **Descripción:** Define rasgos físicos fijos del protagonista y escenarios para mantener coherencia en todas las escenas del vídeo.
-- **Programas / Archivos:** `proyectos/banco_consistencia_global.json, docs/ESTRATEGIA_CONSISTENCIA_VISUAL.md`
-- **Skills utilizadas:** `Ninguna`
+- **Programas / Archivos:** `proyectos/banco_consistencia_global.json, docs/ESTRATEGIA_CONSISTENCIA_VISUAL.md, app/core/consistency_reference_skill.py, app/core/project_manager.py, app/core/script_generator.py, tests/test_consistency_skill102.py`
+- **Skills utilizadas:** `#102 10114514/consistency-reference-prompt` (adoptada definitivamente, prueba A/B P3 validada: hoja de 6 vistas sin bordes opt-in con formato_vista=seis_vistas, perfiles de 9 atributos, fichas de props multi-estado y regla de preservación de sombras en escenas nocturnas aplicada automáticamente en craft_environment_prompt y enrich_scene_prompt_with_anchors; evidencias en validacion/pruebas_skills/P3)
 
 ## Paso 3: Aprobación Human-in-the-Loop vía Telegram
 - **Descripción:** Envía propuestas visuales por Telegram con botones (Aprobar/Rechazar/Rehacer) y procesa respuestas en lenguaje natural.

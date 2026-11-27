@@ -1676,3 +1676,15 @@ async def api_save_settings(req: SettingsRequest):
         return {"success": True, "settings": res}
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+@app.get("/api/projects/{project_id}/consistency-reference-prompts")
+async def api_get_skill102_reference_prompts(project_id: str):
+    """Prompts de referencia de consistencia (Skill #102) para personajes y escenarios del proyecto."""
+    try:
+        from app.core.project_manager import get_skill102_reference_prompts
+        return {"success": True, **get_skill102_reference_prompts(project_id)}
+    except FileNotFoundError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))

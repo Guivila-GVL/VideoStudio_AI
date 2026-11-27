@@ -170,6 +170,7 @@ def build_skill102_scene_reference_prompt(
     characters_in_scene: Optional[List[str]] = None,
     props_in_scene: Optional[List[Dict[str, Any]]] = None,
     is_night_or_low_light: bool = True,
+    exclude_characters: Optional[List[str]] = None,
     style_clause: str = "delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, vertical 9:16 composition, no 3D CGI, no photorealism",
 ) -> str:
     """
@@ -228,9 +229,46 @@ def build_skill102_scene_reference_prompt(
         parts.append("Consistent Characters: " + "; ".join(char_clauses))
     if prop_clauses:
         parts.append("Consistent Props: " + "; ".join(prop_clauses))
-    parts.append("Strict character lock: exclude unrelated database characters (NO Darbón the white-bearded veterinarian)")
+    excl = ["Darbón the white-bearded veterinarian"] if exclude_characters is None else exclude_characters
+    if excl:
+        parts.append("Strict character lock: exclude unrelated database characters (NO " + ", NO ".join(excl) + ")")
     parts.append(f"No text, no captions, no watermarks. {style_clause}, masterpiece.")
     return ". ".join(parts)
+
+
+# ---------------------------------------------------------------------------
+# Helpers de producción (integrados definitivamente en el Paso 2)
+# ---------------------------------------------------------------------------
+SHADOW_PRESERVATION_CLAUSE = (
+    "For night or low-light scenes, preserve shadow details — dark areas must have "
+    "visible watercolor and ink detail, no crushed blacks"
+)
+_LOW_LIGHT_WORDS = (
+    "night", "twilight", "dusk", "evening", "moon", "starry", "nocturn", "noche",
+    "anochecer", "crepúsculo", "crepusculo", "atardecer", "morad", "low-light", "low light",
+)
+
+
+def is_low_light_text(text: str) -> bool:
+    """True si el texto describe una escena nocturna o de poca luz."""
+    low = (text or "").lower()
+    return any(w in low for w in _LOW_LIGHT_WORDS)
+
+
+def apply_shadow_preservation(prompt: str, context_text: str = "") -> str:
+    """Añade (una sola vez) la regla de preservación de sombras si la escena es de poca luz."""
+    if not prompt or "preserve shadow details" in prompt.lower():
+        return prompt
+    if is_low_light_text(f"{context_text} {prompt}"):
+        return f"{prompt.rstrip(', ')}, {SHADOW_PRESERVATION_CLAUSE}"
+    return prompt
+
+
+def build_six_view_sheet_prompt(subject: str, style_clause: str) -> str:
+    """Hoja de referencia de 6 vistas sin bordes (Skill #102) para un sujeto ya descrito."""
+    return build_skill102_character_6view_prompt(
+        {"nombre": "Character", "ancla_visual": subject}, style_clause=style_clause
+    ).replace("Character: ", "", 1)
 
 
 def _load_font(size: int, bold: bool = False) -> ImageFont.FreeTypeFont:

@@ -5,7 +5,7 @@
   "total_personajes": 3,
   "referencias_listas": 3,
   "generados_en_sincronizacion": [],
-  "actualizado_en": "2026-11-27 13:51:03",
+  "actualizado_en": "2026-11-27 14:03:44",
   "personajes": [
     {
       "project_id": "el_principito",
@@ -61,7 +61,7 @@
       "lora_directive": "<lora:el_principito_el_zorro_v1:0.85> chr_el_zorro",
       "ancla_visual": "El Zorro (slender graceful desert fox with vibrant golden-orange fur, fluffy white chest and white-tipped bushy tail, expressive wise almond eyes, standing on all four paws)",
       "seed_consistencia": 813588,
-      "estado_aprobacion": "rechazado"
+      "estado_aprobacion": "pendiente"
     },
     {
       "project_id": "el_principito",
