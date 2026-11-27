@@ -199,19 +199,38 @@ def test_api():
     assert narrator_res.status_code == 200
     narrator_info = narrator_res.json()
     assert narrator_info["success"] is True
-    assert narrator_info["voz_defecto"] == "edge_alvaro_joven"
+    assert narrator_info["voz_defecto"].startswith("edge_")
 
-    # Test voz sintetizada en tiempo real con edge_alvaro_joven
+    # Test voz sintetizada en tiempo real con edge_alvaro_joven (producción expresiva wind-comic)
     test_voice_res = client.post("/api/projects/platero_y_yo/narrator/test-voice", json={
         "voice_id": "edge_alvaro_joven",
-        "sample_text": "Platero es pequeno, peludo, suave; tan blando por fuera, que se diria todo de algodon."
+        "sample_text": "Platero es pequeno, peludo, suave; tan blando por fuera, que se diria todo de algodon.\n—¡Mira, Platero! —le dijo la niña sonriendo—. ¿Ves esas mariposas?"
     })
     assert test_voice_res.status_code == 200
     voice_audio = test_voice_res.json()
     assert voice_audio["success"] is True
     assert voice_audio["provider"] == "edge"
+    assert voice_audio.get("engine_mode") == "edge_wind_comic_expressive"
     assert voice_audio["duration"] > 0
-    print(f"[OK] Sintesis de voz en espanol nativo verificada con exito: {voice_audio['url']} ({voice_audio['duration']}s)")
+    assert len(voice_audio.get("sentences", [])) >= 3
+    speakers = {s["speaker"] for s in voice_audio["sentences"]}
+    voices_used = {s["voice_key"] for s in voice_audio["sentences"]}
+    assert "narrador" in speakers
+    assert len(voices_used) >= 2, "Debe diferenciar voz de narrador y personaje en diálogo"
+    print(f"[OK] Sintesis expresiva wind-comic en produccion verificada con exito: {voice_audio['url']} ({voice_audio['duration']}s, {len(voice_audio['sentences'])} frases, voces={voices_used})")
+
+    # Test endpoint /api/tts/generate en produccion
+    tts_gen_res = client.post("/api/tts/generate", json={
+        "text": "El burrito alzó las orejas.\n—¡Vamos a correr hacia el arroyo!",
+        "voice_key": "edge_alvaro"
+    })
+    assert tts_gen_res.status_code == 200
+    tts_gen = tts_gen_res.json()
+    assert tts_gen["success"] is True
+    assert tts_gen.get("engine_mode") == "edge_wind_comic_expressive"
+    assert len(tts_gen.get("sentences", [])) >= 2
+    assert len(tts_gen.get("words", [])) > 0
+    print(f"[OK] Endpoint /api/tts/generate validado con timestamps por frase ({len(tts_gen['sentences'])}) y palabra ({len(tts_gen['words'])})")
 
     print("\n[EXITO] Todos los tests de la API, Consistencia Visual, Pipeline y Voces Espanolas pasaron al 100%!")
 

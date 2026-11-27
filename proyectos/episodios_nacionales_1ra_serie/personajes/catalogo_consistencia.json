@@ -1,0 +1,39 @@
+{
+  "project_id": "episodios_nacionales_1ra_serie",
+  "titulo": "Episodios Nacionales - 1ra Serie",
+  "estilo_visual": "cinematic",
+  "total_personajes": 1,
+  "referencias_listas": 1,
+  "generados_en_sincronizacion": [],
+  "actualizado_en": "2026-11-27 13:27:33",
+  "personajes": [
+    {
+      "project_id": "episodios_nacionales_1ra_serie",
+      "project_title": "Episodios Nacionales - 1ra Serie",
+      "id": "personaje_principal",
+      "nombre": "Personaje Principal",
+      "rol": "Protagonista",
+      "tipo": "humano",
+      "descripcion_visual": "Figura carismática con mirada decidida, atuendo característico de su época y porte seguro.",
+      "prompt_retrato": "Three-quarter angle (45-degree front-side view) illustrated character illustration of Personaje Principal, Charismatic figure with a determined look, characteristic attire of his time and confident demeanor, single human, full body standing head to toe, shoes visible, no other characters, single character shown in a natural three-quarter front-side pose (body and head angled 45 degrees to the side, non-symmetrical diagonal stance, not facing straight at the camera), full body standing head to toe, wide safety margins, no cropped feet, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features, centered composition with wide safety margins, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, no paper texture, no parchment texture, no yellow tint, no shadows, zero scenery, no text, no words, no labels, no arrows, vertical 9:16 portrait composition, cinematic 35mm character design, authentic film lighting, shallow depth of field, sharp photorealistic details, masterpiece",
+      "formato_vista": "cuerpo_entero",
+      "sin_fondo": true,
+      "imagen_url": "/proyectos_data/episodios_nacionales_1ra_serie/personajes/personaje_principal.jpg?t=1795782417",
+      "clean_image_url": "/proyectos_data/episodios_nacionales_1ra_serie/personajes/personaje_principal.jpg",
+      "hoja_referencia_path": "proyectos/episodios_nacionales_1ra_serie/personajes/personaje_principal.jpg",
+      "reference_exists": true,
+      "file_size_bytes": 207755,
+      "file_size_formatted": "203 KB",
+      "cref_url": "/proyectos_data/episodios_nacionales_1ra_serie/personajes/personaje_principal.jpg",
+      "cref_weight": 100,
+      "cref_directive": "--cref /proyectos_data/episodios_nacionales_1ra_serie/personajes/personaje_principal.jpg --cw 100",
+      "lora_model": "episodios_nacionales_1ra_serie_personaje_principal_v1",
+      "lora_weight": 0.85,
+      "lora_trigger": "chr_personaje_principal",
+      "lora_directive": "<lora:episodios_nacionales_1ra_serie_personaje_principal_v1:0.85> chr_personaje_principal",
+      "ancla_visual": "Personaje Principal (Full body character turnaround, cinematic 35mm style, plain solid white background, vertical 9:16, masterpiece)",
+      "seed_consistencia": 124822,
+      "estado_aprobacion": "pendiente"
+    }
+  ]
+}

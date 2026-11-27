@@ -340,6 +340,8 @@ class TTSRequest(BaseModel):
     voice_key: str = "edge_alvaro"
     provider: Optional[str] = None
     custom_voice_id: Optional[str] = None
+    expressive: Optional[bool] = True
+    dialogue_voice_map: Optional[Dict[str, str]] = None
 
 class ImageRequest(BaseModel):
     prompt: str
@@ -556,7 +558,9 @@ def test_narrator_voice_endpoint(project_id: str, req: TestNarratorVoiceRequest)
             "success": True,
             "url": res["url"],
             "duration": res["duration"],
-            "provider": res.get("provider", "openai")
+            "provider": res.get("provider", "openai"),
+            "engine_mode": res.get("engine_mode", "standard"),
+            "sentences": res.get("sentences", []),
         }
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
@@ -1489,7 +1493,9 @@ async def api_generate_tts(req: TTSRequest):
             text=req.text,
             voice_key=req.voice_key,
             provider=req.provider,
-            custom_voice_id=req.custom_voice_id
+            custom_voice_id=req.custom_voice_id,
+            expressive=True if req.expressive is None else bool(req.expressive),
+            dialogue_voice_map=req.dialogue_voice_map,
         )
         return {"success": True, **res}
     except Exception as e:

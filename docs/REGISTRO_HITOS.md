@@ -1,5 +1,37 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [27/11/2026 13:28:30] ✅ Implementar definitivamente #87 ChrisChen667788/wind-comic (patrón services/tts.service.ts) en Paso 5: Locución neuronal y narración de audio (#P1)
+
+- **ID Tarea:** `211`
+- **Prioridad:** ALTA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Implementada definitivamente en producción la Skill #87 ChrisChen667788/wind-comic (patrón services/tts.service.ts) en el Paso 5 (Locución neuronal y narración de audio): 1) synthesize_speech en app/core/tts_engine.py ejecuta por defecto el motor expresivo edge_wind_comic_expressive con modulación emocional por frase (pitch/rate/pausa según emoción detectada), 2) diferenciación automática de voces entre narrador, incisos y personajes en diálogos, y 3) generación automática de timestamps exactos por frase (.sentences.json) y por palabra (.words.json) para subtítulos. Actualizados endpoints /api/tts/generate y /narrator/test-voice en app/main.py, docs/PROCESO_PROYECTO.md y validados todos los tests de API al 100%.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen, 02. Actividades y 03. Siguientes Pasos)
+  - [x] Arquitectura del proceso revisada y NotebookLM sincronizado
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
+### [27/11/2026 13:08:34] ✅ Probar / Adaptar Skill #87 ChrisChen667788/wind-comic (patrón services/tts.service.ts) en Paso 5: Locución neuronal y narración de audio (#P1)
+
+- **ID Tarea:** `208`
+- **Prioridad:** ALTA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Adaptado el patrón services/tts.service.ts de Skill #87 (ChrisChen667788/wind-comic) en Paso 5 (app/core/tts_engine.py) sin alterar synthesize_speech en producción. Añadidas las 3 mejoras: 1) modulación emocional por frase (pitch/rate/pausa según emoción detectada), 2) diferenciación automática de voces en español nativo entre narrador (edge_alvaro), incisos narrativos y personajes en diálogo (edge_elvira, edge_alvaro_joven), y 3) timestamps exactos por frase (.sentences.json) y por palabra (.words.json). Ejecutada prueba comparativa A/B en scratch/ (audio_ANTES_actual.mp3 de 22.99s plano vs audio_DESPUES_adaptado.mp3 de 30.24s expresivo multi-voz) y verificado endpoint /narrator/test-voice al 100%.
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen, 02. Actividades y 03. Siguientes Pasos)
+  - [x] Arquitectura del proceso revisada y NotebookLM sincronizado
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [15/11/2026 12:10:00] ✅ Auditoría de consistencia, documentación en OneNote y ejecución autónoma del Capítulo 2 (Platero y Yo)
 
 - **ID Tarea:** `manual-cap2-autonomo`

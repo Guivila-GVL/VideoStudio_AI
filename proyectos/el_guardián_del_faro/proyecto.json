@@ -6,8 +6,30 @@
   "ambiente": "Acantilados rocosos de Punta Esmeralda en una costa atlántica salvaje. El tono es misterioso, cinematográfico y épico, con noches de niebla densa, tormentas marinas y destellos luminosos mágicos.",
   "estilo_visual": "cinematic",
   "estilo_detalles": "Iluminación cinematográfica 35mm, alto contraste, sombras atmosféricas, partículas de niebla marina y reflejos de luz dorada en la lluvia.",
+  "reglas_generacion": {
+    "fondo_blanco": true,
+    "cuerpo_entero": true,
+    "sin_texto": true,
+    "escenarios_sin_personas": true,
+    "formato_vertical": true,
+    "nivel_detalle": 75,
+    "nivel_realismo": 75
+  },
+  "motor_imagenes": "flux",
   "voz_defecto": "eleven_george",
+  "perfil_narrador": {
+    "nombre": "Narrador Principal",
+    "genero": "masculino",
+    "edad_aprox": "Adulto (30-40 años)",
+    "rango_edad": "adulto",
+    "tono": "Cálido y literario",
+    "justificacion": "Narrador general del universo.",
+    "voz_recomendada": "eleven_george",
+    "texto_muestra": "Había una vez un lugar donde las historias cobraban vida."
+  },
   "personajes_recurrentes_texto": "Lucas (el joven vigía del faro), Marina (guardiana del océano)",
+  "referencia_personaje_id": null,
+  "referencia_escenario_id": null,
   "personajes": [
     {
       "id": "lucas",
@@ -16,17 +38,37 @@
       "tipo": "humano",
       "descripcion_visual": "Joven vigía de 25 años, cabello castaño revuelto por el viento, rostro decidido, viste un impermeable impermeable amarillo brillante y sostiene una linterna de bronce",
       "imagen_url": "/proyectos_data/el_guardián_del_faro/personajes/lucas.jpg?t=1794398793",
-      "prompt_retrato": "Full body character turnaround model sheet of Lucas, a 25 year old handsome lighthouse keeper, tousled brown hair, determined expression, wearing a classic bright yellow rain coat slicker jacket and holding a vintage brass lantern, cinematic 35mm film lighting, dramatic atmospheric look, isolated on plain solid pure white background, vertical 9:16, masterpiece",
       "hoja_referencia_path": "proyectos/el_guardián_del_faro/personajes/lucas.jpg",
+      "prompt_retrato": "Three-quarter angle (45-degree front-side view) illustrated character illustration of Lucas, Young lookout, 25 years old, brown hair tousled by the wind, determined face, wearing a bright yellow raincoat and holding a bronze lantern, child/adolescent human, full body standing head to toe, shoes visible, no other characters, single character shown in a natural three-quarter front-side pose (body and head angled 45 degrees to the side, non-symmetrical diagonal stance, not facing straight at the camera), full body standing head to toe, wide safety margins, no cropped feet, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features, centered composition with wide safety margins, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, no paper texture, no parchment texture, no yellow tint, no shadows, zero scenery, no text, no words, no labels, no arrows, vertical 9:16 portrait composition, cinematic 35mm character design, authentic film lighting, shallow depth of field, sharp photorealistic details, Iluminación cinematográfica 35mm, alto contraste, sombras atmosféricas, partículas de niebla marina y reflejos de luz dorada en la lluvia., masterpiece",
+      "sin_fondo": true,
+      "formato_vista": "cuerpo_entero",
       "cref_url": "/proyectos_data/el_guardián_del_faro/personajes/lucas.jpg",
       "cref_weight": 100,
-      "cref_directive": "--cref /proyectos_data/el_guardián_del_faro/personajes/lucas.jpg --cw 100",
       "lora_model": "el_guardián_del_faro_lucas_v1",
       "lora_weight": 0.85,
       "lora_trigger": "chr_lucas",
-      "lora_directive": "<lora:el_guardián_del_faro_lucas_v1:0.85> chr_lucas",
       "ancla_visual": "Lucas (25-year-old handsome coastal lighthouse keeper, wind-tousled brown hair, determined gaze, wearing a bright yellow waterproof slicker raincoat and holding a vintage brass lantern)",
-      "seed_consistencia": 744067
+      "seed_consistencia": 744067,
+      "estado_aprobacion": "aprobado",
+      "motivo_rechazo": "",
+      "telegram_message_id": null,
+      "aprobado_en": null,
+      "propuesta_enviada_en": null,
+      "reglas_personaje": {
+        "hoja_4_vistas": false,
+        "cuerpo_entero": true,
+        "fondo_blanco": true,
+        "sin_texto": true,
+        "formato_vertical": true,
+        "nivel_detalle": 75,
+        "nivel_realismo": 75
+      },
+      "hoja_4_vistas_url": null,
+      "vistas_4": null,
+      "active_version": null,
+      "historial_imagenes": [],
+      "cref_directive": "--cref /proyectos_data/el_guardián_del_faro/personajes/lucas.jpg --cw 100",
+      "lora_directive": "<lora:el_guardián_del_faro_lucas_v1:0.85> chr_lucas"
     },
     {
       "id": "marina",
@@ -35,17 +77,37 @@
       "tipo": "humano",
       "descripcion_visual": "Joven mujer etérea de largos cabellos ondulados azul mar, mirada profunda color turquesa, vestida con túnica marina fluida con destellos fosforescentes",
       "imagen_url": "/proyectos_data/el_guardián_del_faro/personajes/marina.jpg?t=1794398793",
-      "prompt_retrato": "Full body character turnaround model sheet of Marina, an ethereal ocean guardian maiden, long wavy sea-blue hair flowing with gentle breeze, deep turquoise eyes, wearing a glowing translucent sea-green dress with luminescent oceanic accents, cinematic lighting, isolated on plain solid pure white background, vertical 9:16, masterpiece",
       "hoja_referencia_path": "proyectos/el_guardián_del_faro/personajes/marina.jpg",
+      "prompt_retrato": "Three-quarter angle (45-degree front-side view) illustrated character illustration of Marina, Young ethereal woman with long wavy sea-blue hair, deep turquoise look, dressed in a fluid marine tunic with phosphorescent sparkles, child/adolescent human, full body standing head to toe, shoes visible, no other characters, single character shown in a natural three-quarter front-side pose (body and head angled 45 degrees to the side, non-symmetrical diagonal stance, not facing straight at the camera), full body standing head to toe, wide safety margins, no cropped feet, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features, centered composition with wide safety margins, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, no paper texture, no parchment texture, no yellow tint, no shadows, zero scenery, no text, no words, no labels, no arrows, vertical 9:16 portrait composition, cinematic 35mm character design, authentic film lighting, shallow depth of field, sharp photorealistic details, Iluminación cinematográfica 35mm, alto contraste, sombras atmosféricas, partículas de niebla marina y reflejos de luz dorada en la lluvia., masterpiece",
+      "sin_fondo": true,
+      "formato_vista": "cuerpo_entero",
       "cref_url": "/proyectos_data/el_guardián_del_faro/personajes/marina.jpg",
       "cref_weight": 100,
-      "cref_directive": "--cref /proyectos_data/el_guardián_del_faro/personajes/marina.jpg --cw 100",
       "lora_model": "el_guardián_del_faro_marina_v1",
       "lora_weight": 0.85,
       "lora_trigger": "chr_marina",
-      "lora_directive": "<lora:el_guardián_del_faro_marina_v1:0.85> chr_marina",
       "ancla_visual": "Marina (ethereal ocean guardian maiden, long wavy sea-blue hair, deep turquoise eyes, wearing a flowing translucent sea-green dress with luminescent oceanic accents)",
-      "seed_consistencia": 891046
+      "seed_consistencia": 891046,
+      "estado_aprobacion": "aprobado",
+      "motivo_rechazo": "",
+      "telegram_message_id": null,
+      "aprobado_en": null,
+      "propuesta_enviada_en": null,
+      "reglas_personaje": {
+        "hoja_4_vistas": false,
+        "cuerpo_entero": true,
+        "fondo_blanco": true,
+        "sin_texto": true,
+        "formato_vertical": true,
+        "nivel_detalle": 75,
+        "nivel_realismo": 75
+      },
+      "hoja_4_vistas_url": null,
+      "vistas_4": null,
+      "active_version": null,
+      "historial_imagenes": [],
+      "cref_directive": "--cref /proyectos_data/el_guardián_del_faro/personajes/marina.jpg --cw 100",
+      "lora_directive": "<lora:el_guardián_del_faro_marina_v1:0.85> chr_marina"
     }
   ],
   "escenarios": [
@@ -55,7 +117,16 @@
       "tipo": "exterior_costero",
       "descripcion_visual": "Antiguo faro majestuoso de piedra blanca sobre un acantilado negro azotado por olas gigantes y densa niebla con rayos dorados",
       "imagen_url": null,
-      "prompt_escenario": "Scenic background art of a majestic ancient tall white stone lighthouse on a dark dramatic rocky cliff, giant ocean waves crashing, dense coastal sea fog pierced by warm golden lantern rays, empty scene, no people, cinematic 35mm photography, vertical 9:16 background scenery, masterpiece"
+      "prompt_escenario": "Cinematic 35mm film still scenic background of cinematic atmospheric lighting, 35mm anamorphic lens, shallow depth of field, authentic film grain, Iluminación cinematográfica 35mm, alto contraste, sombras atmosféricas, partículas de niebla marina y reflejos de luz dorada en la lluvia., Scenic background illustration of Faro de Punta Esmeralda: Old majestic white stone lighthouse on a black cliff lashed by giant waves and dense fog with golden rays, empty scene, no people, no characters, no animals, no text, no words, no labels, no watermarks, vertical 9:16 portrait background scenery, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book scenery design, soft simplified features, masterpiece, no 3D CGI, no photorealism",
+      "reglas_escenario": null,
+      "seed_consistencia": null,
+      "active_version": null,
+      "estado_aprobacion": "pendiente",
+      "motivo_rechazo": "",
+      "telegram_message_id": null,
+      "aprobado_en": null,
+      "propuesta_enviada_en": null,
+      "historial_imagenes": []
     },
     {
       "id": "linterna_fresnel",
@@ -63,9 +134,18 @@
       "tipo": "interior",
       "descripcion_visual": "Cúpula de cristal del faro con la enorme lente de Fresnel dorada giratoria, tormenta visible a través de los cristales salpicados de lluvia",
       "imagen_url": null,
-      "prompt_escenario": "Scenic background art of the top interior lantern room of an antique lighthouse, massive rotating golden Fresnel glass lens glowing brightly, storm and lightning visible through rain-slicked glass windows, empty scene, no people, vertical 9:16 background scenery, cinematic lighting, masterpiece"
+      "prompt_escenario": "Cinematic 35mm film still scenic background of cinematic atmospheric lighting, 35mm anamorphic lens, shallow depth of field, authentic film grain, Iluminación cinematográfica 35mm, alto contraste, sombras atmosféricas, partículas de niebla marina y reflejos de luz dorada en la lluvia., Scenic background illustration of Sala de la Linterna: Lighthouse glass dome with huge rotating golden Fresnel lens, storm visible through rain-spattered glass, empty scene, no people, no characters, no animals, no text, no words, no labels, no watermarks, vertical 9:16 portrait background scenery, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book scenery design, soft simplified features, masterpiece, no 3D CGI, no photorealism",
+      "reglas_escenario": null,
+      "seed_consistencia": null,
+      "active_version": null,
+      "estado_aprobacion": "pendiente",
+      "motivo_rechazo": "",
+      "telegram_message_id": null,
+      "aprobado_en": null,
+      "propuesta_enviada_en": null,
+      "historial_imagenes": []
     }
   ],
   "creado_en": "2026-10-18 12:00:00",
-  "actualizado_en": "2026-11-11 18:36:08"
+  "actualizado_en": "2026-11-27 13:27:33"
 }

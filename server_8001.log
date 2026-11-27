@@ -363,3 +363,1756 @@ INFO:     127.0.0.1:56577 - "GET /proyectos_data/platero_y_yo/escenarios/establo
 INFO:     127.0.0.1:56557 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794415894326 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56575 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56575 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+
+[2026-11-12 19:06:03] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [13852]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:51850 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51850 - "GET /static/css/style.css?v=2.9 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51852 - "GET /static/js/app.js?v=3.5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51852 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51852 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51852 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51852 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51880 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51852 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794506772050 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51850 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794506772051 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794506772051 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51884 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794506772052 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51880 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794506772052 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51885 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794506772052 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51850 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794506772053 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51880 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794506772053 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51884 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794506772054 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794506772054 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51885 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51885 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794506772054 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51884 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51884 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794506772055 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51880 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794506772055 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1792667712 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51852 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1792934963 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1792874195 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1792874327 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1792921205 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51881 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1792870526 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51852 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1792870563 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:51884 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51884 - "GET /proyectos_data/platero_y_yo/capitulos/cap_01_platero/video_final.mp4?t=1792877561 HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:52121 - "POST /api/projects/platero_y_yo/chapters/cap_01_platero/scenes/1/decision HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52405 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52405 - "GET /static/css/style.css?v=2.9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /static/js/app.js?v=3.5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52461 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794571625331 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52462 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794571625332 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52465 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794571625333 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794571625334 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52466 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794571625334 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52468 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794571625330 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52465 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794571625335 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52461 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794571625335 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52461 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794571625336 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52462 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52462 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794571625337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52461 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52461 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794571625337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52465 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794571625337 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52415 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794571625338 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52468 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1792934963 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "POST /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "POST /api/projects/platero_y_yo/character-bank/sync HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794571691424 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53256 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53257 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794571691425 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53258 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794571691426 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53259 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794571691427 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53260 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794571691427 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53256 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794571691428 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794571691429 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53259 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53257 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794571691430 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53259 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794571691432 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53257 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794571691433 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53259 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794571691434 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53249 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794571691434 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53258 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794571691435 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53521 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54895 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54895 - "GET /static/css/style.css?v=3.0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /static/js/app.js?v=3.5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54895 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794572168256 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54904 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794572168257 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54908 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794572168257 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54909 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794572168258 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54895 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794572168260 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54910 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794572168259 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54909 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794572168261 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54904 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794572168261 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794572168262 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54904 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794572168263 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54897 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794572168263 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54909 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794572168264 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54908 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794572168264 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54909 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54908 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54909 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62578 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62580 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62578 - "GET /static/css/style.css?v=3.0 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62671 - "GET /static/js/app.js?v=3.5 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62671 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62671 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62671 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62671 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63249 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63291 - "GET /api/settings HTTP/1.1" 200 OK
+
+[2026-11-13 16:10:31] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [49304]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61793 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61795 - "GET /static/js/app.js?v=3.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61793 - "GET /static/css/style.css?v=3.0 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61793 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61849 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794582640759 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61851 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794582640760 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61852 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794582640761 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61855 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794582640762 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61853 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794582640762 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61849 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794582640763 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61852 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794582640764 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61853 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794582640764 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61849 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794582640765 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61851 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794582640765 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794582640766 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61855 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794582640766 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61849 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794582640766 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61851 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794575664 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61793 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794575000 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61855 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794575007 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61793 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61855 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794575014 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61793 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794575021 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61851 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794575059 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61852 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794575073 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61849 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794575066 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62888 - "GET /proyectos_data/platero_y_yo/personajes/platero.png?t=1794575664 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62889 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.png?t=1794575000 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62900 - "GET /proyectos_data/platero_y_yo/personajes/diana.png?t=1794575007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62902 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794575095 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62901 - "GET /proyectos_data/platero_y_yo/personajes/darbon.png?t=1794575014 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62903 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794575102 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62903 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794575111 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62902 - "GET /proyectos_data/el_principito/personajes/el_zorro.jpg?t=1794398793 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62903 - "GET /proyectos_data/el_principito/personajes/principito.jpg?t=1794398793 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62902 - "GET /proyectos_data/el_principito/personajes/el_aviador.jpg?t=1794398793 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62903 - "GET /proyectos_data/el_guardi%C3%A1n_del_faro/personajes/lucas.jpg?t=1794398793 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62889 - "GET /proyectos_data/el_guardi%C3%A1n_del_faro/personajes/marina.jpg?t=1794398793 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64042 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /static/css/style.css?v=3.1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /static/js/app.js?v=3.9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64121 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794583268450 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64139 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794583268450 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64141 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794583268451 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64145 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794583268452 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64144 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794583268451 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64121 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794583268452 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64144 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794583268453 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64121 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794583268453 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64139 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794583268454 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794583268454 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64144 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794583268455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64145 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794583268455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64144 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794583268455 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64120 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64139 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64691 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65106 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65106 - "GET /static/css/style.css?v=3.2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /static/js/app.js?v=4.0 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794583645315 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65106 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794583645316 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65135 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65138 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794583645316 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65139 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794583645317 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65141 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794583645317 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65135 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794583645318 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65106 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794583645318 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65139 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794583645319 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65135 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794583645319 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794583645320 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65141 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794583645320 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65135 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794583645320 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65135 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794583645321 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65141 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65105 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794575664 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65141 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794575000 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65105 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65141 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794575007 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65138 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794575021 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65106 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794575059 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65141 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794575066 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65135 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794575014 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:65105 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794575073 HTTP/1.1" 304 Not Modified
+
+[2026-11-13 18:16:33] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [40448]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:62961 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62963 - "GET /static/js/app.js?v=4.0 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62961 - "GET /static/css/style.css?v=3.2 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62961 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62961 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62961 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62961 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62961 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794590197644 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62982 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62963 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794590197645 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62983 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794590197645 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62986 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794590197646 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62987 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794590197647 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62982 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794590197648 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62982 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794590197649 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62963 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794590197649 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62983 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794590197650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62961 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62987 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794590197650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62961 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794590197651 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62987 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62987 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794590197651 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62986 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794590197652 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62982 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794575664 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62963 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794575000 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62982 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794575007 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62961 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794575014 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62986 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794575021 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62986 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794575059 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62982 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794575073 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62961 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794575066 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62987 - "GET /proyectos_data/platero_y_yo/personajes/platero.png?t=1794575664 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62983 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794575102 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62961 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.png?t=1794575000 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62963 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794575095 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62982 - "GET /proyectos_data/platero_y_yo/personajes/diana.png?t=1794575007 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62986 - "GET /proyectos_data/platero_y_yo/personajes/darbon.png?t=1794575014 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:62986 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794575111 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:64848 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65113 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65113 - "GET /static/css/style.css?v=3.3 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /static/js/app.js?v=4.1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65123 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794590712927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65113 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794590712928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65128 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794590712929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65123 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794590712931 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65127 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794590712928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65129 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794590712930 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794590712931 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65113 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794590712932 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65123 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794590712933 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65127 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794590712933 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65128 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794590712934 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65129 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794590712934 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65115 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794590712934 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65128 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65127 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+
+[2026-11-13 21:36:19] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [43052]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:60422 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60562 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60633 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60634 - "GET /static/js/app.js?v=4.7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /static/css/style.css?v=3.4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60755 - "GET /static/js/app.js?v=4.7 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794602258212 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794602258212 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60768 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794602258212 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794602258212 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60771 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794602258212 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60771 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60768 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794602258214 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794602258215 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794602258215 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794602258215 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794602258215 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794602258215 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60771 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794602258216 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794602258216 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794602258216 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794602258216 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794602258216 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794602258217 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60771 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794602258217 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794602258217 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794602258217 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794602258217 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60768 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794602258217 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60771 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794602258219 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60772 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794602258218 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794602258219 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794602258219 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794602258220 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60771 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794602258220 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794599716 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:60423 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60755 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794601082 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60767 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794601957 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60423 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794601441 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60768 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794601709 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60947 - "POST /api/projects/platero_y_yo/characters/platero/generate-4-views HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60947 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794602312144 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61299 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794602312144 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61303 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794602312144 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794602312144 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794602318007 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794602318008 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794602318009 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794602318009 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794602318009 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794602318009 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794602318009 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794602318010 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794602318010 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794602318010 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794602318010 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794602318010 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794602318010 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61341 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794602318011 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61304 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794602318011 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61346 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794602318012 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794602318012 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794602318012 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61342 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794602318013 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61347 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794601957 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:61342 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61348 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794601709 HTTP/1.1" 304 Not Modified
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.384267 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.827671 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[PROMPT_TRANSLATE] Error traduciendo descripción con IA: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+INFO:     127.0.0.1:61481 - "POST /api/projects/platero_y_yo/characters/la_nina_chica/optimize-prompt HTTP/1.1" 200 OK
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.444150 seconds (retry 1 of 2)
+
+[2026-11-14 17:33:05] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [22468]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:59690 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59690 - "GET /static/css/style.css?v=3.7 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59691 - "GET /static/js/app.js?v=5.0 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59691 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59691 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59691 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59691 - "GET /api/projects/el_principito HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59726 - "GET /api/projects/el_principito/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59691 - "GET /proyectos_data/el_principito/personajes/principito.jpg?t=1794673999648 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59727 - "GET /proyectos_data/el_principito/personajes/el_aviador.jpg?t=1794673999650 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59690 - "GET /proyectos_data/el_principito/personajes/el_zorro.jpg?t=1794673999649 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59727 - "GET /api/projects/el_principito/chapters/cap_1 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59726 - "GET /api/projects/el_principito/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59727 - "GET /proyectos_data/el_principito/personajes/el_zorro.jpg?t=1794398793 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59690 - "GET /proyectos_data/el_principito/personajes/el_aviador.jpg?t=1794398793 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59691 - "GET /proyectos_data/el_principito/personajes/principito.jpg?t=1794398793 HTTP/1.1" 304 Not Modified
+
+[2026-11-14 18:27:07] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [31624]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:61052 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794677231063 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794677231064 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794677231064 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794677231064 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794677231065 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794677231064 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794677231065 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794677231065 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794677231065 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794677231065 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794677231067 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794677231067 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794677231067 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794677231067 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794677231067 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794677231068 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794677231068 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794677231068 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794677231068 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794677231069 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794677231068 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794677231069 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794677231069 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794677231069 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794677231069 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794677231070 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794677231070 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794677231070 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794677231071 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794677231070 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794677231070 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1794677231071 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1794677231071 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1794677231071 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1794677231071 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1794677231072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794677231072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1794677231072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1794677231072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61078 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1794677231072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61074 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794677231074 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61077 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794677231072 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794677231073 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61072 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794677231073 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61071 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794677231075 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61052 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+
+[2026-11-14 19:18:02] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [3696]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56928 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /static/js/app.js?v=5.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56928 - "GET /static/css/style.css?v=3.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56928 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794680285887 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794680285887 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794680285887 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794680285887 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794680285887 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794680285888 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794680285888 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794680285888 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794680285888 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794680285888 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794680285889 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794680285889 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794680285889 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794680285889 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794680285889 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794680285890 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794680285890 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794680285890 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794680285890 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794680285890 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794680285891 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56928 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1794680285892 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56972 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794680285893 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56967 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794680285893 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56936 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794680285894 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794680285894 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56968 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794680285895 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56971 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.448365 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.757731 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[AI] Error llamando a OpenAI: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}. Activando fallback heurístico.
+INFO:     127.0.0.1:57435 - "POST /api/storyboard/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57435 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57435 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57435 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+
+[2026-11-16 17:22:15] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [17132]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:55907 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /static/js/app.js?v=6.7 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55907 - "GET /static/css/style.css?v=3.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55907 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794846147923 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794846147923 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794846147923 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794846147923 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794846147925 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794846147923 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794846147925 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794846147925 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794846147925 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794846147925 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794846147926 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794846147926 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794846147926 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794846147926 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794846147926 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794846147927 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794846147928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794846147928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794846147928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794846147928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794846147928 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1794846147929 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794846147931 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794846147932 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55909 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794846147933 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794846147934 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55907 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794846147934 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55930 - "GET /static/media/img_98269e1862.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794599716 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794601082 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794601957 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794601441 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794601709 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794602610 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55925 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794604139 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794602832 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /static/media/img_15debbc722.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55930 - "GET /static/media/img_5ed30c0766.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55929 - "GET /static/media/anim_b3597b279a.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55930 - "GET /static/media/audio_fb2f879d0f.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55931 - "GET /static/media/anim_bab39b4c1a.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55930 - "GET /static/media/audio_f862bac4d4.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55931 - "GET /static/media/anim_77f42b6d5a.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55907 - "GET /static/media/audio_1e2239a044.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55931 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56134 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794846170440 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794846170440 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794846170440 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794846170440 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794846170441 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794846170440 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794846170441 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794846170441 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794846170441 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794846170442 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794846170441 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794846170442 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794846170442 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794846170442 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794846170442 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794846170443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794846170443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794846170443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794846170443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794846170443 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794846170444 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794846170445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1794846170445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1794846170445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1794846170445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1794846170445 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794846170446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1794846170446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1794846170446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1794846170446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56136 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1794846170446 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56143 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794846170448 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56139 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794846170448 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56144 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794846170447 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56134 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794846170449 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794846170449 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56145 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56684 - "GET /static/media/anim_b3597b279a.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56684 - "GET /static/media/anim_b3597b279a.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56751 - "GET /static/media/anim_bab39b4c1a.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56751 - "GET /static/media/anim_bab39b4c1a.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56764 - "GET /static/media/anim_77f42b6d5a.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56764 - "GET /static/media/anim_77f42b6d5a.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:56793 - "POST /api/video/render HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56793 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56793 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57037 - "POST /api/image/generate HTTP/1.1" 500 Internal Server Error
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.408988 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.848101 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[AI] Error generando prompt desde descripción: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+INFO:     127.0.0.1:57067 - "POST /api/storyboard/generate-prompt HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57067 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57067 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57067 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57295 - "POST /api/image/generate HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:57468 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57482 - "POST /api/image/generate HTTP/1.1" 500 Internal Server Error
+INFO:     127.0.0.1:57609 - "GET /api/settings HTTP/1.1" 200 OK
+
+[2026-11-17 18:42:04] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [25840]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:54298 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /static/css/style.css?v=3.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54300 - "GET /static/js/app.js?v=6.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54300 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794937369472 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794937369472 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794937369472 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794937369472 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794937369472 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794937369474 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794937369474 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794937369474 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794937369474 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794937369474 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794937369475 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794937369475 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794937369475 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794937369475 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794937369475 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794937369476 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794937369476 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794937369476 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794937369476 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794937369476 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794937369477 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794937369477 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794937369477 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794937369477 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794937369477 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794937369478 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794937369478 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794937369478 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794937369478 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794937369478 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794937369479 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1794937369479 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1794937369479 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1794937369479 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1794937369479 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794937369480 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1794937369480 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1794937369480 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1794937369480 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1794937369480 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794937369482 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54429 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794937369483 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794937369484 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54435 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794937369485 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54300 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794937369486 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54434 - "GET /static/media/img_98269e1862.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794599716 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794601082 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794601957 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794601441 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794601709 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794602610 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54434 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794602832 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54433 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794604139 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54298 - "GET /static/media/img_15debbc722.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54433 - "GET /static/media/img_5ed30c0766.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54433 - "GET /static/media/anim_b3597b279a.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54435 - "GET /static/media/audio_fb2f879d0f.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54300 - "GET /static/media/anim_bab39b4c1a.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54433 - "GET /static/media/anim_77f42b6d5a.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54435 - "GET /static/media/audio_f862bac4d4.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54300 - "GET /static/media/audio_1e2239a044.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:54298 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.412565 seconds (retry 1 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+INFO:openai._base_client:Retrying request in 0.932094 seconds (retry 2 of 2)
+INFO:httpx2:HTTP Request: POST https://api.openai.com/v1/chat/completions "HTTP/1.1 429 Too Many Requests"
+[AI] Error generando prompt desde descripción: Error code: 429 - {'error': {'message': 'You have no credits remaining. Add credits to continue using the API at https://platform.openai.com/settings/organization/billing/.', 'type': 'insufficient_quota', 'param': None, 'code': 'credit_balance_exhausted'}}
+INFO:     127.0.0.1:54788 - "POST /api/storyboard/generate-prompt HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54788 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54788 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54788 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55104 - "POST /api/image/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55104 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55104 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55161 - "GET /static/media/img_8c9dd3d91b.jpg?t=1794937446682 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55161 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55161 - "GET /static/media/img_8c9dd3d91b.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55305 - "POST /api/image/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55305 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55321 - "GET /static/media/img_484a06061f.jpg?t=1794937512119 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55305 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55321 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55321 - "GET /static/media/img_484a06061f.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /static/js/app.js?v=6.9 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794937641599 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1794937641599 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1794937641599 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55631 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1794937641599 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1794937641599 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794937641600 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55631 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794937641601 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1794937641602 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55631 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55631 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1794937641603 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794937641604 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1794937641604 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1794937641604 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1794937641604 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55626 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794937641605 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55631 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1794937641604 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55619 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794937641605 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55632 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1794937641606 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55630 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1794937641607 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1794937641606 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55631 - "GET /static/media/img_8c9dd3d91b.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55631 - "GET /static/media/img_484a06061f.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55618 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:55652 - "POST /api/image/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55652 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55668 - "GET /static/media/img_d9c9055a28.jpg?t=1794937659286 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55652 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55668 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55668 - "GET /static/media/img_d9c9055a28.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "POST /api/image/generate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55735 - "GET /static/media/img_c6025c195e.jpg?t=1794937674401 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55735 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55735 - "GET /static/media/img_c6025c195e.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55735 - "POST /api/scene/animate HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55682 - "GET /api/settings HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55735 - "POST /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55682 - "GET /api/settings/billing HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55735 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55735 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:55735 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 206 Partial Content
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:57534 - "GET /static/media/anim_df07bfd86e.mp4?t=1794938014603 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:55682 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:57586 - "GET /static/media/anim_df07bfd86e.mp4?t=1794938014603 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:57586 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:55682 - "GET /static/media/anim_df07bfd86e.mp4?t=1794938014603 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:57586 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 206 Partial Content
+ERROR:asyncio:Exception in callback _ProactorBasePipeTransport._call_connection_lost()
+handle: <Handle _ProactorBasePipeTransport._call_connection_lost()>
+Traceback (most recent call last):
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\events.py", line 94, in _run
+    self._context.run(self._callback, *self._args)
+    ~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\guill\AppData\Local\Programs\Python\Python314\Lib\asyncio\proactor_events.py", line 165, in _call_connection_lost
+    self._sock.shutdown(socket.SHUT_RDWR)
+    ~~~~~~~~~~~~~~~~~~~^^^^^^^^^^^^^^^^^^
+ConnectionResetError: [WinError 10054] Se ha forzado la interrupción de una conexión existente por el host remoto
+INFO:     127.0.0.1:57713 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57713 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:58016 - "GET /static/media/anim_df07bfd86e.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59194 - "GET /api/projects/platero_y_yo/chapters/capitulo_2 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59194 - "GET /static/media/img_ec95c9cb3c.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59196 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1794604050 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59198 - "GET /static/media/img_ba849d31ae.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59200 - "GET /static/media/img_4355cdd788.jpg HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59204 - "GET /static/media/audio_6feb48039c.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59203 - "GET /static/media/audio_11658e18f0.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59196 - "GET /static/media/audio_07a1af9b96.mp3 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59198 - "GET /proyectos_data/platero_y_yo/videos/capitulo_2.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59200 - "GET /proyectos_data/platero_y_yo/videos/capitulo_2.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59200 - "GET /proyectos_data/platero_y_yo/videos/capitulo_2.mp4 HTTP/1.1" 206 Partial Content
+INFO:     127.0.0.1:59252 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59252 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59252 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59252 - "GET /static/media/img_8c9dd3d91b.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59269 - "GET /static/media/img_c6025c195e.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:59269 - "GET /api/videos/history?project_id=platero_y_yo HTTP/1.1" 200 OK
+
+[2026-11-20 11:06:01] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [40216]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:56841 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /static/js/app.js?v=7.4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /static/css/style.css?v=3.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56843 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1795169169634 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1795169169634 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1795169169634 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1795169169636 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1795169169634 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1795169169634 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1795169169636 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1795169169636 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1795169169636 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1795169169636 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1795169169638 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1795169169639 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1795169169639 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1795169169639 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1795169169639 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1795169169639 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1795169169637 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1795169169640 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1795169169640 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1795169169640 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1795169169640 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1795169169640 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1795169169641 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1795169169641 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56852 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1795169169642 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56841 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1795169169642 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56843 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1795169169643 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56856 - "GET /static/media/img_5898b2ab12.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794599716 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56858 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794601082 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794601957 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794601441 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794601709 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794602610 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794602832 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794604139 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /static/media/img_222fb678d8.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56857 - "GET /static/media/img_ac00a6f7a6.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56857 - "GET /static/media/anim_9088e6f4c9.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56856 - "GET /static/media/anim_e9680d6176.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56857 - "GET /static/media/audio_b9378a2506.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56852 - "GET /static/media/audio_e0adb418d7.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56843 - "GET /static/media/anim_76600abf96.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56852 - "GET /static/media/audio_5fd2eae0ae.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:56857 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:57007 - "GET /api/settings HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57007 - "GET /api/settings/billing HTTP/1.1" 200 OK
+
+[2026-11-27 12:07:15] 🚀 Iniciando servidor oculto (pythonw.exe) -> app.main:app en http://0.0.0.0:8001
+INFO:     Started server process [6820]
+INFO:     Waiting for application startup.
+INFO:     Application startup complete.
+INFO:     Uvicorn running on http://0.0.0.0:8001 (Press CTRL+C to quit)
+INFO:     127.0.0.1:52653 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /static/css/style.css?v=3.8 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52655 - "GET /static/js/app.js?v=7.4 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1795777639752 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1795777639752 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1795777639752 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1795777639752 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1795777639752 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1795777639753 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1795777639753 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1795777639753 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1795777639753 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1795777639753 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1795777639754 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1795777639754 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1795777639754 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1795777639754 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1795777639754 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1795777639755 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1795777639755 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1795777639755 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1795777639755 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1795777639755 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1795777639756 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1795777639756 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1795777639756 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1795777639756 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1795777639756 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1795777639757 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1795777639757 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1795777639757 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1795777639757 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1795777639757 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1795777639758 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1795777639758 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1795777639758 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1795777639758 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1795777639758 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1795777639759 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1795777639759 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1795777639759 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1795777639759 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1795777639759 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1795777639760 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52680 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1795777639761 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1795777639761 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52681 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1795777639762 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52653 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1795777639763 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52675 - "GET /static/media/img_5898b2ab12.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1794597157 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1794599716 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1794601082 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1794601957 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1794601441 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1794601709 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52655 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1794602610 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1794602832 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52675 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1794604139 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52655 - "GET /static/media/img_ac00a6f7a6.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52655 - "GET /static/media/img_222fb678d8.jpg HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52655 - "GET /static/media/anim_9088e6f4c9.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52677 - "GET /static/media/audio_b9378a2506.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52653 - "GET /static/media/anim_e9680d6176.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52681 - "GET /static/media/audio_e0adb418d7.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52677 - "GET /static/media/anim_76600abf96.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52681 - "GET /static/media/audio_5fd2eae0ae.mp3 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:52677 - "GET /proyectos_data/platero_y_yo/videos/cap_01_platero.mp4 HTTP/1.1" 304 Not Modified
+INFO:     127.0.0.1:63370 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /api/status HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /api/voices HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /api/projects HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /api/projects/platero_y_yo HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /api/projects/platero_y_yo/chapters HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/platero.jpg?t=1795781333777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_detalle.jpg?t=1795781333777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_frontal.jpg?t=1795781333777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta.jpg?t=1795781333778 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_trasera.jpg?t=1795781333777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/personajes/platero_v_perfil.jpg?t=1795781333777 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_detalle.jpg?t=1795781333778 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_frontal.jpg?t=1795781333778 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_trasera.jpg?t=1795781333778 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_detalle.jpg?t=1795781333779 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/personajes/el_poeta_v_perfil.jpg?t=1795781333778 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/personajes/diana.jpg?t=1795781333779 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_frontal.jpg?t=1795781333779 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_trasera.jpg?t=1795781333779 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/diana_v_perfil.jpg?t=1795781333779 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/darbon.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_detalle.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_frontal.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_trasera.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/darbon_v_perfil.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/lord.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_detalle.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_perfil.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_frontal.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/lord_v_trasera.jpg?t=1795781333780 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_detalle.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_frontal.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_perfil.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_detalle.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/personajes/canario_verde_v_trasera.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_frontal.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_trasera.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/personajes/la_nina_chica_v_perfil.jpg?t=1795781333781 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara.jpg?t=1795781333782 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_detalle.jpg?t=1795781333782 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_trasera.jpg?t=1795781333782 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63402 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_frontal.jpg?t=1795781333782 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/personajes/anilla_la_hungara_v_perfil.jpg?t=1795781333782 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63370 - "GET /proyectos_data/platero_y_yo/escenarios/calles_blancas_moguer.jpg?t=1795781333782 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63403 - "GET /proyectos_data/platero_y_yo/escenarios/colinas_molino_viento.jpg?t=1795781333783 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /proyectos_data/platero_y_yo/escenarios/pozo_viejo_huerto.jpg?t=1795781333784 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63397 - "GET /proyectos_data/platero_y_yo/escenarios/establo_platero.jpg?t=1795781333784 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63401 - "GET /proyectos_data/platero_y_yo/escenarios/ribera_rio_tinto.jpg?t=1795781333785 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /api/projects/platero_y_yo/chapters/cap_01_platero HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63373 - "GET /api/projects/platero_y_yo/documents/content HTTP/1.1" 200 OK

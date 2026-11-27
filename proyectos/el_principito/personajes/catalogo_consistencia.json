@@ -5,7 +5,7 @@
   "total_personajes": 3,
   "referencias_listas": 3,
   "generados_en_sincronizacion": [],
-  "actualizado_en": "2026-11-11 18:36:08",
+  "actualizado_en": "2026-11-27 13:27:33",
   "personajes": [
     {
       "project_id": "el_principito",
@@ -15,8 +15,8 @@
       "rol": "Protagonista",
       "tipo": "humano",
       "descripcion_visual": "Niño pequeño con pelo rubio dorado revuelto por el viento, bufanda dorada larga flotante, traje de príncipe verde azulado con solapas rojas y botas suaves",
-      "prompt_retrato": "Full body character turnaround model sheet of The Little Prince, an adorable young boy with messy bright golden blonde hair, long flowing yellow scarf, vintage teal-blue prince tunic with red lapels and soft boots, delicate watercolor and ink storybook illustration, soft artistic color washes, four distinct views: full front view, side profile, three-quarters angle, and full back view standing pose from head to toe, isolated on solid plain pure white background, no shadows, vertical 9:16, masterpiece",
-      "formato_vista": "giro_360",
+      "prompt_retrato": "Three-quarter angle (45-degree front-side view) delicate poetic watercolor and ink character illustration of El Principito, Little boy with windblown golden blonde hair, long flowing golden scarf, teal prince suit with red lapels and soft boots, child/adolescent human, full body standing head to toe, shoes visible, no other characters, single character shown in a natural three-quarter front-side pose (body and head angled 45 degrees to the side, non-symmetrical diagonal stance, not facing straight at the camera), full body standing head to toe, wide safety margins, no cropped feet, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features, centered composition with wide safety margins, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, no paper texture, no parchment texture, no yellow tint, no shadows, zero scenery, no text, no words, no labels, no arrows, vertical 9:16 portrait composition, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, masterpiece, no 3D CGI, no photorealism",
+      "formato_vista": "cuerpo_entero",
       "sin_fondo": true,
       "imagen_url": "/proyectos_data/el_principito/personajes/principito.jpg?t=1794398793",
       "clean_image_url": "/proyectos_data/el_principito/personajes/principito.jpg",
@@ -43,8 +43,8 @@
       "rol": "Amigo sabio",
       "tipo": "animal",
       "descripcion_visual": "Zorro esbelto y elegante con pelaje anaranjado dorado, pecho y punta de la cola blanca como la nieve, grandes ojos almendrados y expresión bondadosa",
-      "prompt_retrato": "Full body character turnaround model sheet of the wise Little Prince Fox, a slender adorable fox with vibrant golden orange fur, fluffy white chest and white-tipped bushy tail, gentle expressive almond eyes, standing naturally on all four paws, delicate watercolor and ink storybook illustration, four distinct views: full front view, side profile, three-quarters angle, and rear back view, isolated on solid plain pure white background, no shadows, vertical 9:16, masterpiece",
-      "formato_vista": "giro_360",
+      "prompt_retrato": "Three-quarter angle (45-degree front-side view) delicate poetic watercolor and ink character illustration of El Zorro, Slender, elegant fox with golden-orange fur, snow-white chest and tip of tail, large almond-shaped eyes and kind expression, standing on all four legs, full body visible head to tail and hooves, no humans, no clothing, single character shown in a natural three-quarter front-side pose (body and head angled 45 degrees to the side, non-symmetrical diagonal stance, not facing straight at the camera), full body standing head to toe, wide safety margins, no cropped feet, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features, centered composition with wide safety margins, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, no paper texture, no parchment texture, no yellow tint, no shadows, zero scenery, no text, no words, no labels, no arrows, vertical 9:16 portrait composition, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, masterpiece, no 3D CGI, no photorealism",
+      "formato_vista": "cuerpo_entero",
       "sin_fondo": true,
       "imagen_url": "/proyectos_data/el_principito/personajes/el_zorro.jpg?t=1794398793",
       "clean_image_url": "/proyectos_data/el_principito/personajes/el_zorro.jpg",
@@ -71,8 +71,8 @@
       "rol": "Narrador y Amigo en el Desierto",
       "tipo": "humano",
       "descripcion_visual": "Piloto pionero de los años 30 con chaqueta de cuero marrón desgastada, gorro de aviador con gafas de latón sobre la frente, pañuelo claro al cuello y mirada cálida y compasiva.",
-      "prompt_retrato": "Full body character turnaround model sheet of The Aviator from The Little Prince, 1930s desert pilot wearing worn brown leather flight jacket, canvas aviator cap with brass goggles, warm compassionate eyes, delicate watercolor and ink storybook illustration, four distinct views in 2x2 grid: front view, side profile, three-quarters angle, rear back view, isolated on solid plain pure white background, vertical 9:16, masterpiece",
-      "formato_vista": "giro_360",
+      "prompt_retrato": "Three-quarter angle (45-degree front-side view) delicate poetic watercolor and ink character illustration of El Aviador, Pioneer pilot of the 1930s with worn brown leather jacket, aviator hat with brass glasses on his forehead, light scarf around his neck and warm, compassionate gaze, single human, full body standing head to toe, shoes visible, no other characters, single character shown in a natural three-quarter front-side pose (body and head angled 45 degrees to the side, non-symmetrical diagonal stance, not facing straight at the camera), full body standing head to toe, wide safety margins, no cropped feet, delicate storybook detail, fine sepia ink linework and soft artistic translucent washes, gentle stylized classic storybook illustration proportions, expressive hand-drawn picture-book character design, soft simplified features, centered composition with wide safety margins, completely isolated on solid plain pure white background (#FFFFFF), stark white empty background, solid pure white canvas, no paper texture, no parchment texture, no yellow tint, no shadows, zero scenery, no text, no words, no labels, no arrows, vertical 9:16 portrait composition, delicate poetic watercolor and ink storybook illustration, soft artistic translucent color washes, subtle sepia pencil and ink outlines, masterpiece, no 3D CGI, no photorealism",
+      "formato_vista": "cuerpo_entero",
       "sin_fondo": true,
       "imagen_url": "/proyectos_data/el_principito/personajes/el_aviador.jpg?t=1794398793",
       "clean_image_url": "/proyectos_data/el_principito/personajes/el_aviador.jpg",
@@ -89,7 +89,7 @@
       "lora_directive": "<lora:el_principito_el_aviador_v1:0.85> chr_el_aviador",
       "ancla_visual": "El Aviador (1930s pioneering desert aviator in worn brown leather flight jacket, canvas aviator cap with brass goggles on forehead, warm compassionate gaze)",
       "seed_consistencia": 451437,
-      "estado_aprobacion": "aprobado"
+      "estado_aprobacion": "pendiente"
     }
   ]
 }

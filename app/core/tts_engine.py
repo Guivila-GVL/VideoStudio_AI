@@ -225,11 +225,18 @@ def synthesize_speech(
     text: str,
     voice_key: str = "edge_alvaro",
     provider: Optional[str] = None,
-    custom_voice_id: Optional[str] = None
+    custom_voice_id: Optional[str] = None,
+    expressive: bool = True,
+    dialogue_voice_map: Optional[Dict[str, str]] = None,
 ) -> Dict[str, Any]:
     """
     Sintetiza audio a partir de texto y guarda el archivo en static/media.
-    Devuelve la URL web del archivo y su duración real.
+    Devuelve la URL web del archivo, su duración real y timestamps exactos por frase y palabra.
+    Por defecto en producción (expressive=True) aplica el patrón adoptado de Skill #87
+    ChrisChen667788/wind-comic (services/tts.service.ts):
+      1) Modulación emocional por frase (velocidad / tono dinámicos).
+      2) Voz diferenciada para narrador y personajes en diálogos.
+      3) Timestamps exactos por frase (`sentences`) y palabra (`words`) para subtítulos.
     """
     clean_text = _normalize_text_for_tts(text)
 
@@ -256,8 +263,31 @@ def synthesize_speech(
         else:
             provider = "gtts"
 
-    # 0. Edge-TTS (Microsoft Neural - 100% Castellano Nativo, Calidad de Estudio, Gratuito)
+    # 0. Edge-TTS (Microsoft Neural - 100% Castellano Nativo + Patrón expresivo wind-comic en producción)
     if provider == "edge" or voice_key.startswith("edge_") or (matched_voice and matched_voice.get("provider") == "edge"):
+        if expressive:
+            try:
+                expr_res = synthesize_expressive_speech(
+                    text=text,
+                    narrator_voice=voice_key,
+                    dialogue_voice_map=dialogue_voice_map,
+                    output_path=out_path,
+                )
+                if out_path.exists() and out_path.stat().st_size > 0:
+                    return {
+                        "url": web_url,
+                        "duration": expr_res["duration"],
+                        "provider": "edge",
+                        "engine_mode": "edge_wind_comic_expressive",
+                        "file_path": str(out_path),
+                        "sentences": expr_res.get("sentences", []),
+                        "words": expr_res.get("words", []),
+                        "sentences_json_path": expr_res.get("sentences_json_path"),
+                        "words_json_path": expr_res.get("words_json_path"),
+                    }
+            except Exception as e:
+                print(f"[TTS] Edge-TTS expresivo (wind-comic) excepción, aplicando fallback plano: {e}")
+
         voice_id = custom_voice_id or (matched_voice.get("voice_id") if matched_voice else None) or "es-ES-AlvaroNeural"
         pitch = (matched_voice.get("pitch") if matched_voice else None) or "+0Hz"
         rate = (matched_voice.get("rate") if matched_voice else None) or "+0%"
@@ -294,12 +324,38 @@ def synthesize_speech(
                 word_timings = pool.submit(_run_edge).result()
 
             if out_path.exists() and out_path.stat().st_size > 0:
+                import json as _json
+                duration = get_audio_duration(str(out_path))
                 if word_timings:
-                    import json as _json
                     words_path = out_path.with_suffix(".words.json")
                     words_path.write_text(_json.dumps(word_timings, ensure_ascii=False), encoding="utf-8")
-                duration = get_audio_duration(str(out_path))
-                return {"url": web_url, "duration": duration, "provider": "edge", "file_path": str(out_path), "words": word_timings}
+                sentence_timings = [{
+                    "index": 1,
+                    "speaker": "narrador",
+                    "is_dialogue": False,
+                    "voice_key": voice_key,
+                    "voice_id": voice_id,
+                    "emotion": "neutral",
+                    "pitch": pitch,
+                    "rate": rate,
+                    "text": clean_text,
+                    "start": 0.0,
+                    "end": duration,
+                    "duration": duration,
+                    "words_count": len(word_timings),
+                }]
+                sentences_path = out_path.with_suffix(".sentences.json")
+                sentences_path.write_text(_json.dumps(sentence_timings, ensure_ascii=False, indent=2), encoding="utf-8")
+                return {
+                    "url": web_url,
+                    "duration": duration,
+                    "provider": "edge",
+                    "engine_mode": "edge_flat",
+                    "file_path": str(out_path),
+                    "sentences": sentence_timings,
+                    "words": word_timings,
+                    "sentences_json_path": str(sentences_path),
+                }
             else:
                 print(f"[TTS] Edge-TTS no generó el archivo de audio.")
         except Exception as e:
@@ -374,3 +430,380 @@ def synthesize_speech(
     except Exception as e:
         print(f"[TTS] gTTS excepción: {e}")
         raise RuntimeError(f"No fue posible sintetizar el audio: {e}")
+
+
+# ==============================================================================
+# ADAPTACIÓN SKILL #87: ChrisChen667788/wind-comic (patrón services/tts.service.ts)
+# Paso 5: Locución neuronal y narración de audio (Opt-in / Sin romper producción)
+#   1) Modulación emocional por frase (velocidad / tono dinámicos)
+#   2) Voz diferenciada para narrador y personajes en diálogos
+#   3) Timestamps exactos por frase y palabra para subtítulos sincronizados
+# ==============================================================================
+
+EMOTION_PROSODY_MAP: Dict[str, Dict[str, Any]] = {
+    "neutral":      {"pitch_delta_hz": 0,   "rate_delta_pct": 0,   "pause_after_ms": 260, "label": "Narración neutra"},
+    "lyrical":      {"pitch_delta_hz": -3,  "rate_delta_pct": -7,  "pause_after_ms": 380, "label": "Lírico / contemplativo"},
+    "joyful":       {"pitch_delta_hz": +8,  "rate_delta_pct": +6,  "pause_after_ms": 240, "label": "Alegre / entusiasta"},
+    "tender":       {"pitch_delta_hz": +4,  "rate_delta_pct": -9,  "pause_after_ms": 360, "label": "Tierno / íntimo"},
+    "question":     {"pitch_delta_hz": +10, "rate_delta_pct": -4,  "pause_after_ms": 340, "label": "Pregunta / curiosidad"},
+    "urgent":       {"pitch_delta_hz": +6,  "rate_delta_pct": +10, "pause_after_ms": 200, "label": "Exclamación / urgencia"},
+    "melancholic":  {"pitch_delta_hz": -6,  "rate_delta_pct": -11, "pause_after_ms": 420, "label": "Melancólico / susurro"},
+}
+
+DEFAULT_SPEAKER_VOICE_MAP: Dict[str, str] = {
+    "narrator": "edge_alvaro",
+    "narrador": "edge_alvaro",
+    "protagonista_joven": "edge_alvaro_joven",
+    "character_female": "edge_elvira",
+    "character_young_female": "edge_ximena",
+    "character_male_elder": "edge_alvaro_grave",
+    "character_default": "edge_elvira",
+}
+
+
+def _parse_hz(pitch_str: str) -> int:
+    import re
+    m = re.search(r"([+-]?\d+)", str(pitch_str or "+0Hz"))
+    return int(m.group(1)) if m else 0
+
+
+def _parse_pct(rate_str: str) -> int:
+    import re
+    m = re.search(r"([+-]?\d+)", str(rate_str or "+0%"))
+    return int(m.group(1)) if m else 0
+
+
+def _combine_prosody(base_pitch: str, base_rate: str, emotion: str) -> Dict[str, str]:
+    emo = EMOTION_PROSODY_MAP.get(emotion, EMOTION_PROSODY_MAP["neutral"])
+    final_hz = max(-30, min(35, _parse_hz(base_pitch) + int(emo["pitch_delta_hz"])))
+    final_pct = max(-35, min(35, _parse_pct(base_rate) + int(emo["rate_delta_pct"])))
+    return {
+        "pitch": f"{final_hz:+d}Hz",
+        "rate": f"{final_pct:+d}%",
+        "pause_after_ms": emo["pause_after_ms"],
+    }
+
+
+def detect_sentence_emotion(sentence: str, is_dialogue: bool = False) -> str:
+    """Infiere la emoción dominante de una frase literaria en español para modular pitch/rate."""
+    s = (sentence or "").strip()
+    s_low = s.lower()
+
+    if "¿" in s or s.endswith("?"):
+        return "question"
+    if any(w in s_low for w in ("llor", "triste", "sombra", "pena", "silencio", "oscuro", "lejos", "adiós", "noche")):
+        return "melancholic"
+    if any(w in s_low for w in ("suave", "algodón", "acarici", "blando", "pequeño", "tierno", "dulce", "mim", "dorm")):
+        return "tender"
+    if "¡" in s or s.endswith("!"):
+        if any(w in s_low for w in ("mira", "corre", "vamos", "ven", "rápido", "cuidado")):
+            return "urgent"
+        return "joyful"
+    if any(w in s_low for w in ("mariposa", "sol", "luz", "cristal", "risa", "alegr", "rosa", "oro", "jugar", "cielo")):
+        return "joyful" if is_dialogue else "lyrical"
+    if "…" in s or "..." in s or ";" in s:
+        return "lyrical"
+    return "neutral"
+
+
+def parse_expressive_script(
+    text: str,
+    narrator_voice: str = "edge_alvaro",
+    dialogue_voice_map: Optional[Dict[str, str]] = None,
+) -> List[Dict[str, Any]]:
+    """
+    Segmenta un texto literario en frases siguiendo el patrón de services/tts.service.ts (wind-comic):
+    - Separa intervenciones de diálogo (con raya —, guion largo o comillas «») del narrador.
+    - Detecta incisos del narrador dentro de un diálogo (ej. «—¡Mira, Platero! —le dije sonriendo—. ¡Qué hermosas!»).
+    - Asigna voz por hablante y emoción por frase.
+    """
+    import re
+
+    voice_map = dict(DEFAULT_SPEAKER_VOICE_MAP)
+    voice_map["narrator"] = narrator_voice
+    voice_map["narrador"] = narrator_voice
+    if dialogue_voice_map:
+        voice_map.update(dialogue_voice_map)
+
+    default_dialogue_voice = voice_map.get("character_default", "edge_elvira")
+    if default_dialogue_voice == narrator_voice:
+        default_dialogue_voice = "edge_elvira" if narrator_voice != "edge_elvira" else "edge_alvaro_joven"
+
+    raw_lines = [ln.strip() for ln in (text or "").replace("\r\n", "\n").split("\n") if ln.strip()]
+    segments: List[Dict[str, Any]] = []
+    dialogue_turn = 0
+
+    for line in raw_lines:
+        # Etiqueta explícita tipo [Personaje: emoción] Texto
+        explicit_match = re.match(r"^\[(?P<speaker>[^:\]]+)(?::\s*(?P<emotion>[^\]]+))?\]\s*(?P<content>.+)$", line)
+        if explicit_match:
+            spk = explicit_match.group("speaker").strip().lower()
+            emo = (explicit_match.group("emotion") or "").strip().lower()
+            content = explicit_match.group("content").strip()
+            is_diag = spk not in ("narrador", "narrator")
+            v_key = voice_map.get(spk, default_dialogue_voice if is_diag else narrator_voice)
+            for sent in re.split(r"(?<=[.!?…])\s+", content):
+                sent = sent.strip()
+                if not sent:
+                    continue
+                chosen_emo = emo if emo in EMOTION_PROSODY_MAP else detect_sentence_emotion(sent, is_dialogue=is_diag)
+                segments.append({
+                    "speaker": spk,
+                    "is_dialogue": is_diag,
+                    "voice_key": v_key,
+                    "emotion": chosen_emo,
+                    "text": sent,
+                })
+            continue
+
+        # Detectar línea con raya de diálogo española (—)
+        if line.startswith(("—", "-", "«", "\"")):
+            dialogue_turn += 1
+            # Alternar entre voces de personajes si hay varios turnos de diálogo
+            alt_voices = [
+                voice_map.get("character_default", default_dialogue_voice),
+                voice_map.get("protagonista_joven", "edge_alvaro_joven"),
+                voice_map.get("character_young_female", "edge_ximena"),
+            ]
+            alt_voices = [v for v in alt_voices if v != narrator_voice] or [default_dialogue_voice]
+            current_char_voice = alt_voices[(dialogue_turn - 1) % len(alt_voices)]
+
+            # Si contiene incisos del narrador entre rayas: —Texto diálogo —inciso narrador—. Más diálogo
+            parts = re.split(r"\s*—\s*", line)
+            parts = [p.strip() for p in parts if p.strip()]
+            for p_idx, part in enumerate(parts):
+                # En español, tras la primera raya (p_idx=0 -> diálogo), el segundo bloque suele ser inciso si empieza en minúscula con verbo dicendi
+                is_narrator_aside = (
+                    p_idx % 2 == 1
+                    and bool(re.match(r"^(le\s+|me\s+|se\s+|dijo|dij[eo]|pregunt[oó]|exclam[oó]|susurr[oó]|respondi[oó]|añadi[oó]|grit[oó]|murmur[oó])", part.lower()))
+                )
+                spk = "narrador" if is_narrator_aside else f"personaje_{dialogue_turn}"
+                is_diag = not is_narrator_aside
+                v_key = narrator_voice if is_narrator_aside else current_char_voice
+                clean_part = part.lstrip(". ,;").strip()
+                if not clean_part:
+                    continue
+                if not clean_part.endswith((".", "!", "?", "…", ":")):
+                    clean_part += "."
+                for sent in re.split(r"(?<=[.!?…])\s+", clean_part):
+                    sent = sent.strip()
+                    if not sent:
+                        continue
+                    segments.append({
+                        "speaker": spk,
+                        "is_dialogue": is_diag,
+                        "voice_key": v_key,
+                        "emotion": detect_sentence_emotion(sent, is_dialogue=is_diag),
+                        "text": sent,
+                    })
+        else:
+            # Narración pura: dividir por frases para modular cada oración según su emoción
+            for sent in re.split(r"(?<=[.!?…;])\s+", line):
+                sent = sent.strip()
+                if not sent:
+                    continue
+                if not sent.endswith((".", "!", "?", "…", ";", ":")):
+                    sent += "."
+                segments.append({
+                    "speaker": "narrador",
+                    "is_dialogue": False,
+                    "voice_key": narrator_voice,
+                    "emotion": detect_sentence_emotion(sent, is_dialogue=False),
+                    "text": sent,
+                })
+
+    return segments
+
+
+def synthesize_expressive_speech(
+    text: str,
+    narrator_voice: str = "edge_alvaro",
+    dialogue_voice_map: Optional[Dict[str, str]] = None,
+    output_path: Optional[Path] = None,
+) -> Dict[str, Any]:
+    """
+    Adaptación del patrón services/tts.service.ts de Skill #87 (ChrisChen667788/wind-comic).
+    1) Modula velocidad y tono por frase según análisis emocional.
+    2) Diferencia voz de narrador y voces de personajes en diálogos.
+    3) Devuelve timestamps exactos por frase (`sentences`) y por palabra (`words`) para subtítulos.
+    Mantiene intacto `synthesize_speech` para compatibilidad 100% con producción.
+    """
+    import asyncio
+    import concurrent.futures
+    import json as _json
+    import tempfile
+    import edge_tts
+
+    segments = parse_expressive_script(
+        text=text,
+        narrator_voice=narrator_voice,
+        dialogue_voice_map=dialogue_voice_map,
+    )
+    if not segments:
+        segments = [{
+            "speaker": "narrador",
+            "is_dialogue": False,
+            "voice_key": narrator_voice,
+            "emotion": "neutral",
+            "text": _normalize_text_for_tts(text),
+        }]
+
+    if output_path is not None:
+        out_path = Path(output_path)
+        out_path.parent.mkdir(parents=True, exist_ok=True)
+        filename = out_path.name
+    else:
+        filename = f"audio_expr_{uuid.uuid4().hex[:10]}.mp3"
+        out_path = MEDIA_DIR / filename
+
+    web_url = f"/static/media/{filename}"
+
+    temp_dir = Path(tempfile.mkdtemp(prefix="videostudio_windcomic_tts_"))
+    segment_files: List[Path] = []
+    sentence_timings: List[Dict[str, Any]] = []
+    all_word_timings: List[Dict[str, Any]] = []
+    current_offset_sec = 0.0
+
+    def _synth_segment_edge(seg_text: str, voice_id: str, pitch: str, rate: str, seg_out: Path):
+        async def _save_seg():
+            comm = edge_tts.Communicate(
+                seg_text,
+                voice_id,
+                pitch=pitch,
+                rate=rate,
+                boundary="WordBoundary",
+            )
+            words = []
+            with open(seg_out, "wb") as f:
+                async for chunk in comm.stream():
+                    ctype = chunk.get("type")
+                    if ctype == "audio":
+                        f.write(chunk["data"])
+                    elif ctype == "WordBoundary":
+                        words.append({
+                            "word": chunk.get("text", ""),
+                            "start": round(chunk.get("offset", 0) / 10_000_000, 3),
+                            "duration": round(chunk.get("duration", 0) / 10_000_000, 3),
+                        })
+            return words
+        return asyncio.run(_save_seg())
+
+    with concurrent.futures.ThreadPoolExecutor(max_workers=1) as pool:
+        for idx, seg in enumerate(segments):
+            v_key = seg["voice_key"]
+            matched_v = next((v for v in DEFAULT_VOICES if v["id"] == v_key or v.get("voice_id") == v_key), None)
+            voice_id = (matched_v.get("voice_id") if matched_v else None) or "es-ES-AlvaroNeural"
+            base_pitch = (matched_v.get("pitch") if matched_v else None) or "+0Hz"
+            base_rate = (matched_v.get("rate") if matched_v else None) or "+0%"
+
+            prosody = _combine_prosody(base_pitch, base_rate, seg["emotion"])
+            seg_file = temp_dir / f"seg_{idx:03d}.mp3"
+            clean_seg_text = _normalize_text_for_tts(seg["text"])
+
+            words = pool.submit(
+                _synth_segment_edge,
+                clean_seg_text,
+                voice_id,
+                prosody["pitch"],
+                prosody["rate"],
+                seg_file,
+            ).result()
+
+            seg_dur = get_audio_duration(str(seg_file)) if seg_file.exists() else 0.0
+            segment_files.append(seg_file)
+
+            # Desplazar word timings al reloj global del audio ensamblado
+            shifted_words = []
+            for w in words:
+                sw = {
+                    "word": w["word"],
+                    "start": round(current_offset_sec + w["start"], 3),
+                    "duration": w["duration"],
+                    "speaker": seg["speaker"],
+                    "emotion": seg["emotion"],
+                }
+                shifted_words.append(sw)
+                all_word_timings.append(sw)
+
+            start_sec = round(current_offset_sec, 3)
+            end_sec = round(current_offset_sec + seg_dur, 3)
+            sentence_timings.append({
+                "index": idx + 1,
+                "speaker": seg["speaker"],
+                "is_dialogue": seg["is_dialogue"],
+                "voice_key": v_key,
+                "voice_id": voice_id,
+                "emotion": seg["emotion"],
+                "pitch": prosody["pitch"],
+                "rate": prosody["rate"],
+                "text": seg["text"],
+                "start": start_sec,
+                "end": end_sec,
+                "duration": round(seg_dur, 3),
+                "words_count": len(shifted_words),
+            })
+
+            # Generar silencio breve natural entre frases (pausa dramática según emoción)
+            pause_sec = round(int(prosody["pause_after_ms"]) / 1000.0, 3)
+            silence_file = temp_dir / f"sil_{idx:03d}.mp3"
+            subprocess.run(
+                [
+                    "ffmpeg", "-y", "-f", "lavfi", "-i", "anullsrc=r=24000:cl=mono",
+                    "-t", str(pause_sec), "-q:a", "9", "-acodec", "libmp3lame",
+                    str(silence_file),
+                ],
+                capture_output=True,
+                check=False,
+            )
+            if silence_file.exists() and silence_file.stat().st_size > 0:
+                segment_files.append(silence_file)
+                current_offset_sec += seg_dur + pause_sec
+            else:
+                current_offset_sec += seg_dur
+
+    # Concatenar todos los segmentos y silencios en el MP3 final con recodificación limpia
+    concat_list_path = temp_dir / "concat_list.txt"
+    concat_lines = [f"file '{p.as_posix()}'" for p in segment_files if p.exists()]
+    concat_list_path.write_text("\n".join(concat_lines), encoding="utf-8")
+
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-f", "concat", "-safe", "0",
+            "-i", str(concat_list_path),
+            "-ar", "24000", "-ac", "1", "-b:a", "128k",
+            str(out_path),
+        ],
+        capture_output=True,
+        check=True,
+    )
+
+    # Guardar metadatos de timestamps por frase y palabra junto al audio
+    words_path = out_path.with_suffix(".words.json")
+    words_path.write_text(_json.dumps(all_word_timings, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    sentences_path = out_path.with_suffix(".sentences.json")
+    sentences_path.write_text(_json.dumps(sentence_timings, ensure_ascii=False, indent=2), encoding="utf-8")
+
+    # Limpieza de temporales
+    for p in temp_dir.glob("*"):
+        try:
+            p.unlink()
+        except OSError:
+            pass
+    try:
+        temp_dir.rmdir()
+    except OSError:
+        pass
+
+    total_duration = get_audio_duration(str(out_path))
+    return {
+        "url": web_url,
+        "duration": total_duration,
+        "provider": "edge_wind_comic_expressive",
+        "file_path": str(out_path),
+        "sentences": sentence_timings,
+        "words": all_word_timings,
+        "sentences_json_path": str(sentences_path),
+        "words_json_path": str(words_path),
+    }
+

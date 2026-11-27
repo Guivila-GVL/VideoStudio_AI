@@ -105,3 +105,18 @@ Si el usuario desea contar con voces hiperrealistas adicionales en ElevenLabs:
    - `POST /api/projects/platero_y_yo/narrator/test-voice` ejecutado con éxito (Status 200).
 3. **Batería de Pruebas de Integración:**
    - Todos los 12 pasos de `tests/test_api.py` verificados al 100%.
+
+---
+
+## 6. Adaptación de Skill #87 (`ChrisChen667788/wind-comic` — patrón `services/tts.service.ts`) y Prueba A/B
+
+**Tarea #208 (Propuesta #P1 del Gestor de Skills):**  
+Se ha adaptado de forma aislada y retrocompatible en `app/core/tts_engine.py` (`synthesize_expressive_speech`, `parse_expressive_script`, `detect_sentence_emotion`) el patrón de síntesis multi-actor de `wind-comic` para el **Paso 5: Locución neuronal y narración de audio**, manteniendo intacto `synthesize_speech`:
+
+1. **Modulación emocional por frase (`EMOTION_PROSODY_MAP`):** Ajusta dinámicamente `pitch` (`Hz`), `rate` (`%`) y pausas dramáticas entre oraciones según la emoción inferida (`tender`, `urgent`, `question`, `melancholic`, `joyful`, `lyrical`, `neutral`).
+2. **Voces diferenciadas para narrador y personajes en diálogos:** Detecta rayas de diálogo en español (`—`), distingue los incisos del narrador (*«—le dijo la niña sonriendo en el prado—»*) y alterna automáticamente las voces nativas españolas (`edge_alvaro` para narrador, `edge_elvira` para personaje femenino, `edge_alvaro_joven` para personaje juvenil).
+3. **Timestamps exactos por frase y palabra:** Genera `.sentences.json` y `.words.json` sincronizados al milisegundo con el audio ensamblado para subtítulos dinámicos.
+
+### Resultado de la Prueba Comparativa A/B en `scratch/`
+- **ANTES (`scratch/audio_ANTES_actual.mp3`):** `22.99s` (`137.9 KB`) — Lectura continua con una única voz fija (`edge_alvaro`) y prosodia plana (`+0Hz`, `+0%`).
+- **DESPUÉS (`scratch/audio_DESPUES_adaptado.mp3`):** `30.24s` (`485.0 KB`) — 7 segmentos modulados con 3 voces nativas españolas (`edge_alvaro`, `edge_elvira`, `edge_alvaro_joven`), cambios de emoción por frase y archivo `scratch/audio_DESPUES_adaptado.sentences.json` + `scratch/comparativa_AB_wind_comic_tts.json`.
