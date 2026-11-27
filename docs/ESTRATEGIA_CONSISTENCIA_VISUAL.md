@@ -109,3 +109,19 @@ Para asegurar la coherencia a lo largo de todos los capítulos del libro, no bas
    - Validar que Platero y el Poeta mantengan exactamente el mismo aspecto en las colinas, el huerto y las calles de Moguer.
 5. **Producción en Masa de los Siguientes Capítulos:**
    - Desplegar el flujo para los capítulos 2 a 138 con total garantía de coherencia.
+
+---
+
+## 6. Evaluación y Prueba Comparativa A/B de Skill #102 (`10114514/consistency-reference-prompt` — Propuesta #P3)
+
+En el marco del **Paso 2: Consistencia visual de personajes y escenarios**, se ha evaluado y adaptado de forma aislada (`app/core/consistency_reference_skill.py`) la parte aprovechable de la skill `#102 10114514/consistency-reference-prompt` sin alterar la implementación de producción:
+
+1. **Hojas de Referencia de Personajes de 6 Vistas sin Bordes + 9 Atributos Fijos:**
+   - Layout dividido en fondo blanco puro (`#FFFFFF`) sin líneas divisorias: **1/3 izquierdo** con 3 primeros planos de cabeza apilados (`frontal`, `45° 3/4`, `90° perfil`) y **2/3 derechos** con 3 vistas de cuerpo entero (`frontal`, `lateral 90°`, `trasera`).
+   - Esquema estructurado de 9 atributos (`age, build/scale, coat/hair, face, texture, clothing/tack, accessories, distinguishing_features, expression_baseline`) que fija la escala relativa (Platero = 62% de la altura del Poeta de 13 años) y bloquea falsos positivos de personajes no presentes en el capítulo (como `Darbón` en el Cap. 2).
+2. **Catálogo y Prompts de Props / Accesorios Multi-Estado (Nuevo en Paso 2):**
+   - Incorporación de referencias aisladas sobre fondo blanco (`#FFFFFF`) sin partes humanas para objetos clave del guion, divididas en regiones por estado (p. ej. *Seroncillo/Alforja cerrada* en Estado 1 vs *Seroncillo abierto liberando mariposas blancas* en Estado 2, y *Pincho de hierro del Guarda de Consumos*).
+3. **Prompts de Escenario con Preservación de Detalles en Sombras Nocturnas:**
+   - Estructura de plano general (`lighting, color palette, key objects, atmosphere`) que elimina contradicciones diurnas (`cobalt blue sky without a shadow`) en escenas nocturnas e inyecta la directiva `"For night or low-light scenes, preserve shadow details — dark areas must have visible detail, no crushed blacks"`.
+4. **Evidencias de la Prueba A/B:**
+   - Guardadas en `validacion/pruebas_skills/P3/` (`consistencia_ANTES_actual.png`, `consistencia_DESPUES_skill102.png`, `comparativa_AB_consistency_reference_prompt.json` y `resumen_AB.md`).

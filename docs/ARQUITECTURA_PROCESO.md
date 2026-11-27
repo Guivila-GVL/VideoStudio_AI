@@ -1,7 +1,7 @@
 # Arquitectura del Proceso — VideoStudio AI
 
 > Revisado automáticamente por el Protocolo Centralizado (JARVIS + NotebookLM).
-> **Última revisión:** 27/11/2026 13:29 · **Categoría:** Producción Audiovisual · **Servicio:** Puerto `:8001` (http://localhost:8001) · **Avance:** 13/13 tareas.
+> **Última revisión:** 27/11/2026 13:54 · **Categoría:** Producción Audiovisual · **Servicio:** Puerto `:8001` (http://localhost:8001) · **Avance:** 14/14 tareas.
 
 ## Esquema Visual del Proceso
 
@@ -40,7 +40,7 @@ flowchart TD
 
 ## Infografía / Esquema Gráfico (NotebookLM)
 
-![Arquitectura del Proceso](arquitectura_proceso.jpg)
+![Arquitectura del Proceso](arquitectura_proceso.svg)
 
 <!-- NOTAS_MANUALES_ARQUITECTURA -->
 ## Notas de Arquitectura y Decisiones

@@ -1,5 +1,21 @@
 # Registro Histórico de Hitos y Tareas — VideoStudio AI
 
+### [27/11/2026 13:53:29] ✅ Probar / Adaptar Skill #102 10114514/consistency-reference-prompt en 2. Consistencia visual de personajes y escenarios (#P3)
+
+- **ID Tarea:** `212`
+- **Prioridad:** ALTA
+- **Tipo de Hito:** `manual`
+- **Objetivo / Target:** ``
+- **Resultado Técnico:** Evaluada y adaptada de forma aislada la Skill #102 (10114514/consistency-reference-prompt) en Paso 2 (Consistencia visual de personajes y escenarios) mediante app/core/consistency_reference_skill.py sin sustituir producción. Adaptadas las 3 mejoras clave al estilo acuarela 9:16: 1) hojas de referencia de personajes de 6 vistas sin bordes (1/3 izq con 3 close-ups de cabeza + 2/3 der con 3 vistas de cuerpo entero en fondo #FFFFFF) y esquema de 9 atributos fijos con bloqueo de personajes intrusos (eliminado falso positivo de Darbón en Cap. 2), 2) fichas y prompts de accesorios/props multi-estado (seroncillo cerrado vs abierto con mariposas blancas + pincho de hierro), y 3) preservación de detalle en sombras nocturnas sin colisión de cielo diurno. Generadas evidencias comparativas en validacion/pruebas_skills/P3/ (consistencia_ANTES_actual.png, consistencia_DESPUES_skill102.png, comparativa_AB_consistency_reference_prompt.json, resumen_AB.md) listas en Gestor de Skills (:8005) y validado test_api.py (12/12 OK).
+- **Checklist de Protocolo General:**
+  - [x] Documentación en `/docs` registrada
+  - [x] Bitácora en OneNote sincronizada (01. Resumen, 02. Actividades y 03. Siguientes Pasos)
+  - [x] Arquitectura del proceso revisada y NotebookLM sincronizado
+  - [x] Git Snapshot y Push a repositorio remoto procesado
+  - [x] Conformidad con Skills y Patrones de `0000_Utilidades/01_Skills`
+
+---
+
 ### [27/11/2026 13:28:30] ✅ Implementar definitivamente #87 ChrisChen667788/wind-comic (patrón services/tts.service.ts) en Paso 5: Locución neuronal y narración de audio (#P1)
 
 - **ID Tarea:** `211`
